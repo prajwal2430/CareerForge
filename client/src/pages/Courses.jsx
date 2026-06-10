@@ -1,17 +1,25 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { MOCK_DATA } from '../data/mockData';
 import CourseRow from '../components/courses/CourseRow';
 import CourseFilters from '../components/courses/CourseFilters';
+import CourseCard from '../components/courses/CourseCard';
 import { FiTrendingUp, FiPlay } from 'react-icons/fi';
 
 const Courses = () => {
   const { courses } = MOCK_DATA;
+  const navigate = useNavigate();
+  const [selectedCategory, setSelectedCategory] = useState('All');
 
-  // Duplicate for UI demonstration
+  // Filter lists for the "All" view rows
   const trendingCourses = [...courses, ...courses];
   const newCourses = [...courses].reverse();
   const dsaCourses = courses.filter(c => c.category === 'DSA');
   const webCourses = courses.filter(c => c.category === 'Web Dev');
+  const aptiCourses = courses.filter(c => c.category === 'Aptitude');
+
+  // Filtered list for category grid view
+  const filteredCourses = courses.filter(c => c.category === selectedCategory);
 
   return (
     <div className="pb-12">
@@ -33,25 +41,52 @@ const Courses = () => {
             Build 5 production-ready applications from scratch. Learn React, Node.js, Express, MongoDB, and Redux with advanced authentication and deployment.
           </p>
           <div className="flex gap-4">
-            <button className="btn btn-primary btn-lg rounded-full">
+            <button className="btn btn-primary btn-lg rounded-full" onClick={() => navigate('/courses/2')}>
               <FiPlay className="mr-2" /> Start Watching
             </button>
-            <button className="btn btn-ghost btn-lg rounded-full">
+            <button className="btn btn-ghost btn-lg rounded-full" onClick={() => navigate('/courses/2')}>
               More Info
             </button>
           </div>
         </div>
       </div>
 
-      <CourseFilters />
+      <CourseFilters activeCategory={selectedCategory} onChange={setSelectedCategory} />
 
-      <div className="space-y-4">
-        <CourseRow title="Continue Learning" courses={courses.map(c => ({...c, progress: Math.floor(Math.random() * 80) + 10}))} />
-        <CourseRow title="Trending Now" courses={trendingCourses} />
-        <CourseRow title="Data Structures & Algorithms" courses={[...dsaCourses, ...dsaCourses, ...dsaCourses]} />
-        <CourseRow title="Web Development" courses={[...webCourses, ...webCourses, ...webCourses]} />
-        <CourseRow title="New Releases" courses={newCourses} />
-      </div>
+      {selectedCategory === 'All' ? (
+        <div className="space-y-4">
+          <CourseRow title="Continue Learning" courses={courses.map(c => ({...c, progress: Math.floor(Math.random() * 80) + 10}))} />
+          <CourseRow title="Trending Now" courses={trendingCourses} />
+          <CourseRow title="Data Structures & Algorithms" courses={[...dsaCourses, ...dsaCourses]} />
+          <CourseRow title="Web Development" courses={[...webCourses, ...webCourses]} />
+          {aptiCourses.length > 0 && (
+            <CourseRow title="Aptitude & Reasoning" courses={aptiCourses} />
+          )}
+          <CourseRow title="New Releases" courses={newCourses} />
+        </div>
+      ) : (
+        <div>
+          <div className="flex justify-between items-end mb-6 px-2">
+            <h2 className="text-2xl font-bold text-white tracking-tight">{selectedCategory} Learning Track</h2>
+            <span className="text-sm text-text-muted">{filteredCourses.length} Courses available</span>
+          </div>
+          {filteredCourses.length > 0 ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+              {filteredCourses.map(course => (
+                <div key={course.id} className="snap-start shrink-0">
+                  <CourseCard course={course} onClick={() => navigate(`/courses/${course.id}`)} />
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-16 bg-surface-2 rounded-2xl border border-glass-border">
+              <div className="text-4xl mb-4">🚀</div>
+              <h3 className="text-xl font-bold text-white mb-2">{selectedCategory} Track Coming Soon</h3>
+              <p className="text-text-muted">Our expert instructors are crafting this learning path. Stay tuned!</p>
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 };

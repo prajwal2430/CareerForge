@@ -30,6 +30,7 @@ export const MOCK_DATA = {
     { id: 1, title: 'Complete DSA for Placements', instructor: 'Striver', rating: 4.9, students: '120k', duration: '50h', image: 'dsa-thumb', category: 'DSA', progress: 45 },
     { id: 2, title: 'MERN Stack Masterclass', instructor: 'Hitesh C', rating: 4.8, students: '85k', duration: '60h', image: 'mern-thumb', category: 'Web Dev', progress: 10 },
     { id: 3, title: 'System Design Interview', instructor: 'Gaurav Sen', rating: 4.9, students: '50k', duration: '20h', image: 'sd-thumb', category: 'System Design', progress: 0 },
+    { id: 4, title: 'Quantitative Aptitude & Logical Reasoning', instructor: 'CareerRide', rating: 4.9, students: '150k', duration: '40h', image: 'apti-thumb', category: 'Aptitude', progress: 0, youtubeId: 'euz9GWR3ITY' },
   ],
   companies: [
     { id: 'google', name: 'Google', logo: 'google-logo', difficulty: 'Hard', roles: ['SWE', 'SRE'], package: '30-40 LPA' },
