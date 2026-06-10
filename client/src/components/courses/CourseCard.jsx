@@ -3,6 +3,13 @@ import { motion } from 'framer-motion';
 import { FiStar, FiClock, FiUsers, FiPlayCircle } from 'react-icons/fi';
 import GlassCard from '../ui/GlassCard';
 
+const categoryImages = {
+  'dsa-thumb': 'https://images.unsplash.com/photo-1618401471353-b98aedd07871?q=80&w=600&auto=format&fit=crop',
+  'mern-thumb': 'https://images.unsplash.com/photo-1517694712202-14dd9538aa97?q=80&w=600&auto=format&fit=crop',
+  'sd-thumb': 'https://images.unsplash.com/photo-1600132806370-bf17e65e942f?q=80&w=600&auto=format&fit=crop',
+  'apti-thumb': 'https://images.unsplash.com/photo-1509062522246-3755977927d7?q=80&w=600&auto=format&fit=crop',
+};
+
 const CourseCard = ({ course, onClick }) => {
   return (
     <motion.div
@@ -12,8 +19,14 @@ const CourseCard = ({ course, onClick }) => {
       onClick={onClick}
     >
       <GlassCard className="h-full flex flex-col p-0 overflow-hidden relative">
-        {/* Course Thumbnail placeholder */}
+        {/* Course Thumbnail with background image */}
         <div className="h-40 bg-surface-2 relative overflow-hidden">
+          <div 
+            className="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-105"
+            style={{ 
+              backgroundImage: `url(${categoryImages[course.image] || 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?q=80&w=600&auto=format&fit=crop'})` 
+            }}
+          />
           <div className="absolute inset-0 bg-gradient-to-t from-bg-tertiary to-transparent opacity-60 z-10"></div>
           <div className="absolute top-2 left-2 z-20">
             <span className="text-xs font-bold bg-accent-primary text-white px-2 py-1 rounded-md">
