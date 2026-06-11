@@ -35,7 +35,7 @@ const LandingNav = () => {
             fontFamily: "'Poppins', sans-serif"
           }}>L</div>
           <span style={{ fontFamily: "'Poppins', sans-serif", fontWeight: 700, fontSize: '1.25rem', color: '#1E1E1E' }}>
-            Learn<span style={{ color: '#FF6B00' }}>Hub</span>
+            Learn
           </span>
         </Link>
 

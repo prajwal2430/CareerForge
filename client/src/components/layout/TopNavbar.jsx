@@ -36,7 +36,6 @@ const TopNavbar = ({ isSidebarCollapsed, toggleSidebar }) => {
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           placeholder="Search courses, problems, companies..."
-          shortcut="⌘K"
         />
       </div>
 
@@ -45,7 +44,7 @@ const TopNavbar = ({ isSidebarCollapsed, toggleSidebar }) => {
           🔥 12 Day Streak
         </div>
         
-        <button className="topbar-icon-btn">
+        <button className="topbar-action">
           <FiBell />
           <span className="topbar-badge"></span>
         </button>

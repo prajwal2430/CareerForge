@@ -22,14 +22,14 @@ const ProblemTable = ({ problems }) => {
           {problems.map((problem) => (
             <tr 
               key={problem.id} 
-              className="cursor-pointer hover:bg-surface-1/50"
               onClick={() => navigate(`/practice/${problem.id}`)}
+              style={{ cursor: 'pointer' }}
             >
               <td className="text-center">
-                {problem.status === 'solved' && <FiCheckCircle className="text-color-success inline" />}
-                {problem.status === 'attempted' && <span className="text-color-warning font-bold">?</span>}
+                {problem.status === 'solved' && <FiCheckCircle style={{ color: 'var(--color-success)', display: 'inline', fontSize: '1.2rem' }} />}
+                {problem.status === 'attempted' && <span style={{ color: 'var(--color-warning)', fontWeight: 'bold', fontSize: '1.2rem' }}>?</span>}
               </td>
-              <td className="font-medium text-text-primary hover:text-accent-primary transition-colors">
+              <td style={{ fontWeight: 500, color: 'var(--text-primary)' }}>
                 {problem.id}. {problem.title}
               </td>
               <td>{problem.acceptance}</td>
@@ -39,12 +39,12 @@ const ProblemTable = ({ problems }) => {
               <td className="hidden md:table-cell">
                 <div className="flex gap-2 flex-wrap">
                   {problem.tags.slice(0, 3).map(tag => (
-                    <span key={tag} className="text-xs bg-surface-2 text-text-muted px-2 py-1 rounded-full">
+                    <span key={tag} style={{ fontSize: 'var(--text-xs)', background: 'var(--bg-tertiary)', color: 'var(--text-muted)', padding: '4px 8px', borderRadius: 'var(--radius-full)' }}>
                       {tag}
                     </span>
                   ))}
                   {problem.tags.length > 3 && (
-                    <span className="text-xs bg-surface-2 text-text-muted px-2 py-1 rounded-full">+{problem.tags.length - 3}</span>
+                    <span style={{ fontSize: 'var(--text-xs)', background: 'var(--bg-tertiary)', color: 'var(--text-muted)', padding: '4px 8px', borderRadius: 'var(--radius-full)' }}>+{problem.tags.length - 3}</span>
                   )}
                 </div>
               </td>

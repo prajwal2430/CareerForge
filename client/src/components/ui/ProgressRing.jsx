@@ -24,7 +24,7 @@ const ProgressRing = ({
   }, [setOffset, circumference, progress, offset]);
 
   return (
-    <div className="progress-ring-container" style={{ width: size, height: size }}>
+    <div style={{ width: size, height: size, position: 'relative' }}>
       <svg width={size} height={size}>
         <circle
           stroke={trackColor}
@@ -47,9 +47,9 @@ const ProgressRing = ({
           style={{ transition: 'stroke-dashoffset 1.5s ease-in-out', transform: 'rotate(-90deg)', transformOrigin: '50% 50%' }}
         />
       </svg>
-      <div className="progress-ring-text">
-        <span className="progress-ring-value">{valueText || `${progress}%`}</span>
-        {label && <span className="progress-ring-label">{label}</span>}
+      <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+        <span style={{ fontSize: '1.5rem', fontWeight: 800, color: 'var(--text-primary)', lineHeight: 1 }}>{valueText || `${progress}%`}</span>
+        {label && <span style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-muted)', marginTop: '4px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{label}</span>}
       </div>
     </div>
   );
