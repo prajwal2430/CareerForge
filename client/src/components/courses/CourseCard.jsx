@@ -15,9 +15,10 @@ const CourseCard = ({ course, onClick }) => {
     <motion.div
       whileHover={{ y: -5 }}
       transition={{ duration: 0.2 }}
-      className="h-full cursor-pointer group"
+      style={{ height: '100%', cursor: 'pointer' }}
       onClick={onClick}
     >
+<<<<<<< Updated upstream
       <GlassCard className="h-full flex flex-col p-0 overflow-hidden relative">
         {/* Course Thumbnail with background image */}
         <div className="h-40 bg-surface-2 relative overflow-hidden">
@@ -30,48 +31,111 @@ const CourseCard = ({ course, onClick }) => {
           <div className="absolute inset-0 bg-gradient-to-t from-bg-tertiary to-transparent opacity-60 z-10"></div>
           <div className="absolute top-2 left-2 z-20">
             <span className="text-xs font-bold bg-accent-primary text-white px-2 py-1 rounded-md">
+=======
+      <GlassCard style={{
+        height: '100%',
+        display: 'flex',
+        flexDirection: 'column',
+        padding: 0,
+        overflow: 'hidden',
+        position: 'relative',
+        border: '1px solid var(--glass-border)',
+        background: 'var(--bg-card)',
+        boxShadow: '0 4px 12px rgba(0,0,0,0.03)'
+      }}>
+        {/* Course Thumbnail placeholder */}
+        <div style={{
+          height: '160px',
+          background: 'var(--gradient-orange-light)',
+          position: 'relative',
+          overflow: 'hidden',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center'
+        }}>
+          <div style={{
+            position: 'absolute',
+            inset: 0,
+            background: 'linear-gradient(to top, rgba(0,0,0,0.05), transparent)',
+            zIndex: 10
+          }}></div>
+          <div style={{ position: 'absolute', top: '10px', left: '10px', zIndex: 20 }}>
+            <span style={{
+              fontSize: '0.7rem',
+              fontWeight: 700,
+              background: 'var(--gradient-primary)',
+              color: 'white',
+              padding: '3px 8px',
+              borderRadius: '6px'
+            }}>
+>>>>>>> Stashed changes
               {course.category}
             </span>
           </div>
           {course.progress !== undefined && (
-            <div className="absolute bottom-0 left-0 w-full h-1 bg-surface-3 z-20">
+            <div style={{
+              position: 'absolute',
+              bottom: 0,
+              left: 0,
+              width: '100%',
+              height: '4px',
+              background: 'var(--gray-200)',
+              zIndex: 20
+            }}>
               <div 
-                className="h-full bg-color-success" 
-                style={{ width: `${course.progress}%` }}
+                style={{ height: '100%', background: 'var(--color-success)', width: `${course.progress}%` }}
               ></div>
             </div>
           )}
           
-          {/* Mock play button on hover */}
-          <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 z-30 transition-opacity bg-bg-primary/40 backdrop-blur-sm">
-            <div className="w-12 h-12 rounded-full bg-accent-primary text-white flex items-center justify-center text-xl shadow-glow-primary">
-              <FiPlayCircle />
-            </div>
+          <div style={{
+            fontSize: '1.2rem',
+            fontWeight: 800,
+            color: 'var(--accent-primary)',
+            opacity: 0.85
+          }}>
+            {course.category}
           </div>
         </div>
 
-        <div className="p-4 flex flex-col flex-1">
-          <h3 className="font-bold text-text-primary mb-1 line-clamp-2 leading-tight group-hover:text-accent-primary transition-colors">
+        <div style={{ padding: '1.25rem', display: 'flex', flexDirection: 'column', flex: 1 }}>
+          <h3 style={{
+            fontFamily: "'Poppins', sans-serif",
+            fontWeight: 700,
+            fontSize: '0.95rem',
+            color: 'var(--text-primary)',
+            marginBottom: '0.25rem',
+            lineHeight: 1.3
+          }}>
             {course.title}
           </h3>
-          <p className="text-sm text-text-muted mb-3">{course.instructor}</p>
+          <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginBottom: '0.75rem' }}>{course.instructor}</p>
           
-          <div className="flex items-center gap-1 text-sm mb-4">
-            <span className="font-bold text-color-warning">{course.rating}</span>
-            <div className="flex text-color-warning text-xs">
+          <div style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '0.85rem', marginBottom: '1rem' }}>
+            <span style={{ fontWeight: 700, color: 'var(--color-warning)' }}>{course.rating}</span>
+            <div style={{ display: 'flex', color: 'var(--color-warning)', fontSize: '0.75rem' }}>
               {[...Array(5)].map((_, i) => (
                 <FiStar key={i} className={i < Math.floor(course.rating) ? 'fill-current' : ''} />
               ))}
             </div>
-            <span className="text-text-muted ml-1">({course.students})</span>
+            <span style={{ color: 'var(--text-muted)' }}>({course.students})</span>
           </div>
 
-          <div className="flex justify-between items-center text-xs text-text-muted mt-auto pt-3 border-t border-glass-border">
-            <div className="flex items-center gap-1">
+          <div style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            fontSize: '0.75rem',
+            color: 'var(--text-muted)',
+            marginTop: 'auto',
+            paddingTop: '0.75rem',
+            borderTop: '1px solid var(--gray-100)'
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
               <FiClock /> {course.duration}
             </div>
-            <div className="flex items-center gap-1">
-              <FiUsers /> Beginner Friendly
+            <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+              <FiUsers /> Beginner
             </div>
           </div>
         </div>

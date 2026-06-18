@@ -11,7 +11,10 @@ const Courses = () => {
   const navigate = useNavigate();
   const [selectedCategory, setSelectedCategory] = useState('All');
 
+<<<<<<< Updated upstream
   // Filter lists for the "All" view rows
+=======
+>>>>>>> Stashed changes
   const trendingCourses = [...courses, ...courses];
   const newCourses = [...courses].reverse();
   const dsaCourses = courses.filter(c => c.category === 'DSA');
@@ -22,29 +25,91 @@ const Courses = () => {
   const filteredCourses = courses.filter(c => c.category === selectedCategory);
 
   return (
-    <div className="pb-12">
+    <div style={{ paddingBottom: '3rem' }}>
       {/* Featured Hero Banner */}
-      <div className="relative w-full h-[400px] rounded-2xl overflow-hidden mb-12 group cursor-pointer border border-glass-border">
-        <div className="absolute inset-0 bg-gradient-to-r from-bg-primary via-bg-primary/80 to-transparent z-10"></div>
+      <div style={{
+        position: 'relative',
+        width: '100%',
+        height: '380px',
+        borderRadius: '20px',
+        overflow: 'hidden',
+        marginBottom: '2.5rem',
+        border: '1px solid var(--glass-border)',
+        boxShadow: '0 10px 30px rgba(0,0,0,0.04)',
+        cursor: 'pointer'
+      }}>
+        <div style={{
+          position: 'absolute',
+          inset: 0,
+          background: 'linear-gradient(90deg, var(--bg-primary) 0%, rgba(9,9,14,0.95) 50%, rgba(9,9,14,0.2) 100%)',
+          zIndex: 10
+        }}></div>
         
-        {/* Placeholder image background */}
-        <div className="absolute inset-0 bg-surface-2 bg-[url('https://images.unsplash.com/photo-1517694712202-14dd9538aa97?q=80&w=2070&auto=format&fit=crop')] bg-cover bg-center mix-blend-overlay opacity-40 group-hover:scale-105 transition-transform duration-700"></div>
+        {/* Unsplash background overlay */}
+        <div style={{
+          position: 'absolute',
+          inset: 0,
+          backgroundImage: "url('https://images.unsplash.com/photo-1517694712202-14dd9538aa97?q=80&w=2070&auto=format&fit=crop')",
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          opacity: 0.2,
+          zIndex: 1
+        }}></div>
         
-        <div className="relative z-20 h-full flex flex-col justify-center p-8 md:p-12 max-w-2xl">
-          <div className="flex items-center gap-2 mb-4 text-color-warning text-sm font-bold tracking-widest uppercase">
+        <div style={{
+          position: 'relative',
+          zIndex: 20,
+          height: '100%',
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
+          padding: '2.5rem',
+          maxWidth: '600px'
+        }}>
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '6px',
+            marginBottom: '1rem',
+            color: 'var(--accent-primary)',
+            fontSize: '0.85rem',
+            fontWeight: 700,
+            textTransform: 'uppercase',
+            letterSpacing: '0.1em'
+          }}>
             <FiTrendingUp /> #1 Bestseller
           </div>
-          <h1 className="text-4xl md:text-5xl font-extrabold text-white mb-4 leading-tight">
+          <h1 style={{
+            fontFamily: "'Poppins', sans-serif",
+            fontSize: '2rem',
+            fontWeight: 800,
+            color: 'var(--text-primary)',
+            marginBottom: '1rem',
+            lineHeight: 1.25
+          }}>
             The Ultimate MERN Stack Masterclass
           </h1>
-          <p className="text-lg text-text-muted mb-8 line-clamp-2">
+          <p style={{
+            color: 'var(--text-secondary)',
+            fontSize: '0.95rem',
+            marginBottom: '1.75rem',
+            lineHeight: 1.6
+          }}>
             Build 5 production-ready applications from scratch. Learn React, Node.js, Express, MongoDB, and Redux with advanced authentication and deployment.
           </p>
+<<<<<<< Updated upstream
           <div className="flex gap-4">
             <button className="btn btn-primary btn-lg rounded-full" onClick={() => navigate('/courses/2')}>
               <FiPlay className="mr-2" /> Start Watching
             </button>
             <button className="btn btn-ghost btn-lg rounded-full" onClick={() => navigate('/courses/2')}>
+=======
+          <div style={{ display: 'flex', gap: '1rem' }}>
+            <button className="btn btn-primary" style={{ borderRadius: '30px', padding: '0.6rem 1.5rem' }}>
+              <FiPlay style={{ marginRight: '8px' }} /> Start Watching
+            </button>
+            <button className="btn btn-ghost" style={{ borderRadius: '30px', padding: '0.6rem 1.5rem', background: 'var(--bg-card)' }}>
+>>>>>>> Stashed changes
               More Info
             </button>
           </div>
@@ -53,6 +118,7 @@ const Courses = () => {
 
       <CourseFilters activeCategory={selectedCategory} onChange={setSelectedCategory} />
 
+<<<<<<< Updated upstream
       {selectedCategory === 'All' ? (
         <div className="space-y-4">
           <CourseRow title="Continue Learning" courses={courses.map(c => ({...c, progress: Math.floor(Math.random() * 80) + 10}))} />
@@ -87,6 +153,15 @@ const Courses = () => {
           )}
         </div>
       )}
+=======
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
+        <CourseRow title="Continue Learning" courses={courses.map(c => ({...c, progress: Math.floor(Math.random() * 80) + 10}))} />
+        <CourseRow title="Trending Now" courses={trendingCourses} />
+        <CourseRow title="Data Structures & Algorithms" courses={[...dsaCourses, ...dsaCourses, ...dsaCourses]} />
+        <CourseRow title="Web Development" courses={[...webCourses, ...webCourses, ...webCourses]} />
+        <CourseRow title="New Releases" courses={newCourses} />
+      </div>
+>>>>>>> Stashed changes
     </div>
   );
 };
