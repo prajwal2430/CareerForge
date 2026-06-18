@@ -364,6 +364,7 @@ ul, ol { list-style: none; }
   cursor: pointer;
   transition: all var(--transition-fast);
   font-size: var(--text-lg);
+  position: relative;
 }
 .topbar-action:hover { color: var(--accent-primary); border-color: var(--accent-primary); background: var(--accent-primary-light); }
 .topbar-avatar {
@@ -822,6 +823,21 @@ ul, ol { list-style: none; }
 }
 .search-bar input::placeholder { color: var(--text-muted); }
 .search-icon { color: var(--text-muted); font-size: var(--text-lg); flex-shrink: 0; }
+
+.search-shortcut {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2px 6px;
+  background: var(--gray-100);
+  border: 1px solid var(--gray-200);
+  border-radius: var(--radius-sm);
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--gray-500);
+  font-family: var(--font-mono);
+  letter-spacing: 0.05em;
+}
 
 /* ===== Modal ===== */
 .modal-overlay {

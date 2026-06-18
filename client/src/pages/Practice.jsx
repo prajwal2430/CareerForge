@@ -11,6 +11,19 @@ const Practice = () => {
   const [selectedCourse, setSelectedCourse] = useState('all');
   const [activeTab, setActiveTab] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
+  const sliderRef = useRef(null);
+
+  const slideLeft = () => {
+    if (sliderRef.current) {
+      sliderRef.current.scrollBy({ left: -350, behavior: 'smooth' });
+    }
+  };
+
+  const slideRight = () => {
+    if (sliderRef.current) {
+      sliderRef.current.scrollBy({ left: 350, behavior: 'smooth' });
+    }
+  };
   
   // Operational state for filters
   const [difficultyFilter, setDifficultyFilter] = useState('Difficulty');

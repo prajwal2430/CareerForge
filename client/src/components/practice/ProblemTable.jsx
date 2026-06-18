@@ -25,6 +25,7 @@ const ProblemTable = ({ problems }) => {
               className="problem-row-hover"
               style={{ cursor: 'pointer', borderBottom: '1px solid var(--gray-100)' }}
               onClick={() => navigate(`/practice/${problem.id}`)}
+              style={{ cursor: 'pointer' }}
             >
               <td style={{ textAlign: 'center', padding: '1rem' }}>
                 {problem.status === 'solved' && <FiCheckCircle style={{ color: 'var(--color-success)', fontSize: '1.2rem' }} />}

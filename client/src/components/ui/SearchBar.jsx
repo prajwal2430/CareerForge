@@ -3,15 +3,15 @@ import { FiSearch } from 'react-icons/fi';
 
 const SearchBar = ({ placeholder = 'Search...', value, onChange, shortcut, className = '' }) => {
   return (
-    <div className={`topbar-search ${className}`}>
-      <FiSearch className="topbar-search-icon" />
+    <div className={`search-bar ${className}`}>
+      <FiSearch className="search-icon" />
       <input 
         type="text" 
         placeholder={placeholder} 
         value={value}
         onChange={onChange}
       />
-      {shortcut && <span className="topbar-search-shortcut">{shortcut}</span>}
+      {shortcut && <span className="search-shortcut">{shortcut}</span>}
     </div>
   );
 };
