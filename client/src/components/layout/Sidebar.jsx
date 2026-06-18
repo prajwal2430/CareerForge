@@ -29,7 +29,7 @@ const Sidebar = ({ isCollapsed, setMobileOpen }) => {
   return (
     <aside className={`sidebar ${isCollapsed ? 'collapsed' : ''}`}>
       <div className="sidebar-brand">
-        <div className="sidebar-brand-logo">L</div>
+        <div className="sidebar-brand-icon">L</div>
         <span className="sidebar-brand-text">LearnHub</span>
       </div>
 

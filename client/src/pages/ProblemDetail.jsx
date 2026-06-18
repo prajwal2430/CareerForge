@@ -3,12 +3,10 @@ import { useParams, Link } from 'react-router-dom';
 import ReactMarkdown from 'react-markdown';
 import { FiChevronLeft, FiSettings, FiMaximize2 } from 'react-icons/fi';
 import toast from 'react-hot-toast';
-import { PROBLEMS } from '../data/problemsData';
 import CodeEditor from '../components/practice/CodeEditor';
 import TestCasePanel from '../components/practice/TestCasePanel';
 import Badge from '../components/ui/Badge';
 
-<<<<<<< Updated upstream
 const problemsData = {
   '1': {
     title: 'Two Sum',
@@ -17,34 +15,11 @@ const problemsData = {
     code: '/**\n * @param {number[]} nums\n * @param {number} target\n * @return {number[]}\n */\nvar twoSum = function(nums, target) {\n    \n};',
     description: `
 Given an array of integers \`nums\` and an integer \`target\`, return *indices of the two numbers such that they add up to \`target\`*.
-=======
-const ProblemDetail = () => {
-  const { id } = useParams();
-  const [language, setLanguage] = useState('javascript');
-  const [code, setCode] = useState('');
-  const [isRunning, setIsRunning] = useState(false);
-  const [testCases, setTestCases] = useState([]);
 
-  // Find the problem
-  const problem = PROBLEMS.find(p => p.id.toString() === id);
->>>>>>> Stashed changes
+You may assume that each input would have ***exactly* one solution**, and you may not use the *same* element twice.
 
-  // Sync starter code and test cases when problem or language changes
-  useEffect(() => {
-    if (problem) {
-      const starter = problem.starterCode[language] || '';
-      setCode(starter);
+You can return the answer in any order.
 
-      const tcs = problem.testCases.map(tc => ({
-        ...tc,
-        passed: null,
-        actualOutput: null
-      }));
-      setTestCases(tcs);
-    }
-  }, [id, language, problem]);
-
-<<<<<<< Updated upstream
 ### Example 1:
 **Input:** \`nums = [2,7,11,15]\`, \`target = 9\`  
 **Output:** \`[0,1]\`  
@@ -168,34 +143,6 @@ const ProblemDetail = () => {
     setCode(updatedProblem.code);
     setTestCases(updatedProblem.testCases);
   }, [id]);
-=======
-  if (!problem) {
-    return (
-      <div 
-        style={{
-          minHeight: '100vh',
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'center',
-          padding: '2rem',
-          textAlign: 'center',
-          background: 'var(--bg-primary)'
-        }}
-      >
-        <h1 style={{ fontFamily: "'Poppins', sans-serif", fontSize: '2.5rem', fontWeight: 800, color: 'var(--text-primary)', marginBottom: '0.75rem' }}>
-          Problem Not Found
-        </h1>
-        <p style={{ color: 'var(--text-secondary)', fontSize: '1rem', marginBottom: '2rem' }}>
-          The coding problem you are looking for does not exist or has been removed.
-        </p>
-        <Link to="/practice" className="btn btn-primary" style={{ borderRadius: '20px' }}>
-          Back to Practice List
-        </Link>
-      </div>
-    );
-  }
->>>>>>> Stashed changes
 
   const handleRunCode = () => {
     setIsRunning(true);
@@ -204,7 +151,6 @@ const ProblemDetail = () => {
     // Mock run logic
     setTimeout(() => {
       setIsRunning(false);
-<<<<<<< Updated upstream
       const newTestCases = [...testCases];
       newTestCases[0] = { ...newTestCases[0], passed: true, actualOutput: newTestCases[0].output };
       newTestCases[1] = { ...newTestCases[1], passed: true, actualOutput: newTestCases[1].output };
@@ -212,24 +158,6 @@ const ProblemDetail = () => {
       setTestCases(newTestCases);
       toast.success('All Test Cases Passed!');
     }, 2000);
-=======
-      const newTestCases = testCases.map((tc) => {
-        const isPassed = Math.random() > 0.15; // 85% pass rate for mock run
-        return {
-          ...tc,
-          passed: isPassed,
-          actualOutput: isPassed ? tc.output : `Err: Expected ${tc.output}`
-        };
-      });
-      setTestCases(newTestCases);
-      const passedCount = newTestCases.filter(c => c.passed).length;
-      if (passedCount === newTestCases.length) {
-        toast.success(`Passed all ${newTestCases.length} test cases!`);
-      } else {
-        toast.error(`Failed ${newTestCases.length - passedCount} test cases.`);
-      }
-    }, 1500);
->>>>>>> Stashed changes
   };
 
   const handleSubmit = () => {
@@ -238,40 +166,28 @@ const ProblemDetail = () => {
     
     setTimeout(() => {
       setIsRunning(false);
-<<<<<<< Updated upstream
       toast.success('Accepted! Faster than 97.2% of submissions.');
     }, 2500);
-=======
-      problem.status = 'solved';
-      toast.success('Accepted! Faster than 92.4% of submissions.');
-    }, 2000);
->>>>>>> Stashed changes
   };
 
   return (
     <div className="public-page min-h-screen bg-bg-primary">
       {/* Top Navbar specifically for practice */}
-      <nav className="h-14 bg-surface-2 border-b border-glass-border flex items-center justify-between px-4" style={{ background: 'var(--bg-secondary)', height: '3.5rem' }}>
+      <nav className="h-14 bg-surface-2 border-b border-glass-border flex items-center justify-between px-4">
         <div className="flex items-center gap-4">
-          <Link to="/practice" className="text-text-secondary hover:text-white flex items-center gap-1 transition-colors" style={{ color: 'var(--text-secondary)' }}>
+          <Link to="/practice" className="text-text-secondary hover:text-white flex items-center gap-1 transition-colors">
             <FiChevronLeft /> Problem List
           </Link>
-<<<<<<< Updated upstream
           <div className="h-6 w-px bg-glass-border"></div>
           <span className="font-bold text-text-primary flex items-center gap-2">
             {id}. {problem.title} <Badge variant={problem.difficulty.toLowerCase()}>{problem.difficulty}</Badge>
-=======
-          <div className="h-6 w-px bg-glass-border" style={{ width: '1px', height: '1.5rem', background: 'var(--glass-border)' }}></div>
-          <span className="font-bold text-text-primary flex items-center gap-2" style={{ fontWeight: 700, color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-            {problem.id}. {problem.title} <Badge variant={problem.difficulty.toLowerCase()}>{problem.difficulty}</Badge>
->>>>>>> Stashed changes
           </span>
         </div>
         <div className="flex items-center gap-3">
-          <button className="text-text-secondary hover:text-white p-2 rounded-md hover:bg-surface-3 transition-colors" style={{ background: 'none', color: 'var(--text-secondary)' }}>
+          <button className="text-text-secondary hover:text-white p-2 rounded-md hover:bg-surface-3 transition-colors">
             <FiSettings />
           </button>
-          <button className="text-text-secondary hover:text-white p-2 rounded-md hover:bg-surface-3 transition-colors" style={{ background: 'none', color: 'var(--text-secondary)' }}>
+          <button className="text-text-secondary hover:text-white p-2 rounded-md hover:bg-surface-3 transition-colors">
             <FiMaximize2 />
           </button>
         </div>
@@ -281,7 +197,6 @@ const ProblemDetail = () => {
       <div className="split-pane">
         {/* Left Pane: Problem Description */}
         <div className="split-pane-left">
-<<<<<<< Updated upstream
           <div className="mb-6 flex gap-2">
             <Badge variant={problem.difficulty.toLowerCase()}>{problem.difficulty}</Badge>
             {problem.tags.map((tag, tIdx) => (
@@ -293,97 +208,37 @@ const ProblemDetail = () => {
           
           <div className="markdown-body">
             <ReactMarkdown>{problem.description}</ReactMarkdown>
-=======
-          <div className="mb-6 flex gap-2" style={{ display: 'flex', gap: '0.5rem', marginBottom: '1.5rem' }}>
-            <Badge variant={problem.difficulty.toLowerCase()}>{problem.difficulty}</Badge>
-            {problem.tags.map(tag => (
-              <span key={tag} className="text-xs bg-surface-2 text-text-muted px-2 py-1 rounded-full" style={{ fontSize: '0.75rem', background: 'var(--bg-input)', color: 'var(--text-muted)', padding: '2px 8px', borderRadius: '12px' }}>
-                {tag}
-              </span>
-            ))}
-          </div>
-          
-          <h1 className="text-2xl font-bold text-white mb-6" style={{ fontSize: '1.5rem', fontWeight: 800, color: 'white', marginBottom: '1.5rem' }}>
-            {problem.id}. {problem.title}
-          </h1>
-          
-          <div className="markdown-body">
-            <ReactMarkdown>{problem.description}</ReactMarkdown>
-
-            {problem.examples && problem.examples.length > 0 && (
-              <div style={{ marginTop: '1.5rem' }}>
-                <h3 style={{ fontSize: '1.05rem', fontWeight: 700, color: 'white', marginBottom: '0.75rem' }}>Examples</h3>
-                {problem.examples.map((example, idx) => (
-                  <div key={idx} style={{ marginBottom: '1rem', background: 'var(--bg-input)', padding: '1rem', borderRadius: '12px', border: '1px solid var(--glass-border)' }}>
-                    <div style={{ fontWeight: 700, fontSize: '0.85rem', color: 'var(--text-primary)', marginBottom: '0.25rem' }}>Example {idx + 1}:</div>
-                    <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.8rem', color: 'var(--text-secondary)', whiteSpace: 'pre-wrap', lineHeight: 1.5 }}>
-                      <strong>Input:</strong> {example.input}<br />
-                      <strong>Output:</strong> {example.output}
-                      {example.explanation && (
-                        <>
-                          <br /><strong>Explanation:</strong> {example.explanation}
-                        </>
-                      )}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-
-            {problem.constraints && problem.constraints.length > 0 && (
-              <div style={{ marginTop: '1.5rem' }}>
-                <h3 style={{ fontSize: '1.05rem', fontWeight: 700, color: 'white', marginBottom: '0.5rem' }}>Constraints</h3>
-                <ul style={{ listStyleType: 'disc', paddingLeft: '1.25rem', color: 'var(--text-secondary)', fontSize: '0.85rem', margin: 0 }}>
-                  {problem.constraints.map((constraint, idx) => (
-                    <li key={idx} style={{ fontFamily: 'var(--font-mono)', fontSize: '0.8rem', marginBottom: '0.25rem' }}>{constraint}</li>
-                  ))}
-                </ul>
-              </div>
-            )}
->>>>>>> Stashed changes
           </div>
 
-          <div className="mt-8 pt-8 border-t border-glass-border" style={{ marginTop: '2rem', paddingTop: '2rem', borderTop: '1px solid var(--glass-border)' }}>
-            <div className="flex items-center justify-between text-sm text-text-muted mb-4" style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: '1rem' }}>
-              <span>Course: <strong>{problem.courseTitle}</strong></span>
-              <span>Acceptance Rate: {problem.acceptance}</span>
+          <div className="mt-8 pt-8 border-t border-glass-border">
+            <div className="flex items-center justify-between text-sm text-text-muted mb-4">
+              <span>Accepted: 14.5M</span>
+              <span>Submissions: 28.3M</span>
+              <span>Acceptance Rate: 51.2%</span>
             </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              <span className="text-xs text-text-muted" style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Tags:</span>
-              <div style={{ display: 'flex', gap: '0.35rem', flexWrap: 'wrap' }}>
-                {problem.tags.map(tag => (
-                  <span key={tag} style={{ fontSize: '0.75rem', background: 'var(--bg-input)', color: 'var(--text-secondary)', padding: '2px 8px', borderRadius: '12px' }}>
-                    {tag}
-                  </span>
-                ))}
-              </div>
+            <div className="flex gap-2">
+              <span className="text-xs text-text-muted">Companies:</span>
+              <span className="text-xs font-semibold text-color-warning">Amazon</span>
+              <span className="text-xs font-semibold text-accent-secondary">Google</span>
+              <span className="text-xs font-semibold text-text-primary">Apple</span>
             </div>
           </div>
         </div>
 
         {/* Right Pane: Code Editor and Test Cases */}
         <div className="split-pane-right">
-          <div className="h-10 bg-surface-2 flex items-center justify-between px-4 border-b border-glass-border" style={{ background: 'var(--bg-secondary)', height: '2.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0 1rem', borderBottom: '1px solid var(--glass-border)' }}>
+          <div className="h-10 bg-surface-2 flex items-center justify-between px-4 border-b border-glass-border">
             <select 
               value={language}
               onChange={(e) => setLanguage(e.target.value)}
               className="bg-bg-input border border-glass-border text-sm rounded-md px-2 py-1 text-text-secondary outline-none focus:border-accent-primary"
-              style={{
-                background: 'var(--bg-input)',
-                border: '1px solid var(--glass-border)',
-                borderRadius: '6px',
-                fontSize: '0.85rem',
-                color: 'var(--text-secondary)',
-                padding: '2px 8px',
-                outline: 'none'
-              }}
             >
               <option value="javascript">JavaScript</option>
               <option value="python">Python 3</option>
               <option value="java">Java</option>
               <option value="cpp">C++</option>
             </select>
-            <button className="text-text-secondary hover:text-white text-sm flex items-center gap-1 transition-colors" style={{ background: 'none', color: 'var(--text-secondary)', fontSize: '0.85rem' }}>
+            <button className="text-text-secondary hover:text-white text-sm flex items-center gap-1 transition-colors">
               Auto <FiSettings />
             </button>
           </div>

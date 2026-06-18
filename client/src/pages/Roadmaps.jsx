@@ -8,79 +8,34 @@ const Roadmaps = () => {
   const navigate = useNavigate();
 
   return (
-    <div style={{ paddingBottom: '3rem' }}>
-      <div style={{ marginBottom: '2rem' }}>
-        <h1 style={{ fontFamily: "'Poppins', sans-serif", fontSize: '1.75rem', fontWeight: 800, color: '#1E1E1E', margin: 0 }}>
-          Learning Roadmaps
-        </h1>
-        <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', marginTop: '0.25rem' }}>
-          Structured paths to achieve your career goals.
-        </p>
+    <div className="pb-12 max-w-7xl mx-auto">
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold text-white mb-2">Learning Roadmaps</h1>
+        <p className="text-text-muted">Structured paths to achieve your career goals.</p>
       </div>
 
-      <div style={{
-        display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
-        gap: '1.5rem'
-      }}>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {MOCK_DATA.roadmaps.map((roadmap) => (
           <GlassCard 
             key={roadmap.id} 
-            style={{
-              cursor: 'pointer',
-              border: '1px solid rgba(255,107,0,0.1)',
-              background: 'white',
-              boxShadow: '0 4px 20px rgba(0,0,0,0.03)',
-              padding: '1.5rem',
-              display: 'flex',
-              flexDirection: 'column',
-              justifyContent: 'space-between',
-              transition: 'transform 0.2s, border-color 0.2s'
-            }}
-            whileHover={{ y: -4, borderColor: 'var(--accent-primary)' }}
+            className="cursor-pointer hover:border-accent-primary/50 transition-colors flex flex-col"
             onClick={() => navigate(`/roadmaps/${roadmap.id}`)}
           >
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1.5rem' }}>
-              <div style={{
-                width: '48px',
-                height: '48px',
-                borderRadius: '12px',
-                background: 'var(--gradient-primary)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontWeight: 'bold',
-                color: 'white',
-                fontSize: '1.25rem',
-                boxShadow: 'var(--shadow-orange)'
-              }}>
+            <div className="flex justify-between items-start mb-6">
+              <div className="w-12 h-12 rounded-lg bg-gradient-primary flex items-center justify-center font-bold text-white text-xl shadow-glow-primary">
                 {roadmap.id === 'java' ? '☕' : roadmap.id === 'mern' ? '⚛️' : '📊'}
               </div>
               <ProgressRing 
                 progress={roadmap.progress} 
-                size={48} 
-                strokeWidth={4.5} 
+                size={50} 
+                strokeWidth={4} 
                 valueText={`${roadmap.progress}%`} 
               />
             </div>
             
-            <h3 style={{
-              fontFamily: "'Poppins', sans-serif",
-              fontSize: '1.15rem',
-              fontWeight: 700,
-              color: '#1E1E1E',
-              marginBottom: '1rem',
-              marginTop: 0
-            }}>{roadmap.title}</h3>
+            <h3 className="text-xl font-bold text-white mb-2">{roadmap.title}</h3>
             
-            <div style={{
-              display: 'flex',
-              gap: '12px',
-              fontSize: '0.8rem',
-              color: 'var(--text-muted)',
-              paddingTop: '0.75rem',
-              borderTop: '1px solid var(--gray-100)'
-            }}>
+            <div className="flex gap-4 text-sm text-text-muted mt-auto pt-4 border-t border-glass-border">
               <span>{roadmap.steps} Modules</span>
               <span>•</span>
               <span>{roadmap.duration}</span>

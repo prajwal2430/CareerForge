@@ -24,7 +24,6 @@ import ResumeBuilder from './pages/ResumeBuilder';
 import AIMentor from './pages/AIMentor';
 import Community from './pages/Community';
 import NotFound from './pages/NotFound';
-import Placement from './pages/Placement';
 
 // Lazy load feature pages
 // const Courses = lazy(() => import('./pages/Courses'));
@@ -67,7 +66,6 @@ function App() {
             <Route path="/resume" element={<ResumeBuilder />} />
             <Route path="/ai-mentor" element={<AIMentor />} />
             <Route path="/community" element={<Community />} />
-            <Route path="/placement" element={<Placement />} />
             <Route path="/admin" element={<div className="p-8">Admin Dashboard Coming Soon</div>} />
           </Route>
 
