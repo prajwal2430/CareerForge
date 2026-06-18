@@ -31,129 +31,57 @@ const Community = () => {
   ];
 
   return (
-    <div style={{
-      display: 'flex',
-      flexDirection: 'row',
-      flexWrap: 'wrap',
-      gap: '2rem',
-      paddingBottom: '3rem'
-    }}>
+    <div className="pb-12 max-w-5xl mx-auto flex flex-col md:flex-row gap-8">
       {/* Main Feed */}
-      <div style={{ flex: '1 1 500px', display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <h1 style={{ fontFamily: "'Poppins', sans-serif", fontSize: '1.75rem', fontWeight: 800, color: '#1E1E1E', margin: 0 }}>Community</h1>
-          <button className="btn btn-primary btn-sm" style={{ borderRadius: '20px' }}>Create Post</button>
+      <div className="flex-1 space-y-6">
+        <div className="flex justify-between items-center mb-2">
+          <h1 className="text-3xl font-bold text-white">Community</h1>
+          <button className="btn btn-primary btn-sm">Create Post</button>
         </div>
         
         {/* Filters */}
-        <div style={{
-          display: 'flex',
-          gap: '8px',
-          overflowX: 'auto',
-          paddingBottom: '4px'
-        }} className="scrollbar-hide">
-          <button style={{
-            padding: '4px 14px',
-            borderRadius: '20px',
-            fontSize: '0.8rem',
-            fontWeight: 600,
-            cursor: 'pointer',
-            border: 'none',
-            background: 'var(--gradient-primary)',
-            color: 'white'
-          }}>All</button>
-          <button style={{
-            padding: '4px 14px',
-            borderRadius: '20px',
-            fontSize: '0.8rem',
-            fontWeight: 600,
-            cursor: 'pointer',
-            border: '1px solid var(--gray-200)',
-            background: 'white',
-            color: 'var(--text-secondary)'
-          }}>Interview Experiences</button>
-          <button style={{
-            padding: '4px 14px',
-            borderRadius: '20px',
-            fontSize: '0.8rem',
-            fontWeight: 600,
-            cursor: 'pointer',
-            border: '1px solid var(--gray-200)',
-            background: 'white',
-            color: 'var(--text-secondary)'
-          }}>Doubt Resolution</button>
+        <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
+          <button className="px-4 py-1.5 rounded-full bg-accent-primary text-white text-sm font-medium">All</button>
+          <button className="px-4 py-1.5 rounded-full bg-surface-2 text-text-secondary hover:text-white text-sm font-medium transition-colors">Interview Experiences</button>
+          <button className="px-4 py-1.5 rounded-full bg-surface-2 text-text-secondary hover:text-white text-sm font-medium transition-colors">Doubt Resolution</button>
+          <button className="px-4 py-1.5 rounded-full bg-surface-2 text-text-secondary hover:text-white text-sm font-medium transition-colors">Project Showcase</button>
         </div>
 
         {/* Posts */}
         {posts.map(post => (
-          <GlassCard key={post.id} style={{
-            background: 'white',
-            border: '1px solid rgba(255,107,0,0.1)',
-            boxShadow: '0 4px 20px rgba(0,0,0,0.03)',
-            padding: '1.5rem',
-            borderRadius: '16px'
-          }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1rem' }}>
-              <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
-                <div style={{
-                  width: '40px',
-                  height: '40px',
-                  borderRadius: '50%',
-                  background: 'var(--gradient-primary)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  fontWeight: 'bold',
-                  color: 'white'
-                }}>
+          <GlassCard key={post.id} className="p-6">
+            <div className="flex justify-between items-start mb-4">
+              <div className="flex gap-3 items-center">
+                <div className="w-10 h-10 rounded-full bg-gradient-primary flex items-center justify-center font-bold text-white">
                   {post.avatar}
                 </div>
                 <div>
-                  <p style={{ margin: 0, fontWeight: 700, color: '#1E1E1E', fontSize: '0.95rem' }}>{post.author}</p>
-                  <p style={{ margin: 0, fontSize: '0.75rem', color: 'var(--text-muted)' }}>{post.role} • {post.time}</p>
+                  <p className="font-bold text-white leading-tight">{post.author}</p>
+                  <p className="text-xs text-text-muted">{post.role} • {post.time}</p>
                 </div>
               </div>
-              <button style={{ background: 'none', color: 'var(--text-muted)', cursor: 'pointer' }}>
+              <button className="text-text-muted hover:text-white">
                 <FiMoreHorizontal />
               </button>
             </div>
             
-            <h3 style={{
-              fontFamily: "'Poppins', sans-serif",
-              fontSize: '1.15rem',
-              fontWeight: 700,
-              color: '#1E1E1E',
-              margin: '0 0 0.5rem 0'
-            }}>{post.title}</h3>
-            <p style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', lineHeight: 1.5, margin: '0 0 1rem 0' }}>{post.content}</p>
+            <h3 className="text-xl font-bold text-white mb-2">{post.title}</h3>
+            <p className="text-text-secondary text-sm mb-4 line-clamp-3 leading-relaxed">{post.content}</p>
             
-            <div style={{ display: 'flex', gap: '6px', marginBottom: '1rem', flexWrap: 'wrap' }}>
+            <div className="flex gap-2 mb-4">
               {post.tags.map((tag, idx) => (
-                <span key={idx} style={{
-                  fontSize: '0.75rem',
-                  background: 'var(--gray-100)',
-                  color: 'var(--text-secondary)',
-                  padding: '2px 8px',
-                  borderRadius: '4px',
-                  fontWeight: 500
-                }}>{tag}</span>
+                <span key={idx} className="text-xs bg-surface-2 px-2 py-1 rounded text-text-muted">{tag}</span>
               ))}
             </div>
             
-            <div style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '1.5rem',
-              paddingTop: '1rem',
-              borderTop: '1px solid var(--gray-100)'
-            }}>
-              <button style={{ display: 'flex', alignItems: 'center', gap: '6px', background: 'none', color: 'var(--text-muted)', cursor: 'pointer', fontSize: '0.85rem' }}>
+            <div className="flex items-center gap-6 pt-4 border-t border-glass-border">
+              <button className="flex items-center gap-2 text-text-muted hover:text-accent-primary transition-colors text-sm font-medium">
                 <FiHeart /> {post.likes}
               </button>
-              <button style={{ display: 'flex', alignItems: 'center', gap: '6px', background: 'none', color: 'var(--text-muted)', cursor: 'pointer', fontSize: '0.85rem' }}>
+              <button className="flex items-center gap-2 text-text-muted hover:text-white transition-colors text-sm font-medium">
                 <FiMessageSquare /> {post.comments} Comments
               </button>
-              <button style={{ display: 'flex', alignItems: 'center', gap: '6px', background: 'none', color: 'var(--text-muted)', cursor: 'pointer', fontSize: '0.85rem', marginLeft: 'auto' }}>
+              <button className="flex items-center gap-2 text-text-muted hover:text-white transition-colors text-sm font-medium ml-auto">
                 <FiShare2 /> Share
               </button>
             </div>
@@ -162,62 +90,40 @@ const Community = () => {
       </div>
 
       {/* Right Sidebar */}
-      <div style={{ flex: '0 0 300px', display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-        <GlassCard style={{ background: 'white', border: '1px solid var(--gray-200)', padding: '1.5rem', borderRadius: '16px' }}>
-          <h3 style={{ fontFamily: "'Poppins', sans-serif", fontWeight: 700, color: '#1E1E1E', margin: '0 0 1rem 0', paddingBottom: '0.5rem', borderBottom: '1px solid var(--gray-100)' }}>Trending Topics</h3>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+      <div className="w-full md:w-80 space-y-6">
+        <GlassCard>
+          <h3 className="font-bold mb-4 border-b border-glass-border pb-2">Trending Topics</h3>
+          <div className="space-y-4">
             <div>
-              <p style={{ margin: 0, fontSize: '0.9rem', fontWeight: 600, color: '#1E1E1E' }}>#GoogleOffCampus</p>
-              <p style={{ margin: 0, fontSize: '0.75rem', color: 'var(--text-muted)' }}>1.2k posts</p>
+              <p className="text-sm font-semibold text-white">#GoogleOffCampus</p>
+              <p className="text-xs text-text-muted">1.2k posts</p>
             </div>
             <div>
-              <p style={{ margin: 0, fontSize: '0.9rem', fontWeight: 600, color: '#1E1E1E' }}>#SystemDesign</p>
-              <p style={{ margin: 0, fontSize: '0.75rem', color: 'var(--text-muted)' }}>850 posts</p>
+              <p className="text-sm font-semibold text-white">#SystemDesign</p>
+              <p className="text-xs text-text-muted">850 posts</p>
             </div>
             <div>
-              <p style={{ margin: 0, fontSize: '0.9rem', fontWeight: 600, color: '#1E1E1E' }}>#ReactInterview</p>
-              <p style={{ margin: 0, fontSize: '0.75rem', color: 'var(--text-muted)' }}>540 posts</p>
+              <p className="text-sm font-semibold text-white">#ReactInterview</p>
+              <p className="text-xs text-text-muted">540 posts</p>
             </div>
           </div>
         </GlassCard>
         
-        <GlassCard style={{ background: 'white', border: '1px solid var(--gray-200)', padding: '1.5rem', borderRadius: '16px' }}>
-          <h3 style={{ fontFamily: "'Poppins', sans-serif", fontWeight: 700, color: '#1E1E1E', margin: '0 0 1rem 0', paddingBottom: '0.5rem', borderBottom: '1px solid var(--gray-100)' }}>Top Contributors</h3>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-              <div style={{
-                width: '32px',
-                height: '32px',
-                borderRadius: '50%',
-                background: 'var(--gradient-primary)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontWeight: 'bold',
-                color: 'white',
-                fontSize: '0.85rem'
-              }}>A</div>
+        <GlassCard>
+          <h3 className="font-bold mb-4 border-b border-glass-border pb-2">Top Contributors</h3>
+          <div className="space-y-4 text-sm">
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 rounded-full bg-gradient-warm flex items-center justify-center font-bold text-white">A</div>
               <div>
-                <p style={{ margin: 0, fontSize: '0.85rem', fontWeight: 600, color: '#1E1E1E' }}>Amit Kumar</p>
-                <p style={{ margin: 0, fontSize: '0.75rem', color: 'var(--text-muted)' }}>15k rep</p>
+                <p className="font-semibold text-white">Amit Kumar</p>
+                <p className="text-xs text-text-muted">15k rep</p>
               </div>
             </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-              <div style={{
-                width: '32px',
-                height: '32px',
-                borderRadius: '50%',
-                background: 'var(--gradient-primary)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontWeight: 'bold',
-                color: 'white',
-                fontSize: '0.85rem'
-              }}>S</div>
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 rounded-full bg-gradient-accent flex items-center justify-center font-bold text-white">S</div>
               <div>
-                <p style={{ margin: 0, fontSize: '0.85rem', fontWeight: 600, color: '#1E1E1E' }}>Sneha Rao</p>
-                <p style={{ margin: 0, fontSize: '0.75rem', color: 'var(--text-muted)' }}>12k rep</p>
+                <p className="font-semibold text-white">Sneha Rao</p>
+                <p className="text-xs text-text-muted">12k rep</p>
               </div>
             </div>
           </div>

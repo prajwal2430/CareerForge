@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-<<<<<<< Updated upstream
 import ReactPlayer from 'react-player';
 import {
   FiPlayCircle, FiCheckCircle, FiLock, FiClock, FiStar,
@@ -8,13 +7,9 @@ import {
   FiChevronDown, FiChevronUp, FiExternalLink, FiBookOpen,
   FiUsers, FiBarChart2, FiGlobe, FiCheck
 } from 'react-icons/fi';
-=======
-import { FiPlayCircle, FiCheckCircle, FiClock, FiStar, FiAward, FiFileText, FiCode, FiHelpCircle, FiVideo } from 'react-icons/fi';
->>>>>>> Stashed changes
 import { MOCK_DATA } from '../data/mockData';
 import toast from 'react-hot-toast';
 
-<<<<<<< Updated upstream
 /* ─── Curricula ─────────────────────────────────────────────────────────────── */
 const dsaCurriculum = [
   {
@@ -45,13 +40,6 @@ const dsaCurriculum = [
     ]
   }
 ];
-=======
-const CourseDetail = () => {
-  const { id } = useParams();
-  const [activeTab, setActiveTab] = useState('curriculum');
-  
-  const course = MOCK_DATA.courses.find(c => c.id.toString() === id) || MOCK_DATA.courses[0];
->>>>>>> Stashed changes
 
 const aptitudeCurriculum = [
   {
@@ -80,7 +68,6 @@ const aptitudeCurriculum = [
   }
 ];
 
-<<<<<<< Updated upstream
 const webDevCurriculum = [
   {
     section: 'Section 1: Frontend & React.js', duration: '3h 15m', expanded: true,
@@ -99,109 +86,6 @@ const webDevCurriculum = [
     ]
   }
 ];
-=======
-  // Dynamic syllabus depending on course category/id
-  const getCurriculum = () => {
-    if (course.id.toString() === '2') {
-      // MERN
-      return [
-        {
-          section: 'Section 1: Frontend Development with React',
-          duration: '3h 15m',
-          lessons: [
-            { title: 'React Hooks & State Management', duration: '45m', completed: true, type: 'video' },
-            { title: 'Routing with React Router v7', duration: '50m', completed: true, type: 'video' },
-            { title: 'Global State: Context API vs Redux Toolkit', duration: '1h 40m', completed: false, type: 'video' }
-          ]
-        },
-        {
-          section: 'Section 2: Node.js & Express REST APIs',
-          duration: '4h 10m',
-          lessons: [
-            { title: 'Building Server with Node & Express', duration: '1h', completed: false, type: 'video' },
-            { title: 'REST API Design & MVC Architecture', duration: '1h 30m', completed: false, type: 'video' },
-            { title: 'Middlewares and Error Handling', duration: '1h 40m', completed: false, type: 'video' }
-          ]
-        },
-        {
-          section: 'Section 3: Database & Security',
-          duration: '5h 20m',
-          lessons: [
-            { title: 'MongoDB Schemas & Aggregations', duration: '2h', completed: false, type: 'video' },
-            { title: 'JWT Authentication & Password Hashing', duration: '1h 50m', completed: false, type: 'video' },
-            { title: 'Final Project Deployment (Render & Vercel)', duration: '1h 30m', completed: false, type: 'assignment' }
-          ]
-        }
-      ];
-    } else if (course.id.toString() === '3') {
-      // System Design
-      return [
-        {
-          section: 'Section 1: Foundations of Distributed Systems',
-          duration: '2h 10m',
-          lessons: [
-            { title: 'Vertical vs Horizontal Scaling', duration: '35m', completed: true, type: 'video' },
-            { title: 'Load Balancer Algorithms', duration: '45m', completed: false, type: 'video' },
-            { title: 'Monolithic vs Microservices', duration: '50m', completed: false, type: 'video' }
-          ]
-        },
-        {
-          section: 'Section 2: High Availability Datastores',
-          duration: '3h 30m',
-          lessons: [
-            { title: 'Database Replication and Sharding', duration: '1h 10m', completed: false, type: 'video' },
-            { title: 'SQL vs NoSQL CAP Theorem', duration: '1h 20m', completed: false, type: 'video' },
-            { title: 'CDN & Cache Eviction Policies', duration: '1h', completed: false, type: 'video' }
-          ]
-        },
-        {
-          section: 'Section 3: Real-World Case Studies',
-          duration: '4h 45m',
-          lessons: [
-            { title: 'Designing WhatsApp Chat Engine', duration: '1h 30m', completed: false, type: 'video' },
-            { title: 'Designing Netflix Video Streaming Pipeline', duration: '2h 15m', completed: false, type: 'video' },
-            { title: 'System Design Mock Interview Assignment', duration: '1h', completed: false, type: 'assignment' }
-          ]
-        }
-      ];
-    } else {
-      // DSA (default)
-      return [
-        {
-          section: 'Section 1: Introduction to Data Structures',
-          duration: '1h 20m',
-          lessons: [
-            { title: 'What are Data Structures?', duration: '15m', completed: true, type: 'video' },
-            { title: 'Time and Space Complexity (Big O)', duration: '45m', completed: true, type: 'video' },
-            { title: 'Memory Allocation', duration: '20m', completed: false, type: 'reading' },
-          ]
-        },
-        {
-          section: 'Section 2: Arrays and Strings',
-          duration: '3h 45m',
-          lessons: [
-            { title: 'Arrays Fundamentals', duration: '30m', completed: false, type: 'video' },
-            { title: 'Two Pointers Technique', duration: '45m', completed: false, type: 'video' },
-            { title: 'Sliding Window Pattern', duration: '50m', completed: false, type: 'video' },
-            { title: 'Arrays Practice Assignment', duration: '1h', completed: false, type: 'assignment' },
-          ]
-        },
-        {
-          section: 'Section 3: Linked Lists',
-          duration: '2h 30m',
-          lessons: [
-            { title: 'Singly Linked Lists', duration: '40m', completed: false, type: 'video' },
-            { title: 'Doubly and Circular Linked Lists', duration: '50m', completed: false, type: 'video' },
-            { title: 'Fast and Slow Pointers', duration: '30m', completed: false, type: 'video' },
-            { title: 'Quiz: Linked Lists', duration: '30m', completed: false, type: 'quiz' },
-          ]
-        }
-      ];
-    }
-  };
-
-  const curriculum = getCurriculum();
->>>>>>> Stashed changes
 
 const systemDesignCurriculum = [
   {
@@ -235,7 +119,6 @@ const QuizWidget = ({ quiz }) => {
   };
 
   return (
-<<<<<<< Updated upstream
     <div className="quiz-widget">
       <p className="quiz-question">{quiz.question}</p>
       <div className="quiz-options">
@@ -462,252 +345,6 @@ const CourseDetail = () => {
                   <div className="meta-item"><FiGlobe /><span><strong>English</strong> language</span></div>
                   <div className="meta-item"><FiAward /><span><strong>Certificate</strong> on completion</span></div>
                 </div>
-=======
-    <div style={{ paddingBottom: '3rem' }}>
-      {/* Course Header Banner */}
-      <GlassCard style={{
-        padding: '2rem',
-        borderRadius: '20px',
-        marginBottom: '2rem',
-        display: 'flex',
-        flexWrap: 'wrap',
-        gap: '2rem',
-        alignItems: 'flex-start',
-        border: '1px solid var(--glass-border)',
-        background: 'var(--bg-card)',
-        boxShadow: '0 10px 30px rgba(0,0,0,0.03)',
-        position: 'relative',
-        overflow: 'hidden'
-      }}>
-        <div style={{
-          position: 'absolute',
-          top: 0,
-          right: 0,
-          width: '250px',
-          height: '250px',
-          background: 'radial-gradient(circle, rgba(139,92,246,0.12) 0%, transparent 70%)',
-          pointerEvents: 'none'
-        }}></div>
-        
-        <div style={{
-          width: '100%',
-          maxWidth: '300px',
-          aspectRatio: '16/9',
-          background: 'var(--gradient-orange-light)',
-          borderRadius: '12px',
-          position: 'relative',
-          overflow: 'hidden',
-          flexShrink: 0,
-          boxShadow: 'var(--shadow-sm)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center'
-        }}>
-           <div style={{
-             position: 'absolute',
-             inset: 0,
-             display: 'flex',
-             alignItems: 'center',
-             justifyContent: 'center',
-             background: 'rgba(0,0,0,0.15)',
-             cursor: 'pointer'
-           }}>
-             <div style={{
-               width: '56px',
-               height: '56px',
-               borderRadius: '50%',
-               background: 'var(--gradient-primary)',
-               display: 'flex',
-               alignItems: 'center',
-               justifyContent: 'center',
-               color: 'white',
-               fontSize: '1.75rem',
-               boxShadow: 'var(--shadow-orange)'
-             }}>
-               <FiPlayCircle style={{ marginLeft: '4px' }} />
-             </div>
-           </div>
-        </div>
-
-        <div style={{ flex: 1, position: 'relative', zIndex: 10 }}>
-          <div style={{ display: 'flex', gap: '8px', marginBottom: '0.75rem', flexWrap: 'wrap' }}>
-            <span style={{
-              fontSize: '0.7rem',
-              fontWeight: 700,
-              background: 'var(--accent-primary-light)',
-              color: 'var(--accent-primary)',
-              padding: '3px 10px',
-              borderRadius: '20px',
-              border: '1px solid var(--glass-border)'
-            }}>
-              {course.category}
-            </span>
-            <span style={{
-              fontSize: '0.7rem',
-              fontWeight: 700,
-              background: 'var(--color-info-bg)',
-              color: 'var(--color-info)',
-              padding: '3px 10px',
-              borderRadius: '20px'
-            }}>
-              Beginner Friendly
-            </span>
-          </div>
-          
-          <h1 style={{
-            fontFamily: "'Poppins', sans-serif",
-            fontSize: '2rem',
-            fontWeight: 800,
-            color: 'var(--text-primary)',
-            marginBottom: '0.75rem',
-            lineHeight: 1.25,
-            marginTop: 0
-          }}>
-            {course.title}
-          </h1>
-          
-          <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', marginBottom: '1.25rem', lineHeight: 1.6 }}>
-            Master the fundamentals of {course.category} with comprehensive video lectures, interactive coding assignments, and real-world projects. Designed to make you interview-ready.
-          </p>
-
-          <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: '1.5rem', marginBottom: '1.5rem', fontSize: '0.85rem' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <div style={{
-                width: '32px',
-                height: '32px',
-                borderRadius: '50%',
-                background: 'var(--gradient-primary)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontWeight: 'bold',
-                color: 'white'
-              }}>
-                {course.instructor.charAt(0)}
-              </div>
-              <span style={{ fontWeight: 600, color: 'var(--text-primary)' }}>{course.instructor}</span>
-            </div>
-            
-            <div style={{ display: 'flex', alignItems: 'center', gap: '4px', color: 'var(--color-warning)', fontWeight: 600 }}>
-              <FiStar className="fill-current" /> {course.rating} <span style={{ color: 'var(--text-muted)', fontWeight: 'normal' }}>({course.students} students)</span>
-            </div>
-            
-            <div style={{ display: 'flex', alignItems: 'center', gap: '4px', color: 'var(--text-muted)' }}>
-              <FiClock /> {course.duration} total
-            </div>
-
-            <div style={{ display: 'flex', alignItems: 'center', gap: '4px', color: 'var(--text-muted)' }}>
-              <FiAward /> Certificate
-            </div>
-          </div>
-
-          <div style={{ display: 'flex', gap: '0.75rem' }}>
-            <button className="btn btn-primary" style={{ borderRadius: '20px' }}>Continue Learning</button>
-            <button className="btn btn-ghost" style={{ borderRadius: '20px', background: 'white' }}>Save to List</button>
-          </div>
-        </div>
-      </GlassCard>
-
-      {/* Main Content Area */}
-      <div style={{
-        display: 'flex',
-        flexDirection: 'row',
-        flexWrap: 'wrap',
-        gap: '2rem'
-      }}>
-        <div style={{ flex: '1 1 500px' }}>
-          <Tabs tabs={tabs} activeTab={activeTab} onChange={setActiveTab} style={{ marginBottom: '1.5rem' }} />
-          
-          {activeTab === 'curriculum' && (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-              {curriculum.map((section, idx) => (
-                <GlassCard key={idx} style={{
-                  padding: 0,
-                  overflow: 'hidden',
-                  background: 'white',
-                  border: '1px solid var(--gray-200)',
-                  boxShadow: '0 4px 12px rgba(0,0,0,0.02)',
-                  borderRadius: '16px'
-                }} hover={false}>
-                  <div style={{
-                    background: '#F9FAFB',
-                    padding: '1rem',
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                    borderBottom: '1px solid var(--gray-200)'
-                  }}>
-                    <h3 style={{ fontFamily: "'Poppins', sans-serif", fontWeight: 700, color: '#1E1E1E', margin: 0, fontSize: '0.95rem' }}>{section.section}</h3>
-                    <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{section.lessons.length} lessons • {section.duration}</span>
-                  </div>
-                  <div>
-                    {section.lessons.map((lesson, lIdx) => (
-                      <div 
-                        key={lIdx} 
-                        style={{
-                          padding: '1rem',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'space-between',
-                          borderBottom: lIdx === section.lessons.length - 1 ? 'none' : '1px solid var(--gray-100)',
-                          cursor: 'pointer'
-                        }}
-                        className="lesson-row-hover"
-                      >
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                          <span style={{ display: 'flex', alignItems: 'center' }}>
-                            {getIconForType(lesson.type, lesson.completed)}
-                          </span>
-                          <span style={{
-                            fontSize: '0.85rem',
-                            fontWeight: 500,
-                            color: lesson.completed ? 'var(--text-muted)' : '#1E1E1E',
-                            textDecoration: lesson.completed ? 'line-through' : 'none'
-                          }}>
-                            {lesson.title}
-                          </span>
-                        </div>
-                        <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{lesson.duration}</span>
-                      </div>
-                    ))}
-                  </div>
-                </GlassCard>
-              ))}
-            </div>
-          )}
-
-          {activeTab === 'overview' && (
-            <GlassCard style={{ background: 'white', border: '1px solid var(--gray-200)', padding: '1.5rem', borderRadius: '16px' }}>
-              <h3 style={{ fontFamily: "'Poppins', sans-serif", fontWeight: 700, color: '#1E1E1E', margin: '0 0 1rem 0', fontSize: '1.1rem' }}>About this course</h3>
-              <div style={{ color: 'var(--text-secondary)', display: 'flex', flexDirection: 'column', gap: '1rem', fontSize: '0.9rem', lineHeight: 1.6 }}>
-                <p style={{ margin: 0 }}>
-                  This comprehensive course is designed to take you from a complete beginner to an advanced programmer. You will learn the core concepts that are essential for cracking technical interviews at top tech companies like Google, Amazon, Microsoft, and Meta.
-                </p>
-                <h4 style={{ fontFamily: "'Poppins', sans-serif", fontWeight: 700, color: '#1E1E1E', margin: '0.75rem 0 0.25rem 0', fontSize: '0.95rem' }}>What you'll learn</h4>
-                <ul style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '8px', padding: 0, margin: 0, listStyle: 'none' }}>
-                  <li style={{ display: 'flex', alignItems: 'flex-start', gap: '8px' }}><FiCheckCircle style={{ color: 'var(--color-success)', marginTop: '3px', flexShrink: 0 }} /> Master fundamental data structures</li>
-                  <li style={{ display: 'flex', alignItems: 'flex-start', gap: '8px' }}><FiCheckCircle style={{ color: 'var(--color-success)', marginTop: '3px', flexShrink: 0 }} /> Understand algorithmic complexity</li>
-                  <li style={{ display: 'flex', alignItems: 'flex-start', gap: '8px' }}><FiCheckCircle style={{ color: 'var(--color-success)', marginTop: '3px', flexShrink: 0 }} /> Solve 100+ LeetCode style problems</li>
-                  <li style={{ display: 'flex', alignItems: 'flex-start', gap: '8px' }}><FiCheckCircle style={{ color: 'var(--color-success)', marginTop: '3px', flexShrink: 0 }} /> Learn common patterns</li>
-                </ul>
-              </div>
-            </GlassCard>
-          )}
-
-          {activeTab === 'reviews' && (
-            <GlassCard style={{ background: 'white', border: '1px solid var(--gray-200)', padding: '1.5rem', borderRadius: '16px' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem', paddingBottom: '1.5rem', borderBottom: '1px solid var(--gray-200)', marginBottom: '1.5rem' }}>
-                <div style={{ fontSize: '2.5rem', fontWeight: 800, color: '#1E1E1E', lineHeight: 1 }}>4.9</div>
-                <div>
-                  <div style={{ display: 'flex', color: 'var(--color-warning)', fontSize: '1.1rem', marginBottom: '4px' }}>
-                    {[1, 2, 3, 4, 5].map(i => <FiStar key={i} className="fill-current" />)}
-                  </div>
-                  <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Course Rating (2,450 ratings)</div>
-                </div>
-              </div>
-              <div style={{ textAlign: 'center', color: 'var(--text-muted)', padding: '2rem 0', fontSize: '0.9rem' }}>
-                Reviews placeholder for demonstration.
->>>>>>> Stashed changes
               </div>
             )}
 
@@ -764,7 +401,6 @@ const CourseDetail = () => {
           </div>
         </div>
 
-<<<<<<< Updated upstream
         {/* RIGHT: Course Sidebar */}
         <aside className="course-sidebar">
 
@@ -832,40 +468,6 @@ const CourseDetail = () => {
               <li><FiFileText /> {allLessons.filter(l => l.type === 'reading').length} reading articles</li>
               <li><FiAward /> Certificate of completion</li>
               <li><FiGlobe /> Lifetime access</li>
-=======
-        {/* Sidebar */}
-        <div style={{ flex: '0 0 300px', display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-          <GlassCard style={{ background: 'white', border: '1px solid var(--gray-200)', padding: '1.5rem', borderRadius: '16px' }}>
-            <h3 style={{ fontFamily: "'Poppins', sans-serif", fontWeight: 700, color: '#1E1E1E', margin: '0 0 1rem 0', fontSize: '1.05rem' }}>Your Progress</h3>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem', fontSize: '0.85rem' }}>
-              <span style={{ color: 'var(--text-muted)' }}>12 / 140 lessons</span>
-              <span style={{ fontWeight: 700, color: 'var(--accent-primary)' }}>9%</span>
-            </div>
-            <div style={{ width: '100%', height: '8px', background: 'var(--gray-200)', borderRadius: '9999px', overflow: 'hidden' }}>
-              <div style={{ height: '100%', background: 'var(--gradient-primary)', width: '9%' }}></div>
-            </div>
-          </GlassCard>
-
-          <GlassCard style={{ background: 'white', border: '1px solid var(--gray-200)', padding: '1.5rem', borderRadius: '16px' }}>
-            <h3 style={{ fontFamily: "'Poppins', sans-serif", fontWeight: 700, color: '#1E1E1E', margin: '0 0 1rem 0', fontSize: '1.05rem' }}>Course Features</h3>
-            <ul style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', padding: 0, margin: 0, listStyle: 'none', fontSize: '0.85rem' }}>
-              <li style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--text-secondary)' }}><FiVideo style={{ color: 'var(--text-muted)' }} /> Video content</div>
-                <span style={{ fontWeight: 600, color: '#1E1E1E' }}>50 hours</span>
-              </li>
-              <li style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--text-secondary)' }}><FiCode style={{ color: 'var(--text-muted)' }} /> Coding exercises</div>
-                <span style={{ fontWeight: 600, color: '#1E1E1E' }}>120+</span>
-              </li>
-              <li style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--text-secondary)' }}><FiFileText style={{ color: 'var(--text-muted)' }} /> Notes</div>
-                <span style={{ fontWeight: 600, color: '#1E1E1E' }}>45</span>
-              </li>
-              <li style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--text-secondary)' }}><FiAward style={{ color: 'var(--text-muted)' }} /> Certificate</div>
-                <span style={{ fontWeight: 600, color: '#1E1E1E' }}>Yes</span>
-              </li>
->>>>>>> Stashed changes
             </ul>
           </div>
 

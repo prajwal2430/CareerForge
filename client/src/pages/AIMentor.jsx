@@ -5,7 +5,7 @@ import GlassCard from '../components/ui/GlassCard';
 
 const AIMentor = () => {
   const [messages, setMessages] = useState([
-    { id: 1, sender: 'ai', text: 'Hello! I am your CareerForge AI Mentor. How can I help you with your placement preparation today?' }
+    { id: 1, sender: 'ai', text: 'Hello! I am your LearnHub AI Mentor. How can I help you with your placement preparation today?' }
   ]);
   const [input, setInput] = useState('');
   const [isTyping, setIsTyping] = useState(false);
@@ -41,180 +41,80 @@ const AIMentor = () => {
   };
 
   return (
-    <div style={{ paddingBottom: '3rem', height: 'calc(100vh - 120px)', display: 'flex', flexDirection: 'column' }}>
-      <div style={{ marginBottom: '1.5rem' }}>
-        <h1 style={{ fontFamily: "'Poppins', sans-serif", fontSize: '1.75rem', fontWeight: 800, color: '#1E1E1E', margin: 0, display: 'flex', alignItems: 'center', gap: '10px' }}>
-          <FiCpu style={{ color: 'var(--accent-primary)' }} /> AI Placement Mentor
+    <div className="pb-12 max-w-4xl mx-auto h-[calc(100vh-100px)] flex flex-col">
+      <div className="mb-6">
+        <h1 className="text-3xl font-bold text-white mb-2 flex items-center gap-3">
+          <FiCpu className="text-accent-primary" /> AI Placement Mentor
         </h1>
-        <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', marginTop: '0.25rem' }}>
-          Get personalized guidance, mock interviews, and study plans.
-        </p>
+        <p className="text-text-muted">Get personalized guidance, mock interviews, and study plans.</p>
       </div>
 
-      <GlassCard style={{
-        flex: 1,
-        padding: 0,
-        overflow: 'hidden',
-        display: 'flex',
-        flexDirection: 'column',
-        position: 'relative',
-        border: '1px solid rgba(255,107,0,0.15)',
-        background: 'white',
-        boxShadow: '0 10px 30px rgba(0,0,0,0.04)'
-      }}>
-        <div style={{
-          flex: 1,
-          overflowY: 'auto',
-          padding: '1.5rem',
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '1.5rem',
-          position: 'relative',
-          zIndex: 10
-        }}>
+      <GlassCard className="flex-1 p-0 overflow-hidden flex flex-col relative border border-accent-primary/20">
+        <div className="absolute inset-0 bg-gradient-mesh opacity-30 pointer-events-none"></div>
+        
+        <div className="flex-1 overflow-y-auto p-6 space-y-6 relative z-10">
           {messages.map(msg => (
             <motion.div 
               key={msg.id}
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              style={{
-                display: 'flex',
-                gap: '1rem',
-                flexDirection: msg.sender === 'user' ? 'row-reverse' : 'row'
-              }}
+              className={`flex gap-4 ${msg.sender === 'user' ? 'flex-row-reverse' : ''}`}
             >
-              <div style={{
-                width: '40px',
-                height: '40px',
-                borderRadius: '50%',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                flexShrink: 0,
-                background: msg.sender === 'user' ? 'var(--gray-100)' : 'var(--gradient-primary)',
-                color: msg.sender === 'user' ? 'var(--text-primary)' : 'white',
-                boxShadow: msg.sender === 'user' ? 'none' : 'var(--shadow-orange)'
-              }}>
+              <div className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 ${
+                msg.sender === 'user' ? 'bg-surface-3 text-text-primary' : 'bg-gradient-primary text-white shadow-glow-primary'
+              }`}>
                 {msg.sender === 'user' ? <FiUser /> : <FiCpu />}
               </div>
-              <div style={{
-                maxWidth: '75%',
-                padding: '1rem',
-                borderRadius: '16px',
-                background: msg.sender === 'user' ? 'rgba(255,107,0,0.05)' : '#F9FAFB',
-                border: msg.sender === 'user' ? '1px solid rgba(255,107,0,0.1)' : '1px solid var(--gray-200)',
-                borderTopRightRadius: msg.sender === 'user' ? '4px' : '16px',
-                borderTopLeftRadius: msg.sender === 'ai' ? '4px' : '16px'
-              }}>
-                <p style={{ margin: 0, fontSize: '0.9rem', color: '#1E1E1E', lineHeight: 1.5 }}>{msg.text}</p>
+              <div className={`max-w-[80%] p-4 rounded-2xl ${
+                msg.sender === 'user' 
+                  ? 'bg-surface-3 rounded-tr-sm' 
+                  : 'bg-glass-bg border border-glass-border rounded-tl-sm backdrop-blur-md'
+              }`}>
+                <p className="text-sm leading-relaxed">{msg.text}</p>
               </div>
             </motion.div>
           ))}
           
           {isTyping && (
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} style={{ display: 'flex', gap: '1rem' }}>
-              <div style={{
-                width: '40px',
-                height: '40px',
-                borderRadius: '50%',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                flexShrink: 0,
-                background: 'var(--gradient-primary)',
-                color: 'white',
-                boxShadow: 'var(--shadow-orange)'
-              }}>
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex gap-4">
+               <div className="w-10 h-10 rounded-full bg-gradient-primary flex items-center justify-center shrink-0 text-white shadow-glow-primary">
                 <FiCpu />
               </div>
-              <div style={{
-                padding: '1rem',
-                borderRadius: '16px',
-                background: '#F9FAFB',
-                border: '1px solid var(--gray-200)',
-                borderTopLeftRadius: '4px',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '4px'
-              }}>
-                <div style={{ width: '8px', height: '8px', background: 'var(--text-muted)', borderRadius: '50%' }} className="animate-bounce"></div>
-                <div style={{ width: '8px', height: '8px', background: 'var(--text-muted)', borderRadius: '50%', animationDelay: '0.2s' }} className="animate-bounce"></div>
-                <div style={{ width: '8px', height: '8px', background: 'var(--text-muted)', borderRadius: '50%', animationDelay: '0.4s' }} className="animate-bounce"></div>
+              <div className="p-4 rounded-2xl bg-glass-bg border border-glass-border rounded-tl-sm flex items-center gap-1">
+                <div className="w-2 h-2 bg-text-muted rounded-full animate-bounce"></div>
+                <div className="w-2 h-2 bg-text-muted rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+                <div className="w-2 h-2 bg-text-muted rounded-full animate-bounce" style={{ animationDelay: '0.4s' }}></div>
               </div>
             </motion.div>
           )}
           <div ref={endOfMessagesRef} />
         </div>
 
-        <div style={{
-          padding: '1.25rem',
-          background: 'rgba(249,250,251,0.8)',
-          borderTop: '1px solid var(--gray-200)',
-          position: 'relative',
-          zIndex: 10
-        }}>
-          <form onSubmit={handleSend} style={{ display: 'flex', gap: '0.75rem' }}>
+        <div className="p-4 bg-surface-2 border-t border-glass-border relative z-10">
+          <form onSubmit={handleSend} className="flex gap-2">
             <input 
               type="text" 
               value={input}
               onChange={(e) => setInput(e.target.value)}
               placeholder="Ask anything about your placement prep..."
-              style={{
-                flex: 1,
-                background: 'white',
-                border: '1px solid var(--gray-200)',
-                borderRadius: '30px',
-                padding: '0.75rem 1.5rem',
-                fontSize: '0.9rem',
-                outline: 'none',
-                transition: 'border-color 0.2s'
-              }}
+              className="flex-1 bg-bg-input border border-glass-border rounded-full px-6 py-3 text-sm focus:border-accent-primary outline-none transition-colors"
             />
             <button 
               type="submit" 
-              style={{
-                width: '46px',
-                height: '46px',
-                borderRadius: '50%',
-                background: 'var(--gradient-primary)',
-                color: 'white',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                boxShadow: 'var(--shadow-orange)',
-                cursor: 'pointer',
-                border: 'none'
-              }}
+              className="w-12 h-12 rounded-full bg-accent-primary text-white flex items-center justify-center hover:bg-accent-primary-hover transition-colors shadow-glow-primary"
               disabled={!input.trim()}
             >
               <FiSend />
             </button>
           </form>
           
-          <div style={{
-            display: 'flex',
-            gap: '8px',
-            marginTop: '0.75rem',
-            overflowX: 'auto',
-            paddingBottom: '4px'
-          }} className="scrollbar-hide">
+          <div className="flex gap-2 mt-3 overflow-x-auto scrollbar-hide pb-1">
             {['Generate DP Study Plan', 'Conduct Mock Interview', 'Review my Resume'].map((prompt, idx) => (
               <button 
                 key={idx} 
                 type="button"
                 onClick={() => setInput(prompt)}
-                style={{
-                  fontSize: '0.75rem',
-                  fontWeight: 600,
-                  background: 'white',
-                  color: 'var(--text-secondary)',
-                  border: '1px solid var(--gray-200)',
-                  padding: '4px 12px',
-                  borderRadius: '20px',
-                  whiteSpace: 'nowrap',
-                  cursor: 'pointer',
-                  transition: 'all 0.2s'
-                }}
+                className="text-xs bg-surface-3 px-3 py-1.5 rounded-full whitespace-nowrap hover:bg-surface-3/80 transition-colors"
               >
                 {prompt}
               </button>
