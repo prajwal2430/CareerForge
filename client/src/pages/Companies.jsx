@@ -9,40 +9,87 @@ const Companies = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="pb-12 max-w-7xl mx-auto">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-white mb-2">Company Preparation</h1>
-        <p className="text-text-muted">Targeted preparation for top tech companies.</p>
+    <div style={{ paddingBottom: '3rem' }}>
+      <div style={{ marginBottom: '2rem' }}>
+        <h1 style={{ fontFamily: "'Poppins', sans-serif", fontSize: '1.75rem', fontWeight: 800, color: '#1E1E1E', margin: 0 }}>
+          Company Preparation
+        </h1>
+        <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', marginTop: '0.25rem' }}>
+          Targeted preparation for top tier technology companies.
+        </p>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div style={{
+        display: 'grid',
+        gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))',
+        gap: '1.5rem'
+      }}>
         {MOCK_DATA.companies.map((company) => (
           <GlassCard 
             key={company.id} 
-            className="cursor-pointer hover:border-accent-primary/50 transition-colors"
+            style={{
+              cursor: 'pointer',
+              border: '1px solid rgba(255,107,0,0.1)',
+              background: 'white',
+              boxShadow: '0 4px 20px rgba(0,0,0,0.03)',
+              padding: '1.5rem',
+              transition: 'transform 0.2s, border-color 0.2s'
+            }}
+            whileHover={{ y: -4, borderColor: 'var(--accent-primary)' }}
             onClick={() => navigate(`/companies/${company.id}`)}
           >
-            <div className="flex justify-between items-start mb-6">
-              <div className="w-16 h-16 rounded-xl bg-surface-2 border border-glass-border flex items-center justify-center font-black text-2xl" style={{ color: company.color || 'var(--text-primary)' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1.5rem' }}>
+              <div style={{
+                width: '56px',
+                height: '56px',
+                borderRadius: '12px',
+                background: 'rgba(255,107,0,0.06)',
+                border: '1px solid rgba(255,107,0,0.15)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontFamily: "'Poppins', sans-serif",
+                fontWeight: 900,
+                fontSize: '1.5rem',
+                color: company.color || 'var(--accent-primary)'
+              }}>
                 {company.name.charAt(0)}
               </div>
               <Badge variant={company.difficulty.toLowerCase()}>{company.difficulty}</Badge>
             </div>
             
-            <h3 className="text-xl font-bold text-white mb-4">{company.name}</h3>
+            <h3 style={{
+              fontFamily: "'Poppins', sans-serif",
+              fontSize: '1.15rem',
+              fontWeight: 700,
+              color: '#1E1E1E',
+              marginBottom: '1rem',
+              marginTop: 0
+            }}>{company.name}</h3>
             
-            <div className="space-y-3">
-              <div className="flex items-center gap-2 text-sm text-text-secondary">
-                <FiBriefcase className="text-accent-secondary" />
-                <div className="flex gap-1 flex-wrap">
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
+                <FiBriefcase style={{ color: 'var(--accent-primary)', flexShrink: 0 }} />
+                <div style={{ display: 'flex', gap: '4px', flexWrap: 'wrap' }}>
                   {company.roles.map((role, idx) => (
-                    <span key={idx} className="bg-surface-2 px-2 py-0.5 rounded text-xs">{role}</span>
+                    <span 
+                      key={idx} 
+                      style={{
+                        background: 'var(--gray-100)',
+                        padding: '2px 8px',
+                        borderRadius: '4px',
+                        fontSize: '0.75rem',
+                        fontWeight: 500
+                      }}
+                    >
+                      {role}
+                    </span>
                   ))}
                 </div>
               </div>
-              <div className="flex items-center gap-2 text-sm text-text-secondary">
-                <FiDollarSign className="text-color-success" />
-                <span className="font-medium text-color-success">{company.package}</span>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
+                <FiDollarSign style={{ color: 'var(--color-success)', flexShrink: 0 }} />
+                <span style={{ fontWeight: 700, color: 'var(--color-success)' }}>{company.package}</span>
               </div>
             </div>
           </GlassCard>

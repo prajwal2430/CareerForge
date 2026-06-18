@@ -20,29 +20,76 @@ const CourseRow = ({ title, courses }) => {
   };
 
   return (
-    <div className="mb-10 relative group">
-      <div className="flex justify-between items-end mb-4 px-2">
-        <h2 className="text-xl font-bold text-white tracking-tight">{title}</h2>
-        <button className="text-sm text-accent-primary hover:text-accent-primary-hover font-semibold">
+    <div style={{ marginBottom: '2.5rem', position: 'relative' }} className="group">
+      <div style={{
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'flex-end',
+        marginBottom: '1rem',
+        padding: '0 8px'
+      }}>
+        <h2 style={{
+          fontFamily: "'Poppins', sans-serif",
+          fontSize: '1.25rem',
+          fontWeight: 700,
+          color: 'var(--text-primary)',
+          margin: 0
+        }}>{title}</h2>
+        <button style={{
+          fontSize: '0.85rem',
+          color: 'var(--accent-primary)',
+          fontWeight: 600,
+          background: 'none',
+          cursor: 'pointer'
+        }}>
           View All
         </button>
       </div>
 
-      <div className="relative">
+      <div style={{ position: 'relative' }}>
         <button 
           onClick={() => handleScroll('left')}
-          className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-1/2 z-20 w-10 h-10 rounded-full bg-surface-2 border border-glass-border flex items-center justify-center text-text-secondary hover:text-white opacity-0 group-hover:opacity-100 transition-opacity disabled:opacity-0 hidden md:flex shadow-lg"
+          style={{
+            position: 'absolute',
+            left: '-20px',
+            top: '50%',
+            transform: 'translateY(-50%)',
+            zIndex: 20,
+            width: '40px',
+            height: '40px',
+            borderRadius: '50%',
+            background: 'var(--bg-card)',
+            border: '1px solid var(--glass-border)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            color: 'var(--text-secondary)',
+            boxShadow: 'var(--shadow-md)',
+            cursor: 'pointer'
+          }}
         >
-          <FiChevronLeft className="text-xl" />
+          <FiChevronLeft style={{ fontSize: '1.25rem' }} />
         </button>
 
         <div 
           ref={rowRef}
-          className="flex overflow-x-auto gap-6 pb-4 pt-2 px-2 snap-x snap-mandatory scrollbar-hide"
-          style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+          style={{
+            display: 'flex',
+            overflowX: 'auto',
+            gap: '1.5rem',
+            paddingBottom: '1rem',
+            paddingTop: '0.5rem',
+            paddingLeft: '8px',
+            paddingRight: '8px'
+          }}
+          className="scrollbar-hide"
         >
           {courses.map((course, idx) => (
-            <div key={idx} className="min-w-[280px] w-[280px] md:min-w-[320px] md:w-[320px] snap-start shrink-0">
+            <div key={idx} style={{
+              minWidth: '300px',
+              width: '300px',
+              flexShrink: 0
+            }}>
               <CourseCard course={course} onClick={() => navigate(`/courses/${course.id}`)} />
             </div>
           ))}
@@ -50,9 +97,26 @@ const CourseRow = ({ title, courses }) => {
 
         <button 
           onClick={() => handleScroll('right')}
-          className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/2 z-20 w-10 h-10 rounded-full bg-surface-2 border border-glass-border flex items-center justify-center text-text-secondary hover:text-white opacity-0 group-hover:opacity-100 transition-opacity disabled:opacity-0 hidden md:flex shadow-lg"
+          style={{
+            position: 'absolute',
+            right: '-20px',
+            top: '50%',
+            transform: 'translateY(-50%)',
+            zIndex: 20,
+            width: '40px',
+            height: '40px',
+            borderRadius: '50%',
+            background: 'var(--bg-card)',
+            border: '1px solid var(--glass-border)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            color: 'var(--text-secondary)',
+            boxShadow: 'var(--shadow-md)',
+            cursor: 'pointer'
+          }}
         >
-          <FiChevronRight className="text-xl" />
+          <FiChevronRight style={{ fontSize: '1.25rem' }} />
         </button>
       </div>
     </div>
