@@ -203,12 +203,12 @@ const Courses = () => {
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: i * 0.08 }}
-            className="bg-white dark:bg-slate-900 border border-gray-100 dark:border-slate-800 rounded-2xl p-5 flex items-center gap-4 shadow-card"
+            className="bg-card border-none border border-border rounded-2xl p-5 flex items-center gap-4 shadow-card"
           >
             <span className="text-3xl">{s.icon}</span>
             <div>
-              <div className="text-xl font-bold text-slate-900 dark:text-white font-display leading-tight">{s.value}</div>
-              <div className="text-xs font-medium text-slate-400 dark:text-slate-500 mt-1">{s.label}</div>
+              <div className="text-xl font-bold text-text-main font-display leading-tight">{s.value}</div>
+              <div className="text-xs font-medium text-slate-400 dark:text-text-muted mt-1">{s.label}</div>
             </div>
           </motion.div>
         ))}
@@ -217,7 +217,7 @@ const Courses = () => {
       {/* ── Search & Filters ── */}
       <div className="flex flex-col sm:flex-row gap-3 items-center justify-between">
         <div className="relative w-full sm:max-w-md">
-          <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500" />
+          <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 dark:text-text-muted" />
           <input
             type="text"
             placeholder="Search courses or instructors..."
@@ -225,23 +225,23 @@ const Courses = () => {
             onChange={e => setSearchQuery(e.target.value)}
             className="
               w-full pl-10 pr-4 py-2.5 text-sm rounded-xl
-              bg-white dark:bg-slate-900
+              bg-card border-none
               border border-gray-200 dark:border-slate-800
               text-slate-950 dark:text-slate-50
-              placeholder:text-slate-400 dark:placeholder:text-slate-500
+              placeholder:text-slate-400 dark:placeholder:text-text-muted
               focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500
               transition-all shadow-sm
             "
           />
         </div>
         <div className="flex items-center gap-2 w-full sm:w-auto">
-          <SlidersHorizontal size={14} className="text-slate-400 dark:text-slate-500" />
+          <SlidersHorizontal size={14} className="text-slate-400 dark:text-text-muted" />
           <select
             value={levelFilter}
             onChange={e => setLevelFilter(e.target.value)}
             className="
               w-full sm:w-44 px-3 py-2.5 text-sm rounded-xl
-              bg-white dark:bg-slate-900
+              bg-card border-none
               border border-gray-200 dark:border-slate-800
               text-slate-950 dark:text-slate-50
               focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500
@@ -273,7 +273,7 @@ const Courses = () => {
                 border transition-all duration-200 flex-shrink-0
                 ${active
                   ? `bg-gradient-to-r ${cat.gradient} text-white border-transparent shadow-lg shadow-teal-500/10`
-                  : 'bg-white dark:bg-slate-900 border-gray-200 dark:border-slate-800 text-slate-500 dark:text-slate-400 hover:text-teal-600 dark:hover:text-teal-400'
+                  : 'bg-card border-none border-gray-200 dark:border-slate-800 text-text-muted dark:text-slate-400 hover:text-teal-600 dark:hover:text-teal-400'
                 }
               `}
             >
@@ -301,11 +301,11 @@ const Courses = () => {
             <div>
               <div className="flex items-center gap-2">
                 <span className={`w-1.5 h-6 rounded-full bg-gradient-to-b ${catMeta.gradient}`} />
-                <h2 className="text-xl font-bold text-slate-900 dark:text-white font-display">
+                <h2 className="text-xl font-bold text-text-main font-display">
                   {selectedCategory === 'All' ? 'All Courses' : catMeta.label}
                 </h2>
               </div>
-              <p className="text-xs text-slate-400 dark:text-slate-500 mt-1 ml-3">
+              <p className="text-xs text-slate-400 dark:text-text-muted mt-1 ml-3">
                 {filteredCourses.length} courses {searchQuery ? `matching "${searchQuery}"` : 'available'}
               </p>
             </div>
@@ -338,10 +338,10 @@ const Courses = () => {
               ))}
             </motion.div>
           ) : (
-            <div className="text-center py-16 bg-white dark:bg-slate-900 border border-gray-100 dark:border-slate-800 rounded-3xl">
+            <div className="text-center py-16 bg-card border-none border border-border rounded-3xl">
               <div className="text-4xl mb-3">🔍</div>
               <h3 className="text-slate-950 dark:text-white font-semibold">No courses found</h3>
-              <p className="text-slate-400 dark:text-slate-500 text-sm mt-1">Try adjusting your search or filters</p>
+              <p className="text-slate-400 dark:text-text-muted text-sm mt-1">Try adjusting your search or filters</p>
               <button
                 onClick={() => { setSearchQuery(''); setLevelFilter('All'); }}
                 className="mt-4 bg-teal-50 dark:bg-teal-900/25 text-teal-700 dark:text-teal-400 border border-teal-100 dark:border-teal-900/50 px-5 py-2 rounded-full font-bold text-xs hover:bg-teal-100 dark:hover:bg-teal-900/40 transition-colors"
@@ -357,8 +357,8 @@ const Courses = () => {
               <div className="flex items-center gap-2 mb-6">
                 <span className="w-1.5 h-6 rounded-full bg-gradient-to-b from-teal-500 to-cyan-500" />
                 <div>
-                  <h3 className="text-lg font-bold text-slate-900 dark:text-white font-display">Browse by Category</h3>
-                  <p className="text-xs text-slate-400 dark:text-slate-500 mt-0.5">Click a track to explore its courses</p>
+                  <h3 className="text-lg font-bold text-text-main font-display">Browse by Category</h3>
+                  <p className="text-xs text-slate-400 dark:text-text-muted mt-0.5">Click a track to explore its courses</p>
                 </div>
               </div>
 
@@ -374,7 +374,7 @@ const Courses = () => {
                       onClick={() => setSelectedCategory(cat.id)}
                       className="
                         cursor-pointer rounded-2xl overflow-hidden flex flex-col
-                        bg-white dark:bg-slate-900 border border-gray-100 dark:border-slate-800
+                        bg-card border-none border border-border
                         hover:border-teal-200 dark:hover:border-teal-800 transition-all duration-200 shadow-sm
                       "
                     >
@@ -384,7 +384,7 @@ const Courses = () => {
                           <Icon size={20} strokeWidth={2} />
                         </div>
                         <div className="flex-1 min-w-0">
-                          <h4 className="font-bold text-slate-900 dark:text-white text-sm truncate">{cat.label}</h4>
+                          <h4 className="font-bold text-text-main text-sm truncate">{cat.label}</h4>
                           <span className="inline-block mt-2 text-[10px] font-bold px-2 py-0.5 rounded-full bg-teal-50 dark:bg-teal-900/30 text-teal-600 dark:text-teal-400 border border-teal-100/50 dark:border-teal-900/50">
                             {catCourses.length} Courses
                           </span>

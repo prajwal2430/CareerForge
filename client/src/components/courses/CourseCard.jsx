@@ -41,7 +41,7 @@ const CourseCard = ({ course, onClick }) => {
       onClick={onClick}
     >
       <div className="
-        flex-1 flex flex-col bg-white dark:bg-slate-900
+        flex-1 flex flex-col bg-card border-none
         border border-slate-100 dark:border-slate-800 rounded-2xl
         overflow-hidden shadow-sm hover:shadow-md transition-all duration-300
       ">
@@ -88,7 +88,7 @@ const CourseCard = ({ course, onClick }) => {
             <h3 className="text-sm font-bold text-slate-800 dark:text-slate-100 leading-snug group-hover:text-teal-600 dark:group-hover:text-teal-400 transition-colors line-clamp-2">
               {course.title}
             </h3>
-            <p className="text-xs text-slate-400 dark:text-slate-500">{course.instructor}</p>
+            <p className="text-xs text-slate-400 dark:text-text-muted">{course.instructor}</p>
           </div>
 
           {/* Rating */}
@@ -104,11 +104,11 @@ const CourseCard = ({ course, onClick }) => {
                 />
               ))}
             </div>
-            <span className="text-slate-400 dark:text-slate-500">({course.students})</span>
+            <span className="text-slate-400 dark:text-text-muted">({course.students})</span>
           </div>
 
           {/* Footer */}
-          <div className="flex justify-between items-center border-t border-slate-100 dark:border-slate-800/60 pt-3.5 mt-auto text-xs text-slate-400 dark:text-slate-500">
+          <div className="flex justify-between items-center border-t border-slate-100 dark:border-slate-800/60 pt-3.5 mt-auto text-xs text-slate-400 dark:text-text-muted">
             <span className="flex items-center gap-1">
               <Clock size={13} /> {course.duration}
             </span>
@@ -117,7 +117,7 @@ const CourseCard = ({ course, onClick }) => {
                 <Zap size={13} /> {course.progress}% done
               </span>
             ) : (
-              <span className="flex items-center gap-1 text-slate-500 dark:text-slate-400 font-semibold group-hover:text-teal-600 dark:group-hover:text-teal-400 transition-colors">
+              <span className="flex items-center gap-1 text-text-muted dark:text-slate-400 font-semibold group-hover:text-teal-600 dark:group-hover:text-teal-400 transition-colors">
                 Start Now
               </span>
             )}

@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Menu, Search, Bell, Settings, LogOut, User, ChevronDown, Command } from 'lucide-react';
+import { Menu, Search, Bell, Settings, LogOut, User, Bot, Command } from 'lucide-react';
 
 const TopNavbar = ({ isSidebarCollapsed, toggleSidebar }) => {
   const { user, logout } = useAuth();
@@ -21,7 +21,6 @@ const TopNavbar = ({ isSidebarCollapsed, toggleSidebar }) => {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  // ⌘K shortcut to focus search
   useEffect(() => {
     const handler = (e) => {
       if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
@@ -42,132 +41,121 @@ const TopNavbar = ({ isSidebarCollapsed, toggleSidebar }) => {
 
   return (
     <header
-      className="fixed top-0 right-0 h-16 z-[200] flex items-center justify-between px-4 md:px-6 transition-all duration-300"
-      style={{ left: sidebarWidth }}
+      className={`fixed top-0 right-0 h-16 z-[190] flex items-center justify-between px-4 lg:px-6 transition-all duration-300 ${isSidebarCollapsed ? 'md:left-[72px]' : 'md:left-[72px] lg:left-[260px]'} left-0`}
+      style={{
+        background: 'rgba(11, 16, 32, 0.80)',
+        backdropFilter: 'blur(16px)',
+        WebkitBackdropFilter: 'blur(16px)',
+        borderBottom: '1px solid #263248',
+      }}
     >
-      {/* Glass background */}
-      <div className="absolute inset-0 bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl border-b border-gray-100 dark:border-slate-800" />
-
-      {/* ── Left ── */}
-      <div className="relative flex items-center gap-3 z-10">
-        {/* Sidebar toggle */}
+      {/* ── Left Toggle (Mobile only) ── */}
+      <div className="flex items-center gap-3">
         <button
           onClick={toggleSidebar}
-          className="p-2 rounded-xl text-gray-400 hover:text-teal-600 hover:bg-teal-50 dark:hover:bg-teal-900/20 transition-all duration-150"
-          aria-label="Toggle sidebar"
+          className="lg:hidden p-2 -ml-2 rounded-lg text-[#94A3B8] hover:text-[#F8FAFC] hover:bg-[#263248] transition-colors"
         >
-          <Menu size={20} strokeWidth={1.75} />
+          <Menu size={22} strokeWidth={2} />
         </button>
+      </div>
 
+      {/* ── Right Action Area ── */}
+      <div className="flex items-center gap-4">
+        
         {/* Search */}
-        <div className={`relative flex items-center transition-all duration-200 ${searchFocused ? 'w-72' : 'w-56'}`}>
-          <Search
-            size={15}
-            strokeWidth={1.75}
-            className="absolute left-3 text-gray-400 dark:text-slate-500 pointer-events-none"
-          />
+        <div className={`hidden sm:flex relative items-center transition-all duration-300 ease-out ${searchFocused ? 'w-64' : 'w-48'}`}>
+          <Search size={14} strokeWidth={2} className="absolute left-3 text-[#94A3B8] pointer-events-none" />
           <input
             id="global-search"
             type="text"
-            placeholder="Search courses, problems..."
+            placeholder="Search..."
             onFocus={() => setSearchFocused(true)}
             onBlur={() => setSearchFocused(false)}
             className="
-              w-full pl-9 pr-16 py-2 text-sm rounded-xl
-              bg-gray-50 dark:bg-slate-800
-              border border-gray-200 dark:border-slate-700
-              text-slate-900 dark:text-slate-100
-              placeholder:text-gray-400 dark:placeholder:text-slate-500
-              focus:outline-none focus:ring-2 focus:ring-teal-500/30 focus:border-teal-500
-              transition-all duration-200
+              w-full pl-9 pr-12 py-1.5 text-sm rounded-full
+              bg-[#111827] border border-[#263248]
+              text-[#F8FAFC] placeholder:text-[#94A3B8]
+              focus:outline-none focus:ring-1 focus:ring-[#7C3AED] focus:border-[#7C3AED]
+              transition-all duration-300
             "
           />
-          <div className="absolute right-3 flex items-center gap-0.5">
-            <kbd className="px-1.5 py-0.5 text-[10px] font-mono bg-white dark:bg-slate-700 border border-gray-200 dark:border-slate-600 rounded text-gray-400 dark:text-slate-400 shadow-sm">
-              ⌘K
-            </kbd>
-          </div>
-        </div>
-      </div>
-
-      {/* ── Right ── */}
-      <div className="relative flex items-center gap-2 z-10">
-        {/* Streak badge */}
-        <div className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-gradient-to-r from-orange-500 to-red-500 text-white text-xs font-bold shadow-sm select-none">
-          🔥 <span>12</span>
-          <span className="opacity-80 font-normal hidden md:inline">day streak</span>
+          <kbd className="absolute right-2 px-1.5 py-0.5 text-[10px] font-mono bg-[#151D2F] border border-[#263248] rounded text-[#94A3B8]">
+            ⌘K
+          </kbd>
         </div>
 
-        {/* Notifications */}
-        <button className="relative p-2 rounded-xl text-gray-400 hover:text-teal-600 hover:bg-teal-50 dark:hover:bg-teal-900/20 transition-all duration-150">
-          <Bell size={19} strokeWidth={1.75} />
-          <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full ring-2 ring-white dark:ring-slate-900" />
-        </button>
+        {/* Action Icons */}
+        <div className="flex items-center gap-1">
+          <button className="relative p-2 rounded-full text-[#94A3B8] hover:text-[#06B6D4] hover:bg-[#06B6D4]/10 transition-colors duration-200">
+            <Bot size={18} strokeWidth={2} />
+          </button>
+          
+          <button className="relative p-2 rounded-full text-[#94A3B8] hover:text-[#F8FAFC] hover:bg-[#263248] transition-colors duration-200">
+            <Bell size={18} strokeWidth={2} />
+            <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-[#EF4444] rounded-full ring-2 ring-[#0B1020]" />
+          </button>
+        </div>
 
-        {/* Avatar + Dropdown */}
+        {/* Divider */}
+        <div className="hidden sm:block w-px h-6 bg-[#263248] mx-1" />
+
+        {/* Profile Dropdown */}
         <div className="relative" ref={dropdownRef}>
           <button
             onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-            className="flex items-center gap-2 pl-1 pr-2 py-1 rounded-xl hover:bg-gray-50 dark:hover:bg-slate-800 transition-all duration-150 group"
+            className="flex items-center gap-2 p-1 pr-3 rounded-full hover:bg-[#151D2F] border border-transparent hover:border-[#263248] transition-all duration-200"
           >
-            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-teal-500 to-cyan-400 flex items-center justify-center text-white text-xs font-bold">
+            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#7C3AED] to-[#06B6D4] flex items-center justify-center text-[#F8FAFC] text-sm font-bold shadow-primary">
               {user?.name ? user.name.charAt(0).toUpperCase() : 'U'}
             </div>
-            <ChevronDown
-              size={14}
-              strokeWidth={2}
-              className={`text-gray-400 transition-transform duration-200 ${isDropdownOpen ? 'rotate-180' : ''}`}
-            />
+            <div className="hidden sm:block text-left">
+              <p className="text-xs font-semibold text-[#F8FAFC] leading-none mb-1">{user?.name || 'User'}</p>
+              <p className="text-[10px] text-[#94A3B8] leading-none font-mono">PRO TEAM</p>
+            </div>
           </button>
 
           <AnimatePresence>
             {isDropdownOpen && (
               <motion.div
-                initial={{ opacity: 0, y: 8, scale: 0.96 }}
+                initial={{ opacity: 0, y: 10, scale: 0.95 }}
                 animate={{ opacity: 1, y: 0, scale: 1 }}
-                exit={{ opacity: 0, y: 8, scale: 0.96 }}
+                exit={{ opacity: 0, y: 10, scale: 0.95 }}
                 transition={{ duration: 0.15, ease: 'easeOut' }}
-                className="
-                  absolute right-0 mt-2 w-52 origin-top-right
-                  bg-white dark:bg-slate-900 rounded-2xl
-                  border border-gray-100 dark:border-slate-800
-                  shadow-lg dark:shadow-slate-900/50
-                  overflow-hidden z-50
-                "
+                className="absolute right-0 mt-3 w-56 bg-[#151D2F] border border-[#263248] rounded-xl shadow-[0_10px_40px_rgba(0,0,0,0.5)] overflow-hidden z-50 origin-top-right"
               >
-                {/* User info header */}
-                <div className="px-4 py-3 border-b border-gray-100 dark:border-slate-800">
-                  <p className="text-sm font-semibold text-slate-900 dark:text-white truncate">{user?.name}</p>
-                  <p className="text-xs text-gray-400 dark:text-slate-500 truncate">{user?.email || 'student@learnhub.io'}</p>
+                <div className="px-4 py-3 border-b border-[#263248] bg-[#111827]">
+                  <p className="text-sm font-bold text-[#F8FAFC] truncate">{user?.name}</p>
+                  <p className="text-xs text-[#94A3B8] truncate">{user?.email || 'student@careerforge.io'}</p>
                 </div>
 
-                <div className="p-1.5">
+                <div className="p-2 space-y-1">
                   <button
                     onClick={() => { setIsDropdownOpen(false); navigate('/profile'); }}
-                    className="flex items-center gap-2.5 w-full px-3 py-2 rounded-xl text-sm text-gray-600 dark:text-slate-300 hover:bg-gray-50 dark:hover:bg-slate-800 hover:text-teal-600 transition-all"
+                    className="flex items-center gap-3 w-full px-3 py-2 rounded-lg text-sm font-medium text-[#CBD5E1] hover:text-[#F8FAFC] hover:bg-[#7C3AED] transition-colors"
                   >
-                    <User size={15} strokeWidth={1.75} /> Profile
+                    <User size={15} strokeWidth={2} /> Profile
                   </button>
                   <button
                     onClick={() => { setIsDropdownOpen(false); navigate('/settings'); }}
-                    className="flex items-center gap-2.5 w-full px-3 py-2 rounded-xl text-sm text-gray-600 dark:text-slate-300 hover:bg-gray-50 dark:hover:bg-slate-800 hover:text-teal-600 transition-all"
+                    className="flex items-center gap-3 w-full px-3 py-2 rounded-lg text-sm font-medium text-[#CBD5E1] hover:text-[#F8FAFC] hover:bg-[#7C3AED] transition-colors"
                   >
-                    <Settings size={15} strokeWidth={1.75} /> Settings
+                    <Settings size={15} strokeWidth={2} /> Settings
                   </button>
                 </div>
 
-                <div className="p-1.5 border-t border-gray-100 dark:border-slate-800">
+                <div className="p-2 border-t border-[#263248]">
                   <button
                     onClick={handleLogout}
-                    className="flex items-center gap-2.5 w-full px-3 py-2 rounded-xl text-sm text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition-all"
+                    className="flex items-center gap-3 w-full px-3 py-2 rounded-lg text-sm font-bold text-[#EF4444] hover:bg-[#EF4444]/10 transition-colors"
                   >
-                    <LogOut size={15} strokeWidth={1.75} /> Logout
+                    <LogOut size={15} strokeWidth={2.5} /> Log Out
                   </button>
                 </div>
               </motion.div>
             )}
           </AnimatePresence>
         </div>
+        
       </div>
     </header>
   );

@@ -1,10 +1,7 @@
 import React, { useState, useRef } from 'react';
-import { FiCheckCircle, FiTrendingUp, FiBarChart2, FiChevronLeft, FiChevronRight } from 'react-icons/fi';
+import { FiTrendingUp, FiChevronLeft, FiChevronRight, FiSearch, FiFilter } from 'react-icons/fi';
 import { MOCK_DATA } from '../data/mockData';
 import ProblemTable from '../components/practice/ProblemTable';
-import SearchBar from '../components/ui/SearchBar';
-import GlassCard from '../components/ui/GlassCard';
-import Tabs from '../components/ui/Tabs';
 
 const Practice = () => {
   const [activeTab, setActiveTab] = useState('all');
@@ -19,18 +16,12 @@ const Practice = () => {
   const sliderRef = useRef(null);
 
   const slideLeft = () => {
-    if (sliderRef.current) {
-      sliderRef.current.scrollBy({ left: -350, behavior: 'smooth' });
-    }
+    if (sliderRef.current) sliderRef.current.scrollBy({ left: -350, behavior: 'smooth' });
   };
-
   const slideRight = () => {
-    if (sliderRef.current) {
-      sliderRef.current.scrollBy({ left: 350, behavior: 'smooth' });
-    }
+    if (sliderRef.current) sliderRef.current.scrollBy({ left: 350, behavior: 'smooth' });
   };
   
-  // Create mock problems list with companies for active filtering
   const problemsList = [
     { id: 1, title: 'Two Sum', acceptance: '52.3%', difficulty: 'Easy', status: 'solved', tags: ['Array', 'Hash Table'], companies: ['Google', 'Amazon'] },
     { id: 2, title: 'Add Two Numbers', acceptance: '41.8%', difficulty: 'Medium', status: 'unsolved', tags: ['Linked List', 'Math'], companies: ['Amazon', 'Microsoft'] },
@@ -44,23 +35,12 @@ const Practice = () => {
     { id: 10, title: 'Regular Expression Matching', acceptance: '28.5%', difficulty: 'Hard', status: 'unsolved', tags: ['String', 'Dynamic Programming', 'Recursion'], companies: ['Microsoft'] },
   ];
 
-  const tabs = [
-    { id: 'all', label: 'All Topics' },
-    { id: 'algorithms', label: 'Algorithms' },
-    { id: 'database', label: 'Database' },
-    { id: 'shell', label: 'Shell' },
-    { id: 'concurrency', label: 'Concurrency' },
-  ];
-
   const filteredProblems = problemsList.filter(p => {
     const matchesSearch = p.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
                           p.tags.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase()));
-    
-    // Check if matching algorithms/other tab tags
     const matchesTab = activeTab === 'all' || 
                        p.tags.some(tag => tag.toLowerCase() === activeTab.toLowerCase()) ||
                        (activeTab === 'algorithms' && p.tags.includes('Dynamic Programming'));
-                       
     const matchesDifficulty = difficultyFilter === 'All' || p.difficulty.toLowerCase() === difficultyFilter.toLowerCase();
     const matchesStatus = statusFilter === 'All' || p.status.toLowerCase() === statusFilter.toLowerCase();
     const matchesTag = tagFilter === 'All' || p.tags.some(tag => tag.toLowerCase() === tagFilter.toLowerCase());
@@ -70,153 +50,119 @@ const Practice = () => {
   });
 
   return (
-    <div className="container section-sm">
-      <div style={{ background: 'linear-gradient(135deg, #0F172A, #0F766E)', padding: 'var(--space-6)', borderRadius: 'var(--radius-lg)', marginBottom: 'var(--space-8)' }}>
-        {/* Horizontal Scrollable Cards */}
-        <div style={{ position: 'relative' }}>
-          <button onClick={slideLeft} style={{ position: 'absolute', left: '-16px', top: '70px', transform: 'translateY(-50%)', zIndex: 10, background: '#1E2937', color: 'white', width: '32px', height: '32px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 4px 12px rgba(0,0,0,0.5)', border: '1px solid rgba(255,255,255,0.1)', cursor: 'pointer' }}>
-            <FiChevronLeft size={20} />
-          </button>
+    <div className="pb-12 max-w-[1400px] mx-auto px-4 sm:px-6">
+      <div className="mb-8 mt-4">
+        <h1 className="text-3xl sm:text-4xl font-display font-bold text-[#F8FAFC] mb-2">Technical Interview Prep</h1>
+        <p className="text-[#94A3B8]">Master data structures, algorithms, and system design.</p>
+      </div>
+
+      <div className="bg-[#111827] border border-[#263248] rounded-[24px] p-6 sm:p-8 mb-8 relative overflow-hidden shadow-sm">
+        <div className="absolute top-0 right-0 w-1/2 h-full bg-gradient-to-l from-[#7C3AED]/10 to-transparent pointer-events-none" />
+        
+        {/* Carousel */}
+        <div className="relative z-10 mb-8">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-lg font-bold font-display text-[#F8FAFC]">Featured Curriculums</h2>
+            <div className="flex gap-2">
+              <button onClick={slideLeft} className="w-8 h-8 rounded-full bg-[#151D2F] border border-[#263248] text-[#CBD5E1] hover:text-[#7C3AED] hover:border-[#7C3AED] flex items-center justify-center transition-all"><FiChevronLeft /></button>
+              <button onClick={slideRight} className="w-8 h-8 rounded-full bg-[#151D2F] border border-[#263248] text-[#CBD5E1] hover:text-[#7C3AED] hover:border-[#7C3AED] flex items-center justify-center transition-all"><FiChevronRight /></button>
+            </div>
+          </div>
           
-          <div ref={sliderRef} className="mb-8 scrollbar-hide" style={{ display: 'flex', gap: 'var(--space-4)', overflowX: 'auto', paddingBottom: '8px', scrollBehavior: 'smooth' }}>
-            <div style={{ minWidth: '300px', height: '140px', background: 'linear-gradient(135deg, #0F172A, #115E59)', borderRadius: 'var(--radius-lg)', padding: 'var(--space-6)', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', color: 'white', position: 'relative', overflow: 'hidden', flexShrink: 0 }}>
-              <div style={{ zIndex: 1, textAlign: 'center' }}>
-                <div style={{ marginBottom: '8px' }}>
-                  <span style={{ background: 'rgba(255,255,255,0.2)', padding: '4px 8px', borderRadius: '4px' }}>🔥</span>
-                </div>
-                <h3 style={{ fontSize: '1.2rem', fontWeight: 600 }}>{MOCK_DATA.courses[0].title}</h3>
-                <p style={{ color: 'rgba(255,255,255,0.7)', fontSize: '0.85rem', marginTop: '4px' }}>Curated for Placements</p>
-              </div>
+          <div ref={sliderRef} className="flex gap-5 overflow-x-auto scrollbar-none scroll-smooth pb-2" style={{msOverflowStyle:'none', scrollbarWidth:'none'}}>
+            
+            <div className="min-w-[280px] h-[140px] bg-gradient-to-br from-[#7C3AED] to-[#06B6D4] rounded-[20px] p-6 flex flex-col justify-center relative overflow-hidden text-white cursor-pointer hover:shadow-[0_10px_30px_rgba(124,58,237,0.3)] hover:-translate-y-1 transition-all">
+                <span className="w-max bg-white/20 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider mb-2">🔥 Top Curated</span>
+                <h3 className="text-xl font-bold font-display leading-tight">{MOCK_DATA.courses[0].title}</h3>
             </div>
             
-            <div style={{ minWidth: '320px', height: '140px', background: 'linear-gradient(135deg, #0F766E, #0D9488)', borderRadius: 'var(--radius-lg)', padding: 'var(--space-6)', display: 'flex', flexDirection: 'column', justifyContent: 'center', color: 'white', position: 'relative', overflow: 'hidden', flexShrink: 0 }}>
-              <div style={{ zIndex: 1 }}>
-                <h3 style={{ fontSize: '1.2rem', fontWeight: 600, marginBottom: '4px' }}>{MOCK_DATA.courses[2].category} Crash Course:</h3>
-                <p style={{ color: 'rgba(255,255,255,0.8)', fontSize: '0.9rem' }}>{MOCK_DATA.courses[2].title}</p>
-              </div>
-              <div style={{ position: 'absolute', right: '-20px', bottom: '-20px', opacity: 0.2 }}>
-                <FiCheckCircle size={100} />
-              </div>
+            <div className="min-w-[280px] h-[140px] bg-[#151D2F] border border-[#263248] rounded-[20px] p-6 flex flex-col justify-center text-[#F8FAFC] cursor-pointer hover:border-[#7C3AED] hover:-translate-y-1 transition-all group">
+                <h3 className="text-sm font-bold text-[#06B6D4] mb-1 uppercase tracking-wider">{MOCK_DATA.courses[2].category} Crash Course</h3>
+                <p className="text-lg font-bold font-display group-hover:text-[#7C3AED] transition-colors">{MOCK_DATA.courses[2].title}</p>
             </div>
 
-            <div style={{ minWidth: '320px', height: '140px', background: 'linear-gradient(135deg, #0F766E, #115E59)', borderRadius: 'var(--radius-lg)', padding: 'var(--space-6)', display: 'flex', flexDirection: 'column', justifyContent: 'center', color: 'white', position: 'relative', overflow: 'hidden', flexShrink: 0 }}>
-              <div style={{ zIndex: 1 }}>
-                <h3 style={{ fontSize: '1.2rem', fontWeight: 600, marginBottom: '4px' }}>{MOCK_DATA.courses[1].category} Bootcamp:</h3>
-                <p style={{ color: 'rgba(255,255,255,0.8)', fontSize: '0.9rem' }}>{MOCK_DATA.courses[1].title}</p>
-              </div>
+            <div className="min-w-[280px] h-[140px] bg-[#151D2F] border border-[#263248] rounded-[20px] p-6 flex flex-col justify-center text-[#F8FAFC] cursor-pointer hover:border-[#7C3AED] hover:-translate-y-1 transition-all group">
+                <h3 className="text-sm font-bold text-[#7C3AED] mb-1 uppercase tracking-wider">{MOCK_DATA.courses[1].category} Bootcamp</h3>
+                <p className="text-lg font-bold font-display group-hover:text-[#06B6D4] transition-colors">{MOCK_DATA.courses[1].title}</p>
             </div>
 
-            <div style={{ minWidth: '200px', height: '140px', background: 'linear-gradient(135deg, #0891B2, #0D9488)', borderRadius: 'var(--radius-lg)', padding: 'var(--space-6)', display: 'flex', flexDirection: 'column', justifyContent: 'center', color: 'white', position: 'relative', overflow: 'hidden', flexShrink: 0 }}>
-              <div style={{ zIndex: 1 }}>
-                <h3 style={{ fontSize: '1.2rem', fontWeight: 600 }}>Top Company Tags</h3>
-              </div>
-            </div>
           </div>
-
-          <button onClick={slideRight} style={{ position: 'absolute', right: '-16px', top: '70px', transform: 'translateY(-50%)', zIndex: 10, background: '#1E2937', color: 'white', width: '32px', height: '32px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 4px 12px rgba(0,0,0,0.5)', border: '1px solid rgba(255,255,255,0.1)', cursor: 'pointer' }}>
-            <FiChevronRight size={20} />
-          </button>
         </div>
 
-        {/* Tags Row */}
-        <div className="flex flex-wrap gap-4 mb-6" style={{ color: 'rgba(255,255,255,0.8)' }}>
+        {/* Global Stats */}
+        <h2 className="text-sm font-bold text-[#64748B] uppercase tracking-wider mb-3">Popular Topics</h2>
+        <div className="flex flex-wrap gap-3 relative z-10">
           {[
-            { label: 'Array', count: 342 },
-            { label: 'String', count: 156 },
-            { label: 'Hash Table', count: 89 },
-            { label: 'Math', count: 214 },
-            { label: 'Dynamic Programming', count: 412 },
-            { label: 'Binary Search', count: 178 }
+            { label: 'Array', count: 342, color: '#06B6D4' },
+            { label: 'String', count: 156, color: '#7C3AED' },
+            { label: 'Hash Table', count: 89, color: '#F59E0B' },
+            { label: 'Math', count: 214, color: '#10B981' },
+            { label: 'Dynamic Programming', count: 412, color: '#EF4444' }
           ].map((tag, idx) => (
-            <div 
+            <button 
               key={idx} 
               onClick={() => setTagFilter(tagFilter === tag.label ? 'All' : tag.label)}
-              style={{ 
-                display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer',
-                color: tagFilter === tag.label ? '#2DD4BF' : 'white',
-                fontWeight: tagFilter === tag.label ? 700 : 400
-              }}
+              className={`flex items-center gap-2 px-4 py-2 rounded-full border text-[13px] font-semibold transition-colors ${
+                tagFilter === tag.label ? 'bg-[#7C3AED]/20 border-[#7C3AED] text-[#FFFFFF]' : 'bg-[#151D2F] border-[#263248] text-[#CBD5E1] hover:border-[#7C3AED]/50 hover:bg-[#7C3AED]/10'
+              }`}
             >
               <span>{tag.label}</span>
-              <span style={{ fontSize: '0.75rem', background: tagFilter === tag.label ? 'rgba(45, 212, 191, 0.2)' : 'rgba(255,255,255,0.1)', padding: '2px 6px', borderRadius: '12px' }}>{tag.count}</span>
-            </div>
+              <span className="text-[10px] px-1.5 py-0.5 rounded-full" style={{ backgroundColor: `${tag.color}20`, color: tag.color }}>{tag.count}</span>
+            </button>
           ))}
-        </div>
-
-        {/* Pill Filters */}
-        <div className="flex flex-wrap gap-3">
-          <div 
-            onClick={() => setActiveTab('all')}
-            style={{ display: 'flex', alignItems: 'center', gap: '8px', background: activeTab === 'all' ? 'white' : 'rgba(255,255,255,0.1)', color: activeTab === 'all' ? '#0F172A' : 'rgba(255,255,255,0.9)', padding: '8px 16px', borderRadius: '20px', fontWeight: 500, cursor: 'pointer', transition: 'all 0.2s' }}
-          >
-            <FiCheckCircle />
-            <span>All Topics</span>
-          </div>
-          <div 
-            onClick={() => setActiveTab('algorithms')}
-            style={{ display: 'flex', alignItems: 'center', gap: '8px', background: activeTab === 'algorithms' ? 'white' : 'rgba(255,255,255,0.1)', color: activeTab === 'algorithms' ? '#0F172A' : 'rgba(255,255,255,0.9)', padding: '8px 16px', borderRadius: '20px', fontWeight: 500, cursor: 'pointer', transition: 'all 0.2s' }}
-          >
-            <span style={{ color: '#0D9488' }}><FiTrendingUp /></span>
-            <span>Algorithms</span>
-          </div>
         </div>
       </div>
 
-      <GlassCard>
-        <div className="flex justify-between items-center mb-6 gap-4 flex-wrap" style={{ borderBottom: '1px solid var(--gray-100)', paddingBottom: 'var(--space-4)' }}>
-          <Tabs tabs={tabs} activeTab={activeTab} onChange={setActiveTab} />
-          <SearchBar 
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Search questions or tags"
-          />
+      {/* Main Problems Board */}
+      <div className="premium-card !p-6 sm:!p-8">
+        
+        {/* Controls Row */}
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-5 mb-8 border-b border-[#263248] pb-6">
+          <div className="flex gap-2 p-1 bg-[#111827] border border-[#263248] rounded-[14px]">
+            <button 
+              onClick={() => setActiveTab('all')}
+              className={`px-5 py-2 text-[13px] font-bold rounded-[10px] transition-all ${activeTab === 'all' ? 'bg-[#263248] text-[#F8FAFC] shadow-sm' : 'text-[#94A3B8] hover:text-[#F8FAFC]'}`}
+            >
+              All Topics
+            </button>
+            <button 
+              onClick={() => setActiveTab('algorithms')}
+              className={`px-5 py-2 text-[13px] font-bold rounded-[10px] transition-all flex items-center gap-2 ${activeTab === 'algorithms' ? 'bg-[#263248] text-[#F8FAFC] shadow-sm' : 'text-[#94A3B8] hover:text-[#F8FAFC]'}`}
+            >
+              <FiTrendingUp className={activeTab === 'algorithms' ? 'text-[#06B6D4]' : ''} /> Algorithms
+            </button>
+          </div>
+          
+          <div className="form-input-icon w-full lg:w-[350px]">
+            <FiSearch className="input-icon" />
+            <input 
+              type="text" 
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Search problems, questions or tags..."
+              className="form-input !h-11 !rounded-[12px]" 
+            />
+          </div>
         </div>
         
-        <div className="flex gap-3 mb-6 flex-wrap">
-          <select 
-            value={difficultyFilter} 
-            onChange={(e) => setDifficultyFilter(e.target.value)} 
-            className="form-input" 
-            style={{ minWidth: '150px' }}
-          >
+        {/* Filters */}
+        <div className="flex flex-wrap items-center gap-4 mb-8">
+          <div className="flex items-center gap-2 text-[#64748B] font-medium text-[13px] mr-2">
+            <FiFilter /> Filters:
+          </div>
+          <select value={difficultyFilter} onChange={(e) => setDifficultyFilter(e.target.value)} className="form-input !w-[160px] !h-10 !py-0 !text-[13px] !bg-[#0B1020]">
             <option value="All">All Difficulties</option>
             <option value="Easy">Easy</option>
             <option value="Medium">Medium</option>
             <option value="Hard">Hard</option>
           </select>
-          
-          <select 
-            value={statusFilter} 
-            onChange={(e) => setStatusFilter(e.target.value)} 
-            className="form-input" 
-            style={{ minWidth: '150px' }}
-          >
+          <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)} className="form-input !w-[160px] !h-10 !py-0 !text-[13px] !bg-[#0B1020]">
             <option value="All">All Statuses</option>
             <option value="solved">Solved</option>
             <option value="attempted">Attempted</option>
             <option value="unsolved">Unsolved</option>
           </select>
-          
-          <select 
-            value={tagFilter} 
-            onChange={(e) => setTagFilter(e.target.value)} 
-            className="form-input" 
-            style={{ minWidth: '150px' }}
-          >
-            <option value="All">All Tags</option>
-            <option value="Array">Array</option>
-            <option value="String">String</option>
-            <option value="Hash Table">Hash Table</option>
-            <option value="Math">Math</option>
-            <option value="Dynamic Programming">Dynamic Programming</option>
-          </select>
-          
-          <select 
-            value={companyFilter} 
-            onChange={(e) => setCompanyFilter(e.target.value)} 
-            className="form-input" 
-            style={{ minWidth: '150px', color: 'var(--accent-primary)', borderColor: 'var(--accent-primary)', fontWeight: 600 }}
-          >
+          <select value={companyFilter} onChange={(e) => setCompanyFilter(e.target.value)} className="form-input !w-[160px] !h-10 !py-0 !text-[13px] !bg-[#0B1020] text-[#7C3AED] font-semibold border-[#7C3AED]/30">
             <option value="All">All Companies</option>
             <option value="Google">Google</option>
             <option value="Amazon">Amazon</option>
@@ -225,7 +171,7 @@ const Practice = () => {
         </div>
 
         <ProblemTable problems={filteredProblems} />
-      </GlassCard>
+      </div>
     </div>
   );
 };
