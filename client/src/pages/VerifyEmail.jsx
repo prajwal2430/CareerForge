@@ -66,22 +66,22 @@ const VerifyEmail = () => {
   };
 
   return (
-    <div className="auth-page min-h-screen flex items-center justify-center p-4 bg-bg-primary">
+    <div className="auth-page min-h-screen flex items-center justify-center p-4 bg-[#FAFAF9] text-[#1C1917]">
       <motion.div 
-        className="w-full max-w-md glass-card-accent p-8 sm:p-10 text-center"
+        className="w-full max-w-md bg-white border border-[#E7E5E4] rounded-[24px] p-8 sm:p-10 text-center shadow-sm"
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
       >
         <Link to="/" className="inline-flex items-center justify-center mb-8">
-          <div className="w-12 h-12 bg-gradient-accent rounded-xl flex items-center justify-center font-black text-white text-2xl shadow-glow-primary">
+          <div className="w-12 h-12 bg-[#0F766E] rounded-xl flex items-center justify-center font-black text-white text-2xl shadow-sm">
             C
           </div>
         </Link>
         
         {!isVerified ? (
           <>
-            <h2 className="text-2xl font-bold text-white mb-2">Verify your email</h2>
-            <p className="text-text-muted text-sm mb-8">
+            <h2 className="text-2xl font-bold font-display text-[#1C1917] mb-2">Verify your email</h2>
+            <p className="text-[#78716C] text-sm mb-8">
               We've sent a 6-digit verification code to your email. Please enter it below.
             </p>
 
@@ -92,7 +92,7 @@ const VerifyEmail = () => {
                   ref={(el) => (inputRefs.current[index] = el)}
                   type="text"
                   maxLength="1"
-                  className="w-10 h-12 sm:w-12 sm:h-14 bg-bg-input border border-glass-border rounded-lg text-center text-xl font-bold text-white focus:border-accent-primary focus:ring-1 focus:ring-accent-primary transition-all"
+                  className="w-10 h-12 sm:w-12 sm:h-14 bg-[#FAFAF9] border border-[#E7E5E4] rounded-xl text-center text-xl font-bold text-[#1C1917] focus:border-[#0F766E] focus:ring-2 focus:ring-[#0F766E]/20 transition-all outline-none"
                   value={digit}
                   onChange={(e) => handleChange(index, e)}
                   onKeyDown={(e) => handleKeyDown(index, e)}
@@ -109,11 +109,11 @@ const VerifyEmail = () => {
               {isVerifying ? 'Verifying...' : 'Verify Email'}
             </button>
 
-            <p className="text-sm text-text-muted">
+            <p className="text-sm text-[#78716C]">
               Didn't receive the code?{' '}
               <button 
                 onClick={() => toast.success('Verification code resent!')}
-                className="text-accent-primary hover:text-accent-primary-hover font-medium"
+                className="text-[#0F766E] hover:underline font-semibold bg-transparent border-none cursor-pointer"
               >
                 Resend code
               </button>
@@ -125,11 +125,11 @@ const VerifyEmail = () => {
             animate={{ opacity: 1, y: 0 }}
             className="py-8"
           >
-            <div className="w-20 h-20 bg-color-success-bg text-color-success rounded-full flex items-center justify-center text-4xl mx-auto mb-6">
+            <div className="w-20 h-20 bg-[#F0FDFA] text-[#0F766E] border border-[#0F766E]/30 rounded-full flex items-center justify-center text-4xl mx-auto mb-6">
               <FiCheckCircle />
             </div>
-            <h2 className="text-2xl font-bold text-white mb-2">Email Verified!</h2>
-            <p className="text-text-muted">Redirecting you to dashboard...</p>
+            <h2 className="text-2xl font-bold font-display text-[#1C1917] mb-2">Email Verified!</h2>
+            <p className="text-[#78716C]">Redirecting you to dashboard...</p>
           </motion.div>
         )}
       </motion.div>
