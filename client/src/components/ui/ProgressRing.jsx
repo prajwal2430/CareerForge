@@ -4,8 +4,8 @@ const ProgressRing = ({
   progress, 
   size = 120, 
   strokeWidth = 10, 
-  color = 'var(--accent-primary)',
-  trackColor = 'var(--surface-2)',
+  color = 'var(--primary)',
+  trackColor = '#E7E5E4',
   label,
   valueText
 }) => {
