@@ -41,24 +41,24 @@ const CompanyCarousel = () => {
             <div key={i} style={{
               flexShrink: 0, padding: '0.75rem 2rem',
               background: 'white',
-              border: '1.5px solid #E5E7EB', borderRadius: 12,
+              border: '1.5px solid #E7E5E4', borderRadius: 12,
               fontFamily: "'Poppins', sans-serif",
               fontWeight: 700, fontSize: '1rem',
-              color: '#9CA3AF',
+              color: '#78716C',
               cursor: 'default', transition: 'all 0.25s',
               whiteSpace: 'nowrap',
               display: 'flex', alignItems: 'center', gap: 10,
             }}
               onMouseEnter={e => {
-                e.currentTarget.style.borderColor = company.color;
-                e.currentTarget.style.color = company.color;
-                e.currentTarget.style.background = `${company.color}08`;
-                e.currentTarget.style.boxShadow = `0 4px 20px ${company.color}15`;
+                e.currentTarget.style.borderColor = '#0F766E';
+                e.currentTarget.style.color = '#0F766E';
+                e.currentTarget.style.background = '#F0FDFA';
+                e.currentTarget.style.boxShadow = '0 4px 20px rgba(15, 118, 110, 0.12)';
                 e.currentTarget.style.transform = 'translateY(-2px)';
               }}
               onMouseLeave={e => {
-                e.currentTarget.style.borderColor = '#E5E7EB';
-                e.currentTarget.style.color = '#9CA3AF';
+                e.currentTarget.style.borderColor = '#E7E5E4';
+                e.currentTarget.style.color = '#78716C';
                 e.currentTarget.style.background = 'white';
                 e.currentTarget.style.boxShadow = 'none';
                 e.currentTarget.style.transform = 'translateY(0)';
