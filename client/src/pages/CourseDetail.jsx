@@ -736,7 +736,7 @@ const CourseDetail = () => {
                 {/* Course meta */}
                 <div className="overview-meta-grid">
                   <div className="meta-item"><FiUsers /><span><strong>{course.students}</strong> students enrolled</span></div>
-                  <div className="meta-item"><FiStar style={{ color: '#f59e0b' }} /><span><strong>{course.rating}</strong> average rating</span></div>
+                  <div className="meta-item"><FiStar style={{ color: '#F97360', fill: '#F97360' }} /><span><strong>{course.rating}</strong> average rating</span></div>
                   <div className="meta-item"><FiClock /><span><strong>{course.duration}</strong> total content</span></div>
                   <div className="meta-item"><FiBarChart2 /><span><strong>Beginner</strong> level</span></div>
                   <div className="meta-item"><FiGlobe /><span><strong>English</strong> language</span></div>
@@ -907,7 +907,7 @@ const CourseDetail = () => {
             <div className="course-header-meta">
               <span className="course-category-pill">{course.category}</span>
               <div className="course-rating-row">
-                <FiStar style={{ color: '#f59e0b', fill: '#f59e0b' }} />
+                <FiStar style={{ color: '#F97360', fill: '#F97360' }} />
                 <strong>{course.rating}</strong>
                 <span>({course.students} students)</span>
               </div>
