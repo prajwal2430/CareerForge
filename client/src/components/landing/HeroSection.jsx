@@ -35,14 +35,13 @@ const HeroSection = () => {
             <motion.div {...fadeUp} transition={{ delay: 0.1, duration: 0.6 }}>
               <div style={{
                 display: 'inline-flex', alignItems: 'center', gap: 8,
-                background: 'linear-gradient(135deg, #F0FDFA, #CCFBF1)',
-                color: '#0D9488',
-                border: '1px solid rgba(13, 148, 136, 0.2)',
+                background: '#F0FDFA',
+                color: '#0F766E',
+                border: '1px solid rgba(15, 118, 110, 0.2)',
                 padding: '6px 16px', borderRadius: 999,
                 fontSize: '0.8rem', fontWeight: 700, letterSpacing: '0.06em',
                 textTransform: 'uppercase', marginBottom: '1.5rem',
-                fontFamily: "'Poppins', sans-serif",
-                animation: 'border-shimmer 3s ease infinite'
+                fontFamily: "'Poppins', sans-serif"
               }}>
                 <FiZap style={{ fontSize: '0.85rem' }} /> #1 Placement Prep Platform
               </div>
@@ -52,18 +51,13 @@ const HeroSection = () => {
               style={{
                 fontFamily: "'Poppins', sans-serif",
                 fontSize: 'clamp(2.5rem, 5vw, 4rem)',
-                fontWeight: 800, color: '#0F172A',
+                fontWeight: 800, color: '#1C1917',
                 lineHeight: 1.1, letterSpacing: '-0.03em',
                 marginBottom: '1.5rem'
               }}
             >
               Your Complete{' '}
-              <span style={{
-                background: 'linear-gradient(135deg, #0D9488, #06B6D4)',
-                WebkitBackgroundClip: 'text',
-                WebkitTextFillColor: 'transparent',
-                backgroundClip: 'text'
-              }}>
+              <span style={{ color: '#0F766E' }}>
                 Placement Prep
               </span>
               {' '}Platform
@@ -71,7 +65,7 @@ const HeroSection = () => {
 
             <motion.p {...fadeUp} transition={{ delay: 0.3, duration: 0.6 }}
               style={{
-                fontSize: '1.15rem', color: '#4B5563', lineHeight: 1.7,
+                fontSize: '1.15rem', color: '#78716C', lineHeight: 1.7,
                 marginBottom: '2rem', fontFamily: "'Inter', sans-serif"
               }}
             >
@@ -81,15 +75,15 @@ const HeroSection = () => {
             <motion.div {...fadeUp} transition={{ delay: 0.4, duration: 0.6 }}
               style={{ display: 'flex', gap: 16, flexWrap: 'wrap', marginBottom: '3rem' }}
             >
-              <Link to="/register" className="btn btn-primary btn-xl hover-lift animate-glow-ring"
+              <Link to="/register" className="btn btn-accent btn-xl hover-lift"
                 style={{ gap: 10 }}
               >
                 Start Learning Free <FiArrowRight />
               </Link>
               <Link to="/practice" className="btn btn-secondary btn-xl hover-lift"
-                style={{ gap: 10, color: '#0D9488', borderColor: '#0D9488' }}
+                style={{ gap: 10, color: '#0F766E', borderColor: '#E7E5E4' }}
               >
-                <FiPlay style={{ color: '#0D9488' }} /> Explore Courses
+                <FiPlay style={{ color: '#0F766E' }} /> Explore Courses
               </Link>
             </motion.div>
 
@@ -110,13 +104,13 @@ const HeroSection = () => {
                 >
                   <div style={{
                     width: 22, height: 22, borderRadius: '50%',
-                    background: 'linear-gradient(135deg, #0D9488, #06B6D4)',
+                    background: '#0F766E',
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
                     flexShrink: 0
                   }}>
                     <FiCheckCircle style={{ color: 'white', fontSize: '0.7rem' }} />
                   </div>
-                  <span style={{ fontSize: '0.9rem', color: '#6B7280', fontFamily: "'Inter', sans-serif" }}>{item}</span>
+                  <span style={{ fontSize: '0.9rem', color: '#78716C', fontFamily: "'Inter', sans-serif" }}>{item}</span>
                 </motion.div>
               ))}
             </motion.div>
@@ -134,54 +128,54 @@ const HeroSection = () => {
                 position: 'absolute', top: 40, left: 20, right: 0,
                 background: 'white',
                 borderRadius: 20, padding: '1.5rem',
-                boxShadow: '0 20px 60px rgba(0,0,0,0.08), 0 0 0 1px rgba(13, 148, 136, 0.06)',
-                border: '1px solid rgba(243, 244, 246, 0.8)',
+                boxShadow: '0 20px 60px rgba(0,0,0,0.06)',
+                border: '1px solid #E7E5E4',
                 transition: 'all 0.3s ease',
               }}
-              whileHover={{ y: -6, boxShadow: '0 25px 70px rgba(13, 148, 136, 0.12), 0 0 0 1px rgba(13, 148, 136, 0.15)' }}
+              whileHover={{ y: -6, borderColor: '#0F766E' }}
             >
               <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: '1rem' }}>
                 <div style={{
                   width: 42, height: 42, borderRadius: 12,
-                  background: 'linear-gradient(135deg, #0D9488, #06B6D4)',
+                  background: '#0F766E',
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
                   color: 'white', fontSize: '1.1rem',
-                  boxShadow: '0 4px 12px rgba(13, 148, 136, 0.25)'
+                  boxShadow: '0 4px 12px rgba(15, 118, 110, 0.25)'
                 }}>📊</div>
                 <div>
-                  <div style={{ fontFamily: "'Poppins', sans-serif", fontWeight: 700, fontSize: '0.9rem', color: '#0F172A' }}>Placement Dashboard</div>
-                  <div style={{ fontSize: '0.75rem', color: '#9CA3AF' }}>Rahul Sharma • 7 days streak 🔥</div>
+                  <div style={{ fontFamily: "'Poppins', sans-serif", fontWeight: 700, fontSize: '0.9rem', color: '#1C1917' }}>Placement Dashboard</div>
+                  <div style={{ fontSize: '0.75rem', color: '#78716C' }}>Rahul Sharma • 7 days streak 🔥</div>
                 </div>
               </div>
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 12, marginBottom: '1rem' }}>
                 {[
-                  { label: 'Problems', val: '247', sub: '+12 this week', color: '#0D9488' },
-                  { label: 'Mock Score', val: '9.2', sub: 'Top 5%', color: '#10B981' },
-                  { label: 'Courses', val: '3/5', sub: '60% done', color: '#3B82F6' },
+                  { label: 'Problems', val: '247', sub: '+12 this week', color: '#0F766E' },
+                  { label: 'Mock Score', val: '9.2', sub: 'Top 5%', color: '#0F766E' },
+                  { label: 'Courses', val: '3/5', sub: '60% done', color: '#F97360' },
                 ].map((s, i) => (
                   <div key={i} style={{
-                    textAlign: 'center', background: '#F9FAFB', borderRadius: 12, padding: '12px 8px',
+                    textAlign: 'center', background: '#FAFAF9', borderRadius: 12, padding: '12px 8px',
                     transition: 'all 0.2s', cursor: 'default'
                   }}>
                     <div style={{ fontFamily: "'Poppins', sans-serif", fontWeight: 800, fontSize: '1.3rem', color: s.color }}>{s.val}</div>
-                    <div style={{ fontSize: '0.7rem', fontWeight: 600, color: '#4B5563' }}>{s.label}</div>
-                    <div style={{ fontSize: '0.65rem', color: '#9CA3AF', marginTop: 2 }}>{s.sub}</div>
+                    <div style={{ fontSize: '0.7rem', fontWeight: 600, color: '#1C1917' }}>{s.label}</div>
+                    <div style={{ fontSize: '0.65rem', color: '#78716C', marginTop: 2 }}>{s.sub}</div>
                   </div>
                 ))}
               </div>
 
               <div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6 }}>
-                  <span style={{ fontSize: '0.78rem', fontWeight: 600, color: '#4B5563' }}>Placement Readiness</span>
-                  <span style={{ fontSize: '0.78rem', fontWeight: 700, color: '#0D9488' }}>78%</span>
+                  <span style={{ fontSize: '0.78rem', fontWeight: 600, color: '#1C1917' }}>Placement Readiness</span>
+                  <span style={{ fontSize: '0.78rem', fontWeight: 700, color: '#0F766E' }}>78%</span>
                 </div>
-                <div style={{ height: 8, background: '#F3F4F6', borderRadius: 999, overflow: 'hidden' }}>
+                <div style={{ height: 8, background: '#E7E5E4', borderRadius: 999, overflow: 'hidden' }}>
                   <motion.div
                     initial={{ width: 0 }}
                     animate={{ width: '78%' }}
                     transition={{ delay: 0.8, duration: 1.2, ease: 'easeOut' }}
-                    style={{ height: '100%', background: 'linear-gradient(135deg, #0D9488, #06B6D4)', borderRadius: 999 }}
+                    style={{ height: '100%', background: '#0F766E', borderRadius: 999 }}
                   />
                 </div>
               </div>
@@ -195,21 +189,21 @@ const HeroSection = () => {
               className="animate-float"
               style={{ animationDelay: '1s', position: 'absolute', bottom: 60, left: 0,
                 background: 'white', borderRadius: 16, padding: '1rem 1.25rem',
-                boxShadow: '0 10px 30px rgba(0,0,0,0.08)', border: '1px solid #F3F4F6',
+                boxShadow: '0 10px 30px rgba(0,0,0,0.06)', border: '1px solid #E7E5E4',
                 display: 'flex', alignItems: 'center', gap: 12,
                 transition: 'all 0.3s',
               }}
-              whileHover={{ y: -4, boxShadow: '0 15px 40px rgba(16, 185, 129, 0.15)' }}
+              whileHover={{ y: -4, borderColor: '#0F766E' }}
             >
               <div style={{
                 width: 36, height: 36, borderRadius: 10,
-                background: 'linear-gradient(135deg, #10B981, #6EE7B7)',
+                background: '#0F766E',
                 display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white',
-                boxShadow: '0 4px 12px rgba(16, 185, 129, 0.25)'
+                boxShadow: '0 4px 12px rgba(15, 118, 110, 0.25)'
               }}>✓</div>
               <div>
-                <div style={{ fontSize: '0.8rem', fontWeight: 700, color: '#0F172A', fontFamily: "'Poppins', sans-serif" }}>Offer Accepted!</div>
-                <div style={{ fontSize: '0.7rem', color: '#9CA3AF' }}>Amazon — SDE 1 · ₹24 LPA</div>
+                <div style={{ fontSize: '0.8rem', fontWeight: 700, color: '#1C1917', fontFamily: "'Poppins', sans-serif" }}>Offer Accepted!</div>
+                <div style={{ fontSize: '0.7rem', color: '#78716C' }}>Amazon — SDE 1 · ₹24 LPA</div>
               </div>
             </motion.div>
 
@@ -220,12 +214,12 @@ const HeroSection = () => {
               transition={{ delay: 0.5, duration: 0.6 }}
               className="animate-float"
               style={{ animationDelay: '1.5s', position: 'absolute', top: 0, right: -20,
-                background: 'linear-gradient(135deg, #0D9488, #06B6D4)', borderRadius: 16, padding: '1rem 1.25rem',
-                boxShadow: '0 10px 30px rgba(13, 148, 136, 0.3)', color: 'white',
+                background: '#F97360', borderRadius: 16, padding: '1rem 1.25rem',
+                boxShadow: '0 10px 30px rgba(249, 115, 96, 0.3)', color: 'white',
                 display: 'flex', alignItems: 'center', gap: 12,
                 transition: 'all 0.3s',
               }}
-              whileHover={{ y: -4, boxShadow: '0 15px 40px rgba(13, 148, 136, 0.4)' }}
+              whileHover={{ y: -4, boxShadow: '0 15px 40px rgba(249, 115, 96, 0.4)' }}
             >
               <div style={{ fontSize: '1.5rem' }}>🔥</div>
               <div>
@@ -242,19 +236,19 @@ const HeroSection = () => {
               className="animate-float"
               style={{ animationDelay: '0.8s', position: 'absolute', bottom: 20, right: 0,
                 background: 'white', borderRadius: 14, padding: '0.75rem 1rem',
-                boxShadow: '0 8px 20px rgba(0,0,0,0.07)', border: '1px solid #F3F4F6',
+                boxShadow: '0 8px 20px rgba(0,0,0,0.06)', border: '1px solid #E7E5E4',
                 display: 'flex', alignItems: 'center', gap: 8,
                 transition: 'all 0.3s',
               }}
-              whileHover={{ y: -3, boxShadow: '0 12px 30px rgba(245, 158, 11, 0.12)' }}
+              whileHover={{ y: -3, borderColor: '#0F766E' }}
             >
               <div style={{ display: 'flex', gap: 2 }}>
                 {[1,2,3,4,5].map(i => (
-                  <FiStar key={i} style={{ color: '#F59E0B', fontSize: '0.85rem', fill: '#F59E0B' }} />
+                  <FiStar key={i} style={{ color: '#F97360', fontSize: '0.85rem', fill: '#F97360' }} />
                 ))}
               </div>
-              <span style={{ fontSize: '0.78rem', fontWeight: 700, color: '#0F172A' }}>4.9/5</span>
-              <span style={{ fontSize: '0.72rem', color: '#9CA3AF' }}>10k+ Reviews</span>
+              <span style={{ fontSize: '0.78rem', fontWeight: 700, color: '#1C1917' }}>4.9/5</span>
+              <span style={{ fontSize: '0.72rem', color: '#78716C' }}>10k+ Reviews</span>
             </motion.div>
           </div>
         </div>
