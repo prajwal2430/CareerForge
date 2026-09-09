@@ -26,8 +26,20 @@ const userSchema = new mongoose.Schema(
       enum: ['user', 'admin'],
       default: 'user',
     },
+    branch: {
+      type: String,
+      default: 'Computer Science',
+    },
+    year: {
+      type: String,
+      default: 'Final Year',
+    },
+    careerGoal: {
+      type: String,
+      default: 'Software Development Engineer (SDE-1)',
+    },
   },
-  { timestamps: true }
+  { timestamps: true, strict: false }
 );
 
 // Hash password before saving
