@@ -37,11 +37,11 @@ const AppLayout = () => {
   const sidebarWidth = isSidebarCollapsed ? 72 : 260;
 
   return (
-    <div className="flex min-h-screen bg-[#0B1020] text-[#F8FAFC]">
+    <div className="flex min-h-screen bg-[#FAFAF9] text-[#44403C]">
       {/* Mobile Overlay */}
       {isMobileOpen && (
         <div
-          className="fixed inset-0 bg-[#0B1020]/80 backdrop-blur-sm z-[150] md:hidden"
+          className="fixed inset-0 bg-[#0F172A]/50 backdrop-blur-sm z-[150] md:hidden"
           onClick={() => setIsMobileOpen(false)}
         />
       )}
