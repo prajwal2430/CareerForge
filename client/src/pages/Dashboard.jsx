@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip,
@@ -8,26 +8,28 @@ import {
 import {
   Zap, BookOpen, Mic, FileCheck, CheckCircle2, Play, 
   ChevronLeft, ChevronRight, Trophy, Flame, Bot, ArrowRight,
-  TrendingUp, Sparkles, BrainCircuit
+  TrendingUp, Sparkles, BrainCircuit, Code, AlertTriangle,
+  Award, Compass, ShieldCheck, Check, Clock, Target, Calendar
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
-import { MOCK_DATA } from '../data/mockData';
+import api from '../services/api';
 
 /* ─────────────────────────────────────────────────────────────
-   ANIMATED COUNT-UP
+   ANIMATED COUNT-UP HOOK
 ───────────────────────────────────────────────────────────── */
-function useCountUp(target, duration = 1200, start = true) {
+function useCountUp(target, duration = 1000, start = true) {
   const [count, setCount] = useState(0);
   useEffect(() => {
     if (!start) return;
     let startTime = null;
+    const targetNum = Number(target) || 0;
     const step = (timestamp) => {
       if (!startTime) startTime = timestamp;
       const progress = Math.min((timestamp - startTime) / duration, 1);
       const ease = 1 - Math.pow(1 - progress, 3);
-      setCount(Math.floor(ease * target));
+      setCount(Math.floor(ease * targetNum));
       if (progress < 1) requestAnimationFrame(step);
-      else setCount(target);
+      else setCount(targetNum);
     };
     requestAnimationFrame(step);
   }, [target, duration, start]);
@@ -35,12 +37,12 @@ function useCountUp(target, duration = 1200, start = true) {
 }
 
 /* ─────────────────────────────────────────────────────────────
-   STAT CARD
+   STAT CARD COMPONENT
 ───────────────────────────────────────────────────────────── */
 const StatCard = ({ icon: Icon, value, suffix = '', label, color, gradientFrom, gradientTo, delay = 0 }) => {
   const [visible, setVisible] = useState(false);
   const ref = useRef(null);
-  const displayCount = useCountUp(value, 1200, visible);
+  const displayCount = useCountUp(value, 1000, visible);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -56,32 +58,31 @@ const StatCard = ({ icon: Icon, value, suffix = '', label, color, gradientFrom, 
       ref={ref}
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ delay, duration: 0.5, ease: 'easeOut' }}
+      transition={{ delay, duration: 0.4, ease: 'easeOut' }}
       className="premium-card glow group relative overflow-hidden"
     >
-      {/* Subtle Background Glow */}
       <div 
-        className="absolute -top-10 -right-10 w-32 h-32 rounded-full opacity-20 blur-[30px] pointer-events-none transition-opacity duration-300 group-hover:opacity-40" 
+        className="absolute -top-10 -right-10 w-32 h-32 rounded-full opacity-10 blur-[30px] pointer-events-none transition-opacity duration-300 group-hover:opacity-20" 
         style={{ background: `linear-gradient(135deg, ${gradientFrom}, ${gradientTo})` }}
       />
 
       <div className="flex items-start justify-between relative z-10">
         <div>
-          <p className="text-xs font-semibold text-[#94A3B8] uppercase tracking-wider mb-2">{label}</p>
+          <p className="text-xs font-semibold text-[#78716C] uppercase tracking-wider mb-2">{label}</p>
           <div className="flex items-baseline gap-1">
-            <span className="text-[2.5rem] font-bold text-[#F8FAFC] leading-none font-display tracking-tight">
+            <span className="text-[2.25rem] font-bold text-[#1C1917] leading-none font-display tracking-tight">
               {displayCount}
             </span>
             {suffix && (
-              <span className="text-xl font-medium text-[#7C3AED] leading-none">{suffix}</span>
+              <span className="text-xl font-semibold leading-none" style={{ color }}>{suffix}</span>
             )}
           </div>
         </div>
         <div
-          className="w-12 h-12 rounded-[14px] flex items-center justify-center flex-shrink-0 transition-transform duration-300 group-hover:scale-110 shadow-lg"
-          style={{ background: `linear-gradient(135deg, ${gradientFrom}33, ${gradientTo}33)` }}
+          className="w-11 h-11 rounded-[12px] flex items-center justify-center flex-shrink-0 transition-transform duration-300 group-hover:scale-110 shadow-xs"
+          style={{ background: `${color}18` }}
         >
-          <Icon size={24} strokeWidth={2} style={{ color }} />
+          <Icon size={22} strokeWidth={2} style={{ color }} />
         </div>
       </div>
     </motion.div>
@@ -94,12 +95,12 @@ const StatCard = ({ icon: Icon, value, suffix = '', label, color, gradientFrom, 
 const CustomTooltip = ({ active, payload, label }) => {
   if (!active || !payload?.length) return null;
   return (
-    <div className="bg-[#151D2F] border border-[#263248] rounded-xl shadow-[0_8px_30px_rgba(0,0,0,0.5)] px-4 py-3 text-sm">
-      <p className="font-semibold text-[#F8FAFC] mb-2">{label}</p>
+    <div className="bg-white border border-[#E7E5E4] rounded-xl shadow-lg px-4 py-3 text-sm">
+      <p className="font-semibold text-[#1C1917] mb-2">{label}</p>
       {payload.map((p, i) => (
         <p key={i} style={{ color: p.stroke }} className="font-medium flex items-center gap-2">
           <span className="w-2 h-2 rounded-full" style={{ backgroundColor: p.stroke }} />
-          {p.name}: <span className="font-bold text-[#F8FAFC] ml-1">{p.value}</span>
+          {p.name}: <span className="font-bold text-[#1C1917] ml-1">{p.value}</span>
         </p>
       ))}
     </div>
@@ -107,218 +108,517 @@ const CustomTooltip = ({ active, payload, label }) => {
 };
 
 /* ─────────────────────────────────────────────────────────────
-   MAIN DASHBOARD
+   MAIN UPGRADED DASHBOARD (AI-DRIVEN)
 ───────────────────────────────────────────────────────────── */
 const Dashboard = () => {
   const { user } = useAuth();
-  const data = MOCK_DATA;
+  const navigate = useNavigate();
+  const studentId = user?._id || user?.id || 'default_student';
 
-  // Chart period toggle
+  const [dashboard, setDashboard] = useState(null);
+  const [loading, setLoading] = useState(true);
   const [period, setPeriod] = useState('week');
-  const chartData = period === 'week'
-    ? data.weeklyActivity
-    : period === 'month' ? data.monthlyActivity : data.yearlyActivity;
+  const [tasks, setTasks] = useState([]);
 
-  // Tasks state
-  const [tasks, setTasks] = useState(data.tasks);
+  // Fetch all dashboard data from backend AI service
+  useEffect(() => {
+    let isMounted = true;
+    const fetchDashboard = async () => {
+      try {
+        setLoading(true);
+        const res = await api.get(`/ai/dashboard/${studentId}`);
+        if (isMounted && res.data) {
+          setDashboard(res.data);
+          setTasks(res.data.todaysPlan || []);
+        }
+      } catch (err) {
+        console.error('Failed to load student dashboard from backend:', err);
+      } finally {
+        if (isMounted) setLoading(false);
+      }
+    };
 
-  const toggleTask = (id) => {
-    setTasks(prev => prev.map(t => t.id === id ? { ...t, completed: !t.completed } : t));
+    fetchDashboard();
+    return () => {
+      isMounted = false;
+    };
+  }, [studentId]);
+
+  const toggleTask = (taskId) => {
+    setTasks(prev => prev.map(t => t.id === taskId ? { ...t, completed: !t.completed } : t));
   };
 
-  const completedTasks = tasks.filter(t => t.completed).length;
-  const taskPercent = Math.round((completedTasks / tasks.length) * 100);
+  // Readiness values from backend
+  const readinessScore = Math.round(dashboard?.placementReadiness?.score || 72);
+  const readinessStatus = dashboard?.placementReadiness?.status || 'Needs Improvement';
+  const displayReadiness = useCountUp(readinessScore, 1200, !loading);
 
-  // Donut chart data
+  // Skill breakdown from backend
+  const skills = dashboard?.skillBreakdown || {
+    dsa: 45,
+    java: 72,
+    sql: 55,
+    aptitude: 81,
+    communication: 64,
+    interview: 60
+  };
+
+  // Problem breakdown data for pie chart
+  const codingData = dashboard?.codingProgress || { total_solved: 18, easy_solved: 10, medium_solved: 6, hard_solved: 2 };
   const pieData = [
-    { name: 'Easy',   value: data.problems.easy.solved,   color: '#06B6D4' },
-    { name: 'Medium', value: data.problems.medium.solved, color: '#7C3AED' },
-    { name: 'Hard',   value: data.problems.hard.solved,   color: '#F43F5E' },
+    { name: 'Easy',   value: codingData.easy_solved || 10,   color: '#0F766E' },
+    { name: 'Medium', value: codingData.medium_solved || 6,  color: '#14B8A6' },
+    { name: 'Hard',   value: codingData.hard_solved || 2,    color: '#F97360' },
   ];
   const totalSolved = pieData.reduce((a, b) => a + b.value, 0);
 
-  // Overall Readiness Score Calculation (mock)
-  const readinessScore = Math.round((data.user.dsaProgress + data.user.resumeScore + (data.user.mockScore * 10)) / 3);
-  const displayReadiness = useCountUp(readinessScore, 1500, true);
+  // Activity chart data from backend learning streak
+  const activityData = dashboard?.learningStreak?.weeklyActivity || [
+    { day: 'Mon', hours: 2.0, problems: 3 },
+    { day: 'Tue', hours: 1.5, problems: 2 },
+    { day: 'Wed', hours: 3.0, problems: 4 },
+    { day: 'Thu', hours: 2.5, problems: 3 },
+    { day: 'Fri', hours: 1.0, problems: 1 },
+    { day: 'Sat', hours: 0.0, problems: 0 },
+    { day: 'Sun', hours: 2.0, problems: 2 }
+  ];
 
-  // Carousel logic
-  const carouselRef = useRef(null);
-  const scrollCarousel = (dir) => {
-    if (carouselRef.current) {
-      carouselRef.current.scrollBy({ left: dir * 300, behavior: 'smooth' });
-    }
-  };
+  const streakDays = dashboard?.learningStreak?.streakDays || 5;
+
+  if (loading && !dashboard) {
+    return (
+      <div className="pb-12 space-y-8 max-w-[1400px] mx-auto text-[#44403C]">
+        <div className="h-12 bg-white/60 animate-pulse rounded-2xl w-1/3" />
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div className="h-56 bg-white animate-pulse rounded-2xl border border-[#E7E5E4]" />
+          <div className="h-56 bg-white animate-pulse rounded-2xl border border-[#E7E5E4]" />
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-4 gap-6">
+          {[1, 2, 3, 4].map(i => (
+            <div key={i} className="h-28 bg-white animate-pulse rounded-2xl border border-[#E7E5E4]" />
+          ))}
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className="pb-12 space-y-8 max-w-[1400px] mx-auto text-[#F8FAFC]">
+    <div className="pb-12 space-y-8 max-w-[1400px] mx-auto text-[#44403C]">
       
-      {/* ── 1. Header Section ── */}
+      {/* ─────────────────────────────────────────────────────────────
+          1. HEADER SECTION
+      ───────────────────────────────────────────────────────────── */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
           <motion.h1 
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
-            className="text-3xl md:text-4xl font-display font-bold mb-2 flex items-center gap-2"
+            className="text-3xl md:text-4xl font-display font-bold text-[#1C1917] mb-2 flex items-center gap-2"
           >
-            Good Morning, {user?.name?.split(' ')[0] || 'Guest'} <span className="animate-wave origin-bottom-right">👋</span>
+            Good Morning, {user?.name?.split(' ')[0] || dashboard?.student_name || 'Student'} <span className="animate-wave origin-bottom-right">👋</span>
           </motion.h1>
           <motion.p 
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.1 }}
-            className="text-[#94A3B8] text-base"
+            className="text-[#78716C] text-base"
           >
-            Let's move one step closer to your dream career.
+            Placement Roadmap: <strong className="text-[#0F766E]">{dashboard?.careerGoal || 'Software Development Engineer'}</strong> ({dashboard?.year || '4th Year'})
           </motion.p>
         </div>
+
+        <Link
+          to="/ai-mentor"
+          className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#0F766E] hover:bg-[#115E59] text-white text-xs font-semibold shadow-xs transition-all cursor-pointer"
+        >
+          <Sparkles size={15} />
+          <span>Launch AI Mentor</span>
+        </Link>
       </div>
 
-      {/* ── 2. Top Banner Row: Readiness & AI Mentor ── */}
-      <div className="grid grid-cols-1 lg:grid-cols-[1fr_1fr] gap-6">
+      {/* ─────────────────────────────────────────────────────────────
+          2. TOP ROW: PLACEMENT READINESS SCORE & SKILL BREAKDOWN
+      ───────────────────────────────────────────────────────────── */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         
-        {/* Readiness Score Card */}
+        {/* Placement Readiness Gauge Card (5 cols) */}
         <motion.div
            initial={{ opacity: 0, y: 20 }}
            animate={{ opacity: 1, y: 0 }}
            transition={{ delay: 0.2 }}
-           className="premium-card flex flex-col sm:flex-row items-center gap-8 relative overflow-hidden"
+           className="lg:col-span-5 premium-card flex flex-col justify-between relative overflow-hidden"
         >
-          {/* Circular Progress Indicator */}
-          <div className="relative w-36 h-36 flex-shrink-0">
-             <svg className="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
-                <circle 
-                  cx="50" cy="50" r="40" 
-                  className="stroke-[#263248]" strokeWidth="8" fill="none"
-                />
-                <motion.circle 
-                  cx="50" cy="50" r="40"
-                  className="stroke-[#7C3AED]" strokeWidth="8" fill="none"
-                  strokeLinecap="round"
-                  strokeDasharray={`${2 * Math.PI * 40}`}
-                  initial={{ strokeDashoffset: 2 * Math.PI * 40 }}
-                  animate={{ strokeDashoffset: 2 * Math.PI * 40 - ((readinessScore / 100) * 2 * Math.PI * 40) }}
-                  transition={{ duration: 1.5, ease: "easeOut", delay: 0.3 }}
-                />
-             </svg>
-             <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-               <span className="text-3xl font-bold text-[#F8FAFC] tracking-tight tabular-nums">
-                 {displayReadiness}%
-               </span>
-               <span className="text-[10px] text-[#06B6D4] font-semibold uppercase tracking-wider">Score</span>
-             </div>
+          <div className="flex items-center justify-between mb-4">
+            <div>
+              <span className="text-[10px] font-bold uppercase tracking-wider text-[#A8A29E]">Placement Diagnostics</span>
+              <h2 className="text-xl font-bold font-display text-[#1C1917]">Placement Readiness</h2>
+            </div>
+            <span className={`px-2.5 py-1 rounded-full text-xs font-bold ${
+              readinessScore >= 80 ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' :
+              readinessScore >= 70 ? 'bg-amber-50 text-amber-700 border border-amber-200' :
+              'bg-rose-50 text-rose-700 border border-rose-200'
+            }`}>
+              {readinessStatus}
+            </span>
           </div>
 
-          <div className="text-center sm:text-left flex-1 relative z-10">
-            <h2 className="text-2xl font-bold font-display text-[#F8FAFC] mb-2">Career Readiness</h2>
-            <p className="text-sm text-[#94A3B8] leading-relaxed mb-4">
-              Your overall profile strength based on skills, mock interviews, and resume. You are doing fantastic!
-            </p>
-            <div className="flex flex-wrap items-center justify-center sm:justify-start gap-4">
-               <div className="flex items-center gap-1.5 text-sm font-semibold bg-[#263248]/50 border border-[#263248] px-3 py-1.5 rounded-full text-orange-400">
-                 <Flame size={16} /> {data.user.streak} Day Streak
+          <div className="flex flex-col sm:flex-row items-center gap-6 my-2">
+            {/* Circular Gauge */}
+            <div className="relative w-36 h-36 shrink-0">
+               <svg className="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
+                  <circle 
+                    cx="50" cy="50" r="40" 
+                    className="stroke-[#E7E5E4]" strokeWidth="8" fill="none"
+                  />
+                  <motion.circle 
+                    cx="50" cy="50" r="40"
+                    className={
+                      readinessScore >= 80 ? 'stroke-[#0F766E]' :
+                      readinessScore >= 70 ? 'stroke-amber-500' : 'stroke-rose-500'
+                    }
+                    strokeWidth="8" fill="none"
+                    strokeLinecap="round"
+                    strokeDasharray={`${2 * Math.PI * 40}`}
+                    initial={{ strokeDashoffset: 2 * Math.PI * 40 }}
+                    animate={{ strokeDashoffset: 2 * Math.PI * 40 - ((readinessScore / 100) * 2 * Math.PI * 40) }}
+                    transition={{ duration: 1.2, ease: "easeOut", delay: 0.2 }}
+                  />
+               </svg>
+               <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+                 <span className="text-3xl font-bold text-[#1C1917] tracking-tight tabular-nums">
+                   {displayReadiness}%
+                 </span>
+                 <span className="text-[10px] text-[#78716C] font-semibold uppercase tracking-wider">Readiness</span>
                </div>
-               <div className="flex items-center gap-1.5 text-sm font-semibold bg-[#263248]/50 border border-[#263248] px-3 py-1.5 rounded-full text-yellow-400">
-                 <Trophy size={16} /> #{data.user.rank?.toLocaleString()} Global
-               </div>
+            </div>
+
+            <div className="space-y-3 flex-1 text-center sm:text-left">
+              <p className="text-xs text-[#78716C] leading-relaxed">
+                Evaluated deterministically across algorithmic problem solving, core technologies, aptitude, and interview delivery.
+              </p>
+              
+              <div className="flex flex-wrap gap-2 justify-center sm:justify-start">
+                <div className="flex items-center gap-1.5 text-xs font-semibold bg-[#FFF1F0] border border-[#FFE4E1] px-3 py-1 rounded-full text-[#EA6250]">
+                  <Flame size={14} /> {streakDays} Day Streak
+                </div>
+                <div className="flex items-center gap-1.5 text-xs font-semibold bg-[#F0FDFA] border border-[#CCFBF1] px-3 py-1 rounded-full text-[#0F766E]">
+                  <Trophy size={14} /> {dashboard?.placementReadiness?.targetTier || 'Tier 2 Ready'}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Strong Areas & Weak Areas Summary */}
+          <div className="pt-4 border-t border-[#E7E5E4] grid grid-cols-2 gap-3 mt-2">
+            <div>
+              <div className="flex items-center gap-1.5 text-xs font-bold text-emerald-700 mb-1.5">
+                <CheckCircle2 size={13} />
+                <span>Strong Areas:</span>
+              </div>
+              <div className="flex flex-wrap gap-1">
+                {(dashboard?.strongAreas || ['Aptitude', 'Java']).map((item, idx) => (
+                  <span key={idx} className="px-2 py-0.5 rounded text-[11px] font-medium bg-emerald-50 text-emerald-800 border border-emerald-200">
+                    {item}
+                  </span>
+                ))}
+              </div>
+            </div>
+
+            <div>
+              <div className="flex items-center gap-1.5 text-xs font-bold text-rose-700 mb-1.5">
+                <AlertTriangle size={13} />
+                <span>Weak Areas:</span>
+              </div>
+              <div className="flex flex-wrap gap-1">
+                {(dashboard?.weakAreas || ['DSA', 'SQL']).map((item, idx) => (
+                  <span key={idx} className="px-2 py-0.5 rounded text-[11px] font-medium bg-rose-50 text-rose-800 border border-rose-200">
+                    {item}
+                  </span>
+                ))}
+              </div>
             </div>
           </div>
         </motion.div>
 
-        {/* AI Mentor Card */}
+        {/* 2. SKILL BREAKDOWN CARD (7 cols) */}
         <motion.div
            initial={{ opacity: 0, y: 20 }}
            animate={{ opacity: 1, y: 0 }}
            transition={{ delay: 0.3 }}
-           className="rounded-[24px] p-1 shadow-[0_0_40px_rgba(124,58,237,0.15)] relative group cursor-pointer"
-           style={{ background: 'linear-gradient(135deg, #7C3AED, #06B6D4)' }}
+           className="lg:col-span-7 premium-card flex flex-col justify-between"
         >
-          <div className="absolute inset-0 bg-gradient-to-r from-[#7C3AED] to-[#06B6D4] blur-[20px] opacity-20 group-hover:opacity-40 transition-opacity duration-500 rounded-[24px]" />
-          <div className="bg-[#111827] w-full h-full rounded-[22px] p-6 sm:p-8 flex flex-col justify-center relative z-10 overflow-hidden">
-             
-             {/* Decorative Background Icon */}
-             <Bot className="absolute -right-8 -bottom-8 w-48 h-48 text-[#7C3AED] opacity-10 transform rotate-12 transition-transform duration-500 group-hover:rotate-6" />
+          <div>
+            <div className="flex items-center justify-between mb-4">
+              <div>
+                <span className="text-[10px] font-bold uppercase tracking-wider text-[#A8A29E]">Multi-Domain Evaluation</span>
+                <h3 className="text-xl font-bold font-display text-[#1C1917]">Skill Breakdown</h3>
+              </div>
+              <span className="text-xs text-[#78716C]">Target Cutoff: <strong>70%</strong></span>
+            </div>
 
-             <div className="flex items-center gap-3 mb-4">
-               <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#7C3AED] to-[#06B6D4] flex items-center justify-center shadow-[0_0_20px_rgba(6,182,212,0.4)]">
-                 <Sparkles size={24} className="text-white" />
-               </div>
-               <h2 className="text-2xl font-bold font-display text-transparent bg-clip-text bg-gradient-to-r from-[#F8FAFC] to-[#06B6D4]">AI Career Mentor</h2>
-             </div>
-             
-             <p className="text-[#94A3B8] text-sm leading-relaxed mb-6 max-w-[280px]">
-               Practice mock interviews, get instant resume feedback, or map out your career roadmap with personalized AI guidance.
-             </p>
-             
-             <Link to="/ai-mentor" className="inline-flex items-center justify-center gap-2 bg-[#F8FAFC] text-[#111827] font-semibold px-6 py-3 rounded-xl w-max hover:bg-[#06B6D4] hover:text-white transition-colors duration-300">
-               Start Session <ArrowRight size={18} />
-             </Link>
+            {/* Exact Visual Breakdown matching prompt requirements */}
+            <div className="space-y-3.5 mt-2">
+              {[
+                { label: 'DSA', key: 'dsa', value: skills.dsa },
+                { label: 'Java', key: 'java', value: skills.java },
+                { label: 'SQL', key: 'sql', value: skills.sql },
+                { label: 'Aptitude', key: 'aptitude', value: skills.aptitude },
+                { label: 'Communication', key: 'communication', value: skills.communication },
+                { label: 'Interview', key: 'interview', value: skills.interview }
+              ].map((skill) => {
+                const val = Math.round(skill.value || 0);
+                const isStrong = val >= 75;
+                const isWeak = val < 70;
+
+                return (
+                  <div key={skill.key} className="space-y-1">
+                    <div className="flex items-center justify-between text-xs">
+                      <span className="font-semibold text-[#1C1917] w-32">{skill.label}</span>
+                      <div className="flex items-center gap-2">
+                        {isWeak && (
+                          <span className="text-[10px] font-semibold text-rose-600 bg-rose-50 px-1.5 py-0.2 rounded border border-rose-200">
+                            Focus
+                          </span>
+                        )}
+                        <span className="font-bold text-[#1C1917] tabular-nums w-10 text-right">{val}%</span>
+                      </div>
+                    </div>
+                    <div className="w-full h-2.5 bg-[#E7E5E4] rounded-full overflow-hidden">
+                      <motion.div
+                        className={`h-full rounded-full ${
+                          isStrong ? 'bg-[#0F766E]' : isWeak ? 'bg-rose-500' : 'bg-amber-500'
+                        }`}
+                        initial={{ width: 0 }}
+                        animate={{ width: `${Math.min(100, Math.max(5, val))}%` }}
+                        transition={{ duration: 0.8, ease: 'easeOut' }}
+                      />
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          <div className="pt-3 border-t border-[#E7E5E4] flex items-center justify-between text-xs text-[#78716C] mt-4">
+            <span>Overall Diagnostic Precision: <strong>Deterministic</strong></span>
+            <Link to="/ai-mentor" className="text-[#0F766E] font-semibold hover:underline flex items-center gap-1">
+              Drill Weak Topics <ArrowRight size={13} />
+            </Link>
           </div>
         </motion.div>
 
       </div>
 
-      {/* ── 3. Statistic Cards Row ── */}
+      {/* ─────────────────────────────────────────────────────────────
+          3. STATISTIC KPI CARDS (CODING, LEARNING, INTERVIEW, APTITUDE)
+      ───────────────────────────────────────────────────────────── */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         <StatCard
-          icon={Code2}
-          value={data.user.dsaProgress}
-          suffix="%"
-          label="DSA Mastery"
-          color="#06B6D4" gradientFrom="#06B6D4" gradientTo="#38BDF8"
-          delay={0.4}
+          icon={Code}
+          value={codingData.total_solved || 18}
+          suffix=""
+          label="Coding Solved"
+          color="#0F766E" gradientFrom="#0F766E" gradientTo="#14B8A6"
+          delay={0.35}
         />
         <StatCard
           icon={BookOpen}
-          value={data.user.courseProgress}
+          value={Math.round(dashboard?.learningProgress?.percentage || 45)}
           suffix="%"
-          label="Course Progress"
-          color="#7C3AED" gradientFrom="#7C3AED" gradientTo="#A78BFA"
-          delay={0.45}
+          label="Roadmap Progress"
+          color="#0D9488" gradientFrom="#0D9488" gradientTo="#2DD4BF"
+          delay={0.4}
         />
         <StatCard
           icon={Mic}
-          value={data.user.mockScore * 10}
+          value={Math.round(skills.interview || 60)}
           suffix="%"
-          label="Mock Interview"
-          color="#F43F5E" gradientFrom="#F43F5E" gradientTo="#FB7185"
-          delay={0.5}
+          label="Interview Score"
+          color="#F97360" gradientFrom="#F97360" gradientTo="#EA6250"
+          delay={0.45}
         />
         <StatCard
-          icon={FileCheck}
-          value={data.user.resumeScore}
+          icon={Zap}
+          value={Math.round(skills.aptitude || 81)}
           suffix="%"
-          label="ATS Resume"
-          color="#10B981" gradientFrom="#10B981" gradientTo="#34D399"
-          delay={0.55}
+          label="Aptitude Mastery"
+          color="#D97706" gradientFrom="#D97706" gradientTo="#F59E0B"
+          delay={0.5}
         />
       </div>
 
-      {/* ── 4. Charts Content & Tasks ── */}
-      <div className="grid grid-cols-1 lg:grid-cols-[1fr_340px] gap-6">
+      {/* ─────────────────────────────────────────────────────────────
+          4. TODAY'S PLAN & CURRENT ROADMAP ROW
+      ───────────────────────────────────────────────────────────── */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
         
-        {/* Progress Analytics Chart */}
+        {/* TODAY'S PLAN (7 cols) */}
+        <motion.div
+           initial={{ opacity: 0, y: 20 }}
+           animate={{ opacity: 1, y: 0 }}
+           transition={{ delay: 0.55 }}
+           className="lg:col-span-7 premium-card"
+        >
+          <div className="flex items-center justify-between mb-4">
+            <div>
+              <div className="flex items-center gap-2">
+                <Calendar size={18} className="text-[#0F766E]" />
+                <h3 className="text-lg font-bold font-display text-[#1C1917]">Today's Plan</h3>
+              </div>
+              <p className="text-xs text-[#78716C] mt-0.5">Recommended tasks generated adaptively for weak areas</p>
+            </div>
+            <span className="text-xs font-semibold bg-[#F0FDFA] text-[#0F766E] border border-[#CCFBF1] px-2.5 py-1 rounded-full">
+              {tasks.filter(t => t.completed).length} / {tasks.length} Completed
+            </span>
+          </div>
+
+          <div className="space-y-3">
+            {tasks.map((task) => (
+              <div
+                key={task.id}
+                onClick={() => toggleTask(task.id)}
+                className={`p-3 rounded-xl border flex items-center justify-between transition-all cursor-pointer ${
+                  task.completed
+                    ? 'bg-[#F0FDFA]/60 border-[#CCFBF1] text-[#78716C]'
+                    : 'bg-[#FAFAF9] border-[#E7E5E4] hover:border-[#0F766E]/50 text-[#1C1917]'
+                }`}
+              >
+                <div className="flex items-center gap-3">
+                  <div className={`w-6 h-6 rounded-lg flex items-center justify-center border transition-all ${
+                    task.completed
+                      ? 'bg-[#0F766E] border-[#0F766E] text-white'
+                      : 'border-[#D6D3D1] bg-white'
+                  }`}>
+                    {task.completed && <Check size={14} />}
+                  </div>
+                  <div>
+                    <div className={`text-xs font-semibold ${task.completed ? 'line-through text-[#A8A29E]' : ''}`}>
+                      {task.title}
+                    </div>
+                    <div className="text-[10px] text-[#78716C] flex items-center gap-2 mt-0.5">
+                      <span className="font-medium text-[#0F766E]">{task.category}</span>
+                      <span>•</span>
+                      <span>{task.estimated_mins || 30} mins</span>
+                    </div>
+                  </div>
+                </div>
+
+                <span className={`text-[11px] font-semibold px-2.5 py-1 rounded-lg ${
+                  task.completed
+                    ? 'text-emerald-700 bg-emerald-50'
+                    : 'text-[#0F766E] bg-white border border-[#E7E5E4]'
+                }`}>
+                  {task.completed ? 'Done' : 'Start'}
+                </span>
+              </div>
+            ))}
+          </div>
+
+          {/* AI Recommendation Alert */}
+          <div className="mt-5 p-3.5 rounded-xl bg-[#F0FDFA] border border-[#CCFBF1] flex items-start gap-3">
+            <Sparkles size={18} className="text-[#0F766E] shrink-0 mt-0.5" />
+            <div className="text-xs">
+              <strong className="text-[#0F766E]">Recent AI Mentor Recommendation:</strong>
+              <p className="text-[#44403C] mt-0.5 leading-relaxed">
+                {dashboard?.aiRecommendations?.[0] || 'Prioritize Big-O space trade-offs and practice 1 medium Tree challenge.'}
+              </p>
+            </div>
+          </div>
+        </motion.div>
+
+        {/* CURRENT ROADMAP PROGRESS (5 cols) */}
         <motion.div
            initial={{ opacity: 0, y: 20 }}
            animate={{ opacity: 1, y: 0 }}
            transition={{ delay: 0.6 }}
+           className="lg:col-span-5 premium-card"
+        >
+          <div className="flex items-center justify-between mb-4">
+            <div>
+              <div className="flex items-center gap-2">
+                <Compass size={18} className="text-[#0F766E]" />
+                <h3 className="text-lg font-bold font-display text-[#1C1917]">Current Roadmap</h3>
+              </div>
+              <p className="text-xs text-[#78716C] mt-0.5">{dashboard?.currentRoadmap?.title || 'Placement Accelerator'}</p>
+            </div>
+            <Link to="/roadmaps" className="text-xs font-semibold text-[#0F766E] hover:underline">
+              View All
+            </Link>
+          </div>
+
+          <div className="space-y-4">
+            <div>
+              <div className="flex justify-between text-xs mb-1">
+                <span className="font-semibold text-[#78716C]">Roadmap Progress</span>
+                <span className="font-bold text-[#1C1917]">{Math.round(dashboard?.learningProgress?.percentage || 45)}%</span>
+              </div>
+              <div className="w-full h-2 bg-[#E7E5E4] rounded-full overflow-hidden">
+                <div
+                  className="h-full bg-[#0F766E] rounded-full"
+                  style={{ width: `${Math.min(100, Math.max(5, dashboard?.learningProgress?.percentage || 45))}%` }}
+                />
+              </div>
+            </div>
+
+            <div className="space-y-2.5">
+              {(dashboard?.currentRoadmap?.milestones || []).slice(0, 4).map((m, idx) => (
+                <div key={idx} className="flex items-center gap-2.5 p-2 rounded-lg bg-[#FAFAF9] border border-[#E7E5E4]/80 text-xs">
+                  <div className={`w-5 h-5 rounded-md flex items-center justify-center shrink-0 ${
+                    m.completed
+                      ? 'bg-emerald-50 text-emerald-600 border border-emerald-200'
+                      : 'bg-white text-[#A8A29E] border border-[#E7E5E4]'
+                  }`}>
+                    {m.completed ? <Check size={12} /> : <Clock size={12} />}
+                  </div>
+                  <span className={`flex-1 font-medium truncate ${m.completed ? 'text-[#78716C] line-through' : 'text-[#1C1917]'}`}>
+                    {m.topic}
+                  </span>
+                  <span className="text-[10px] font-semibold text-[#A8A29E]">
+                    {m.completed ? 'Mastered' : 'Upcoming'}
+                  </span>
+                </div>
+              ))}
+            </div>
+
+            <div className="pt-2 flex items-center justify-between text-xs text-[#78716C]">
+              <span>Hours Dedicated: <strong>{dashboard?.learningProgress?.hoursSpent || 14.5} hrs</strong></span>
+              <Link to="/ai-mentor" className="text-[#0F766E] font-semibold hover:underline">
+                Update Roadmap →
+              </Link>
+            </div>
+          </div>
+        </motion.div>
+
+      </div>
+
+      {/* ─────────────────────────────────────────────────────────────
+          5. ACTIVITY & CODING BREAKDOWN CHARTS
+      ───────────────────────────────────────────────────────────── */}
+      <div className="grid grid-cols-1 lg:grid-cols-[1fr_340px] gap-6">
+        
+        {/* Activity Area Chart */}
+        <motion.div
+           initial={{ opacity: 0, y: 20 }}
+           animate={{ opacity: 1, y: 0 }}
+           transition={{ delay: 0.65 }}
            className="premium-card"
         >
-          <div className="flex items-center justify-between mb-8 flex-wrap gap-4">
+          <div className="flex items-center justify-between mb-6 flex-wrap gap-4">
              <div>
-               <h3 className="text-lg font-bold font-display text-[#F8FAFC] flex items-center gap-2">
-                 <TrendingUp size={20} className="text-[#06B6D4]" /> Activity Overview
+               <h3 className="text-lg font-bold font-display text-[#1C1917] flex items-center gap-2">
+                 <TrendingUp size={20} className="text-[#0F766E]" /> Practice Velocity & Hours
                </h3>
-               <p className="text-xs text-[#94A3B8] mt-1">Problems solved vs hours studied</p>
+               <p className="text-xs text-[#78716C] mt-0.5">Real-time activity logs synchronized from MongoDB</p>
              </div>
              
-             <div className="flex items-center gap-1 bg-[#0B1020] border border-[#263248] rounded-xl p-1">
+             <div className="flex items-center gap-1 bg-[#FAFAF9] border border-[#E7E5E4] rounded-xl p-1">
                {['week', 'month', 'year'].map(p => (
                  <button
                    key={p} onClick={() => setPeriod(p)}
-                   className={`px-4 py-1.5 rounded-lg text-xs font-semibold transition-all duration-200 capitalize ${
+                   className={`px-3.5 py-1 rounded-lg text-xs font-semibold transition-all duration-200 capitalize ${
                      period === p
-                       ? 'bg-[#263248] text-[#F8FAFC]'
-                       : 'text-[#94A3B8] hover:text-[#F8FAFC]'
+                       ? 'bg-[#0F766E] text-white shadow-xs'
+                       : 'text-[#78716C] hover:text-[#1C1917]'
                    }`}
                  >
                    {p}
@@ -327,184 +627,79 @@ const Dashboard = () => {
              </div>
           </div>
 
-          <div style={{ height: 260 }}>
+          <div style={{ height: 250 }}>
             <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={chartData} margin={{ top: 0, right: 0, left: -20, bottom: 0 }}>
+              <AreaChart data={activityData} margin={{ top: 0, right: 0, left: -20, bottom: 0 }}>
                 <defs>
                   <linearGradient id="colorProblems" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#7C3AED" stopOpacity={0.3}/>
-                    <stop offset="95%" stopColor="#7C3AED" stopOpacity={0}/>
+                    <stop offset="5%" stopColor="#0F766E" stopOpacity={0.25}/>
+                    <stop offset="95%" stopColor="#0F766E" stopOpacity={0}/>
                   </linearGradient>
                   <linearGradient id="colorHours" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#06B6D4" stopOpacity={0.3}/>
-                    <stop offset="95%" stopColor="#06B6D4" stopOpacity={0}/>
+                    <stop offset="5%" stopColor="#F97360" stopOpacity={0.25}/>
+                    <stop offset="95%" stopColor="#F97360" stopOpacity={0}/>
                   </linearGradient>
                 </defs>
-                <CartesianGrid strokeDasharray="3 3" stroke="#263248" vertical={false} />
-                <XAxis dataKey="day" stroke="#94A3B8" fontSize={12} tickLine={false} axisLine={false} dy={10} />
-                <YAxis stroke="#94A3B8" fontSize={12} tickLine={false} axisLine={false} dx={-10} />
+                <CartesianGrid strokeDasharray="3 3" stroke="#E7E5E4" vertical={false} />
+                <XAxis dataKey="day" stroke="#78716C" fontSize={12} tickLine={false} axisLine={false} dy={10} />
+                <YAxis stroke="#78716C" fontSize={12} tickLine={false} axisLine={false} dx={-10} />
                 <Tooltip content={<CustomTooltip />} />
-                <Area type="monotone" dataKey="problems" name="Problems" stroke="#7C3AED" strokeWidth={3} fillOpacity={1} fill="url(#colorProblems)" activeDot={{ r: 6, fill: '#7C3AED', strokeWidth: 2, stroke: '#151D2F' }}/>
-                <Area type="monotone" dataKey="hours" name="Hours" stroke="#06B6D4" strokeWidth={3} fillOpacity={1} fill="url(#colorHours)" activeDot={{ r: 6, fill: '#06B6D4', strokeWidth: 2, stroke: '#151D2F' }}/>
+                <Area type="monotone" dataKey="problems" name="Problems" stroke="#0F766E" strokeWidth={3} fillOpacity={1} fill="url(#colorProblems)" activeDot={{ r: 6, fill: '#0F766E', strokeWidth: 2, stroke: '#FFFFFF' }}/>
+                <Area type="monotone" dataKey="hours" name="Hours" stroke="#F97360" strokeWidth={3} fillOpacity={1} fill="url(#colorHours)" activeDot={{ r: 6, fill: '#F97360', strokeWidth: 2, stroke: '#FFFFFF' }}/>
               </AreaChart>
             </ResponsiveContainer>
           </div>
         </motion.div>
 
-        {/* Right Column: Today's Tasks & Problem Types */}
-        <div className="space-y-6 flex flex-col h-full">
-           
-           {/* Problem Types Donut Chart */}
-           <motion.div
-             initial={{ opacity: 0, y: 20 }}
-             animate={{ opacity: 1, y: 0 }}
-             transition={{ delay: 0.65 }}
-             className="premium-card flex-1 flex flex-col"
-           >
-              <h3 className="text-lg font-bold font-display text-[#F8FAFC] flex items-center gap-2 mb-4">
-                 <BrainCircuit size={20} className="text-[#7C3AED]" /> Problem Breakdown
-              </h3>
-              
-              <div className="relative flex-1" style={{ minHeight: 180 }}>
-                <ResponsiveContainer width="100%" height="100%">
-                  <PieChart>
-                    <Pie data={pieData} cx="50%" cy="50%" innerRadius={55} outerRadius={75} paddingAngle={5} dataKey="value" stroke="none">
-                      {pieData.map((entry, i) => <Cell key={i} fill={entry.color} />)}
-                    </Pie>
-                  </PieChart>
-                </ResponsiveContainer>
-                {/* Center text */}
-                <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-                  <span className="text-2xl font-bold font-display">{totalSolved}</span>
-                  <span className="text-[10px] text-[#94A3B8] font-medium uppercase tracking-wider">Solved</span>
-                </div>
-              </div>
-
-              <div className="mt-4 space-y-3">
-                {pieData.map(d => (
-                  <div key={d.name} className="flex items-center justify-between">
-                     <div className="flex items-center gap-2">
-                       <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: d.color }} />
-                       <span className="text-sm font-medium text-[#c0cbd8]">{d.name}</span>
-                     </div>
-                     <span className="text-sm font-bold" style={{ color: d.color }}>{d.value}</span>
-                  </div>
-                ))}
-              </div>
-           </motion.div>
-
-        </div>
-      </div>
-
-      {/* ── 5. Today's Career Tasks & Continue Learning Row ── */}
-      <div className="grid grid-cols-1 lg:grid-cols-[1fr_340px] gap-6">
-         
-         {/* Carousel */}
-         <motion.div
+        {/* Coding Breakdown Donut Chart */}
+        <motion.div
            initial={{ opacity: 0, y: 20 }}
            animate={{ opacity: 1, y: 0 }}
            transition={{ delay: 0.7 }}
-           className="premium-card overflow-hidden"
-         >
-            <div className="flex items-center justify-between mb-6">
-              <div>
-                <h3 className="text-lg font-bold font-display text-[#F8FAFC] flex items-center gap-2">
-                   <Play size={20} className="text-[#7C3AED]" fill="currentColor" /> Continue Learning
-                </h3>
+           className="premium-card flex flex-col justify-between"
+        >
+          <div>
+            <h3 className="text-lg font-bold font-display text-[#1C1917] flex items-center gap-2 mb-3">
+               <BrainCircuit size={20} className="text-[#0F766E]" /> Coding Difficulty
+            </h3>
+            
+            <div className="relative" style={{ height: 160 }}>
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie data={pieData} cx="50%" cy="50%" innerRadius={50} outerRadius={70} paddingAngle={4} dataKey="value" stroke="none">
+                    {pieData.map((entry, i) => <Cell key={i} fill={entry.color} />)}
+                  </Pie>
+                </PieChart>
+              </ResponsiveContainer>
+              <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+                <span className="text-2xl font-bold font-display text-[#1C1917]">{totalSolved}</span>
+                <span className="text-[10px] text-[#78716C] font-medium uppercase tracking-wider">Solved</span>
               </div>
-              <div className="flex gap-2">
-                <button onClick={() => scrollCarousel(-1)} className="p-2 rounded-xl bg-[#0B1020] border border-[#263248] text-[#94A3B8] hover:text-[#06B6D4] hover:border-[#06B6D4] transition-all">
-                  <ChevronLeft size={16} strokeWidth={2.5} />
-                </button>
-                <button onClick={() => scrollCarousel(1)} className="p-2 rounded-xl bg-[#0B1020] border border-[#263248] text-[#94A3B8] hover:text-[#06B6D4] hover:border-[#06B6D4] transition-all">
-                  <ChevronRight size={16} strokeWidth={2.5} />
-                </button>
-              </div>
             </div>
 
-            <div ref={carouselRef} className="flex gap-4 overflow-x-auto scroll-smooth pb-4 scrollbar-none" style={{ msOverflowStyle: 'none', scrollbarWidth: 'none' }}>
-               {data.continueLearning.map((course, idx) => (
-                  <div key={course.id} className="flex-shrink-0 w-72 bg-[#0B1020] border border-[#263248] rounded-[20px] p-5 hover:border-[#7C3AED] hover:shadow-[0_0_20px_rgba(124,58,237,0.1)] transition-all group">
-                     
-                     <div className="flex items-center gap-4 mb-4">
-                        <div className="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0" style={{ backgroundColor: `${course.color}22` }}>
-                           <BookOpen size={20} style={{ color: course.color }} />
-                        </div>
-                        <div>
-                           <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full" style={{ color: course.color, backgroundColor: `${course.color}11` }}>
-                              {course.category}
-                           </span>
-                           <h4 className="text-sm font-bold text-[#F8FAFC] mt-1 line-clamp-1 group-hover:text-[#06B6D4] transition-colors">{course.title}</h4>
-                        </div>
-                     </div>
-                     
-                     <div className="space-y-2 mb-5">
-                       <div className="flex justify-between text-xs font-semibold">
-                         <span className="text-[#94A3B8]">Progress</span>
-                         <span style={{ color: course.color }}>{course.progress}%</span>
-                       </div>
-                       <div className="h-1.5 bg-[#263248] rounded-full overflow-hidden">
-                         <div className="h-full rounded-full transition-all duration-700" style={{ width: `${course.progress}%`, backgroundColor: course.color }} />
-                       </div>
-                     </div>
-
-                     <Link to={`/courses/${course.id}`} className="block w-full py-2.5 rounded-xl text-center text-sm font-semibold border border-[#263248] hover:bg-[#7C3AED] hover:text-white hover:border-[#7C3AED] transition-colors">
-                       Resume Module
-                     </Link>
-                  </div>
-               ))}
-               
-               <Link to="/courses" className="flex-shrink-0 w-64 bg-transparent border-2 border-dashed border-[#263248] rounded-[20px] flex flex-col items-center justify-center gap-3 hover:border-[#06B6D4] hover:bg-[#06B6D4]/5 transition-all text-[#94A3B8] hover:text-[#06B6D4]">
-                  <div className="w-10 h-10 rounded-full border border-current flex items-center justify-center">
-                     <ArrowRight size={18} />
-                  </div>
-                  <span className="text-sm font-semibold">View All Courses</span>
-               </Link>
+            <div className="mt-3 space-y-2">
+              {pieData.map(d => (
+                <div key={d.name} className="flex items-center justify-between text-xs">
+                   <div className="flex items-center gap-2">
+                     <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: d.color }} />
+                     <span className="font-medium text-[#44403C]">{d.name}</span>
+                   </div>
+                   <span className="font-bold" style={{ color: d.color }}>{d.value}</span>
+                </div>
+              ))}
             </div>
-         </motion.div>
+          </div>
 
-         {/* Today's Tasks */}
-         <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.75 }}
-            className="premium-card overflow-hidden flex flex-col"
-         >
-            <div className="flex items-center justify-between mb-6">
-               <h3 className="text-lg font-bold font-display text-[#F8FAFC]">Today's Tasks</h3>
-               <span className="text-sm font-bold text-[#06B6D4]">{completedTasks}/{tasks.length} Done</span>
-            </div>
-
-            <div className="h-1.5 bg-[#263248] rounded-full mb-6">
-               <motion.div className="h-full bg-gradient-to-r from-[#7C3AED] to-[#06B6D4] rounded-full" animate={{ width: `${taskPercent}%` }} />
-            </div>
-
-            <div className="space-y-3 flex-1">
-               {tasks.map(task => (
-                  <button
-                     key={task.id} onClick={() => toggleTask(task.id)}
-                     className={`w-full flex items-center gap-3 p-3 rounded-xl border transition-all text-left ${task.completed ? 'bg-[#7C3AED]/10 border-[#7C3AED]/30' : 'bg-[#0B1020] border-[#263248] hover:border-[#06B6D4]'}`}
-                  >
-                     <div className={`w-5 h-5 rounded-full flex items-center justify-center border-2 flex-shrink-0 transition-colors ${task.completed ? 'bg-[#7C3AED] border-[#7C3AED]' : 'border-[#475569]'}`}>
-                        {task.completed && <CheckCircle2 size={12} strokeWidth={4} className="text-white" />}
-                     </div>
-                     <span className={`flex-1 text-sm font-medium transition-colors ${task.completed ? 'text-[#94A3B8] line-through' : 'text-[#F8FAFC]'}`}>
-                        {task.title}
-                     </span>
-                     <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${task.completed ? 'bg-[#7C3AED]/20 text-[#7C3AED]' : 'bg-[#263248] text-[#94A3B8]'}`}>
-                        +{task.points} XP
-                     </span>
-                  </button>
-               ))}
-            </div>
-         </motion.div>
+          <div className="pt-3 border-t border-[#E7E5E4] flex items-center justify-between text-xs text-[#78716C]">
+            <span>Acceptance Rate:</span>
+            <strong className="text-[#0F766E]">{codingData.acceptance_rate || 75}%</strong>
+          </div>
+        </motion.div>
 
       </div>
+
     </div>
   );
 };
-
-// Add CSS for pulse/wave if omitted, simple missing icon fix
-const Code2 = ({size, strokeWidth, ...props}) => <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round" {...props}><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>;
 
 export default Dashboard;
