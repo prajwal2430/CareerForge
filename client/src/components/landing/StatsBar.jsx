@@ -41,8 +41,8 @@ const StatsBar = () => {
   return (
     <section style={{
       padding: '5rem 0',
-      background: 'linear-gradient(180deg, #F9FAFB 0%, #FFFFFF 100%)',
-      borderTop: '1px solid #F3F4F6', borderBottom: '1px solid #F3F4F6',
+      background: '#FAFAF9',
+      borderTop: '1px solid #E7E5E4', borderBottom: '1px solid #E7E5E4',
       position: 'relative'
     }}>
       <div className="container">
@@ -60,36 +60,37 @@ const StatsBar = () => {
               transition={{ delay: i * 0.1, duration: 0.5 }}
               style={{
                 textAlign: 'center',
-                padding: '1.5rem 1rem',
+                padding: '1.75rem 1rem',
                 borderRadius: 16,
                 background: 'white',
-                border: '1px solid #F3F4F6',
+                border: '1px solid #E7E5E4',
                 boxShadow: '0 2px 8px rgba(0,0,0,0.03)',
                 transition: 'all 0.3s'
               }}
-              whileHover={{ y: -4, boxShadow: '0 12px 30px rgba(13, 148, 136, 0.08)' }}
+              whileHover={{ y: -4, borderColor: '#0F766E' }}
             >
               <div style={{
                 width: 56, height: 56, margin: '0 auto 1rem',
-                background: 'linear-gradient(135deg, #0D9488, #06B6D4)',
+                background: '#F0FDFA',
+                border: '1px solid rgba(15, 118, 110, 0.2)',
                 borderRadius: 14, display: 'flex', alignItems: 'center', justifyContent: 'center',
-                fontSize: '1.5rem', color: 'white',
-                boxShadow: '0 8px 20px rgba(13, 148, 136, 0.25)'
+                fontSize: '1.5rem', color: '#0F766E',
+                boxShadow: '0 4px 12px rgba(15, 118, 110, 0.15)'
               }}>
                 {s.icon}
               </div>
               <div style={{
                 fontFamily: "'Poppins', sans-serif",
                 fontSize: 'clamp(1.8rem, 3vw, 2.5rem)',
-                fontWeight: 800, color: '#1E1E1E', lineHeight: 1,
+                fontWeight: 800, color: '#1C1917', lineHeight: 1,
                 marginBottom: '0.4rem'
               }}>
                 <AnimatedCounter value={s.value} suffix={s.suffix} />
               </div>
-              <div style={{ fontWeight: 700, color: '#1E1E1E', fontSize: '1rem', marginBottom: '0.25rem', fontFamily: "'Poppins', sans-serif" }}>
+              <div style={{ fontWeight: 700, color: '#1C1917', fontSize: '1rem', marginBottom: '0.25rem', fontFamily: "'Poppins', sans-serif" }}>
                 {s.label}
               </div>
-              <div style={{ fontSize: '0.82rem', color: '#9CA3AF' }}>{s.desc}</div>
+              <div style={{ fontSize: '0.82rem', color: '#78716C' }}>{s.desc}</div>
             </motion.div>
           ))}
         </div>
