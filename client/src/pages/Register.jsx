@@ -10,15 +10,20 @@ import toast from 'react-hot-toast';
 const Register = () => {
   const { register } = useAuth();
   const navigate = useNavigate();
-  const { values, loading, handleChange, handleSubmit } = useForm(
+  const { values, errors, loading, handleChange, handleSubmit } = useForm(
     { name: '', email: '', password: '' },
     async ({ name, email, password }) => {
       try {
-        await register(name, email, password);
+        await register(name.trim(), email.trim(), password);
         toast.success('Account created! Welcome to CareerForge 🎉');
         navigate('/dashboard');
       } catch (err) {
-        toast.error('Failed to create account. Try again.');
+        const errorMsg =
+          err.response?.data?.message ||
+          (err.response?.data?.errors && err.response.data.errors.join(', ')) ||
+          err.message ||
+          'Failed to create account. Try again.';
+        toast.error(errorMsg);
         throw err;
       }
     }
@@ -68,6 +73,23 @@ const Register = () => {
             or with email
             <div className="flex-1 h-px bg-[#E7E5E4]" />
           </div>
+
+          {errors.general && (
+            <div className="p-3.5 mb-6 bg-red-50 border border-red-200 text-red-700 rounded-xl text-sm flex items-start gap-2.5">
+              <span className="text-base leading-none mt-0.5">⚠️</span>
+              <div className="flex-1">
+                <p className="font-semibold">{errors.general}</p>
+                {errors.general.toLowerCase().includes('already in use') && (
+                  <p className="mt-1.5 text-xs text-red-600">
+                    Already registered?{' '}
+                    <Link to="/login" className="font-bold underline hover:text-red-800">
+                      Sign in to your account
+                    </Link>
+                  </p>
+                )}
+              </div>
+            </div>
+          )}
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="form-group mb-0">

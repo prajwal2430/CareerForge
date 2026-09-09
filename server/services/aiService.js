@@ -64,11 +64,16 @@ async function callAIService(endpoint, options = {}) {
     return responseData;
   } catch (err) {
     if (err instanceof AIServiceError) {
+      console.error('[AI_SERVICE] AIServiceError from %s: %s', url, err.message);
       throw err;
     }
 
+    const underlyingCode = err?.cause?.code || err?.code || 'UNKNOWN';
+    const underlyingMessage = err?.message || 'Unknown error';
+
     // Timeout handling
     if (err.name === 'TimeoutError' || err.name === 'AbortError') {
+      console.error('[AI_SERVICE] Timeout contacting %s after %dms: %s', url, timeoutMs, underlyingMessage);
       throw new AIServiceError(
         `AI Service request timed out after ${timeoutMs}ms. Please try again.`,
         504,
@@ -77,15 +82,17 @@ async function callAIService(endpoint, options = {}) {
     }
 
     // Connection refused / Network down
-    if (err.cause?.code === 'ECONNREFUSED' || err.code === 'ECONNREFUSED') {
+    if (underlyingCode === 'ECONNREFUSED' || err?.cause?.code === 'ECONNREFUSED' || err?.code === 'ECONNREFUSED') {
+      console.error('[AI_SERVICE] Connection refused while contacting %s. Underlying error: %s (%s)', url, underlyingMessage, underlyingCode);
       throw new AIServiceError(
         'AI Service is currently unavailable. Please verify the AI service is running.',
         503,
-        { code: 'SERVICE_UNAVAILABLE' }
+        { code: 'SERVICE_UNAVAILABLE', underlyingError: underlyingCode }
       );
     }
 
     // Generic error
+    console.error('[AI_SERVICE] Unexpected error contacting %s: %s (%s)', url, underlyingMessage, underlyingCode);
     throw new AIServiceError(
       err.message || 'An unexpected error occurred while communicating with the AI service.',
       500,

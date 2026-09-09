@@ -10,15 +10,20 @@ import toast from 'react-hot-toast';
 const Login = () => {
   const { login } = useAuth();
   const navigate = useNavigate();
-  const { values, loading, handleChange, handleSubmit } = useForm(
+  const { values, errors, loading, handleChange, handleSubmit } = useForm(
     { email: '', password: '' },
     async ({ email, password }) => {
       try {
-        await login(email, password);
+        await login(email.trim(), password);
         toast.success('Welcome back!');
         navigate('/dashboard');
       } catch (err) {
-        toast.error('Invalid credentials. Please try again.');
+        const errorMsg =
+          err.response?.data?.message ||
+          (err.response?.data?.errors && err.response.data.errors.join(', ')) ||
+          err.message ||
+          'Invalid credentials. Please try again.';
+        toast.error(errorMsg);
         throw err;
       }
     }
@@ -98,6 +103,15 @@ const Login = () => {
             or with email
             <div className="flex-1 h-px bg-[#E7E5E4]" />
           </div>
+
+          {errors.general && (
+            <div className="p-3.5 mb-6 bg-red-50 border border-red-200 text-red-700 rounded-xl text-sm flex items-start gap-2.5">
+              <span className="text-base leading-none mt-0.5">⚠️</span>
+              <div className="flex-1">
+                <p className="font-semibold">{errors.general}</p>
+              </div>
+            </div>
+          )}
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="form-group mb-0">

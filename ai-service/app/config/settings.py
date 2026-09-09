@@ -20,7 +20,7 @@ class Settings(BaseSettings):
     service_name: str = Field(default="career-forge-ai", alias="SERVICE_NAME")
 
     # Google Gemini API
-    gemini_api_key: str = Field(default="your_gemini_api_key_here", alias="GEMINI_API_KEY")
+    GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
     gemini_model: str = Field(default="gemini-2.5-flash", alias="GEMINI_MODEL")
     gemini_timeout_seconds: float = Field(default=30.0, alias="GEMINI_TIMEOUT_SECONDS")
 
