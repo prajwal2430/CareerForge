@@ -35,14 +35,14 @@ const LandingNav = () => {
           <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: '10px', textDecoration: 'none' }}>
             <div style={{
               width: 38, height: 38,
-              background: 'linear-gradient(135deg, #0D9488, #06B6D4)',
+              background: '#0F766E',
               borderRadius: 10, display: 'flex', alignItems: 'center', justifyContent: 'center',
               fontWeight: 800, fontSize: '1.1rem', color: 'white',
-              boxShadow: '0 4px 15px rgba(13, 148, 136, 0.3)',
+              boxShadow: '0 4px 15px rgba(15, 118, 110, 0.3)',
               fontFamily: "'Poppins', sans-serif"
             }}>L</div>
-            <span style={{ fontFamily: "'Poppins', sans-serif", fontWeight: 700, fontSize: '1.25rem', color: '#1E1E1E' }}>
-              Learn<span style={{ color: '#0D9488' }}>Hub</span>
+            <span style={{ fontFamily: "'Poppins', sans-serif", fontWeight: 700, fontSize: '1.25rem', color: '#1C1917' }}>
+              Learn<span style={{ color: '#0F766E' }}>Hub</span>
             </span>
           </Link>
 
@@ -51,7 +51,7 @@ const LandingNav = () => {
             {navLinks.map(link => (
               <Link key={link.to} to={link.to} className="hover-underline" style={{
                 fontSize: '0.95rem', fontWeight: 500,
-                color: '#4B5563',
+                color: '#78716C',
                 textDecoration: 'none',
                 fontFamily: "'Inter', sans-serif"
               }}>
@@ -63,12 +63,12 @@ const LandingNav = () => {
           {/* Actions */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
             <Link to="/login" className="hide-mobile" style={{
-              fontSize: '0.9rem', fontWeight: 600, color: '#4B5563',
+              fontSize: '0.9rem', fontWeight: 600, color: '#78716C',
               textDecoration: 'none', fontFamily: "'Inter', sans-serif"
             }}>
               Sign In
             </Link>
-            <Link to="/register" className="btn btn-primary btn-sm">
+            <Link to="/register" className="btn btn-accent btn-sm">
               Get Started Free
             </Link>
             {/* Mobile Menu Button */}
