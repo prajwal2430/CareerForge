@@ -52,62 +52,62 @@ const Practice = () => {
   return (
     <div className="pb-12 max-w-[1400px] mx-auto px-4 sm:px-6">
       <div className="mb-8 mt-4">
-        <h1 className="text-3xl sm:text-4xl font-display font-bold text-[#F8FAFC] mb-2">Technical Interview Prep</h1>
-        <p className="text-[#94A3B8]">Master data structures, algorithms, and system design.</p>
+        <h1 className="text-3xl sm:text-4xl font-display font-bold text-[#1C1917] mb-2">Technical Interview Prep</h1>
+        <p className="text-[#78716C]">Master data structures, algorithms, and system design.</p>
       </div>
 
-      <div className="bg-[#111827] border border-[#263248] rounded-[24px] p-6 sm:p-8 mb-8 relative overflow-hidden shadow-sm">
-        <div className="absolute top-0 right-0 w-1/2 h-full bg-gradient-to-l from-[#7C3AED]/10 to-transparent pointer-events-none" />
+      <div className="bg-white border border-[#E7E5E4] rounded-[24px] p-6 sm:p-8 mb-8 relative overflow-hidden shadow-xs">
+        <div className="absolute top-0 right-0 w-1/2 h-full bg-gradient-to-l from-[#0F766E]/5 to-transparent pointer-events-none" />
         
         {/* Carousel */}
         <div className="relative z-10 mb-8">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-bold font-display text-[#F8FAFC]">Featured Curriculums</h2>
+            <h2 className="text-lg font-bold font-display text-[#1C1917]">Featured Curriculums</h2>
             <div className="flex gap-2">
-              <button onClick={slideLeft} className="w-8 h-8 rounded-full bg-[#151D2F] border border-[#263248] text-[#CBD5E1] hover:text-[#7C3AED] hover:border-[#7C3AED] flex items-center justify-center transition-all"><FiChevronLeft /></button>
-              <button onClick={slideRight} className="w-8 h-8 rounded-full bg-[#151D2F] border border-[#263248] text-[#CBD5E1] hover:text-[#7C3AED] hover:border-[#7C3AED] flex items-center justify-center transition-all"><FiChevronRight /></button>
+              <button onClick={slideLeft} className="w-8 h-8 rounded-full bg-[#FAFAF9] border border-[#E7E5E4] text-[#78716C] hover:text-[#0F766E] hover:border-[#CCFBF1] flex items-center justify-center transition-all cursor-pointer"><FiChevronLeft /></button>
+              <button onClick={slideRight} className="w-8 h-8 rounded-full bg-[#FAFAF9] border border-[#E7E5E4] text-[#78716C] hover:text-[#0F766E] hover:border-[#CCFBF1] flex items-center justify-center transition-all cursor-pointer"><FiChevronRight /></button>
             </div>
           </div>
           
           <div ref={sliderRef} className="flex gap-5 overflow-x-auto scrollbar-none scroll-smooth pb-2" style={{msOverflowStyle:'none', scrollbarWidth:'none'}}>
             
-            <div className="min-w-[280px] h-[140px] bg-gradient-to-br from-[#7C3AED] to-[#06B6D4] rounded-[20px] p-6 flex flex-col justify-center relative overflow-hidden text-white cursor-pointer hover:shadow-[0_10px_30px_rgba(124,58,237,0.3)] hover:-translate-y-1 transition-all">
-                <span className="w-max bg-white/20 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider mb-2">🔥 Top Curated</span>
+            <div className="min-w-[280px] h-[140px] bg-gradient-to-br from-[#0F766E] to-[#14B8A6] rounded-[20px] p-6 flex flex-col justify-center relative overflow-hidden text-white cursor-pointer hover:shadow-[0_8px_20px_rgba(15,118,110,0.25)] hover:-translate-y-1 transition-all">
+                <span className="w-max bg-white/20 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider mb-2">🔥 Featured Track</span>
                 <h3 className="text-xl font-bold font-display leading-tight">{MOCK_DATA.courses[0].title}</h3>
             </div>
             
-            <div className="min-w-[280px] h-[140px] bg-[#151D2F] border border-[#263248] rounded-[20px] p-6 flex flex-col justify-center text-[#F8FAFC] cursor-pointer hover:border-[#7C3AED] hover:-translate-y-1 transition-all group">
-                <h3 className="text-sm font-bold text-[#06B6D4] mb-1 uppercase tracking-wider">{MOCK_DATA.courses[2].category} Crash Course</h3>
-                <p className="text-lg font-bold font-display group-hover:text-[#7C3AED] transition-colors">{MOCK_DATA.courses[2].title}</p>
+            <div className="min-w-[280px] h-[140px] bg-white border border-[#E7E5E4] rounded-[20px] p-6 flex flex-col justify-center text-[#1C1917] cursor-pointer hover:border-[#0F766E] hover:-translate-y-1 hover:shadow-xs transition-all group">
+                <h3 className="text-sm font-bold text-[#0F766E] mb-1 uppercase tracking-wider">{MOCK_DATA.courses[2].category} Crash Course</h3>
+                <p className="text-lg font-bold font-display group-hover:text-[#0F766E] transition-colors">{MOCK_DATA.courses[2].title}</p>
             </div>
 
-            <div className="min-w-[280px] h-[140px] bg-[#151D2F] border border-[#263248] rounded-[20px] p-6 flex flex-col justify-center text-[#F8FAFC] cursor-pointer hover:border-[#7C3AED] hover:-translate-y-1 transition-all group">
-                <h3 className="text-sm font-bold text-[#7C3AED] mb-1 uppercase tracking-wider">{MOCK_DATA.courses[1].category} Bootcamp</h3>
-                <p className="text-lg font-bold font-display group-hover:text-[#06B6D4] transition-colors">{MOCK_DATA.courses[1].title}</p>
+            <div className="min-w-[280px] h-[140px] bg-white border border-[#E7E5E4] rounded-[20px] p-6 flex flex-col justify-center text-[#1C1917] cursor-pointer hover:border-[#0F766E] hover:-translate-y-1 hover:shadow-xs transition-all group">
+                <h3 className="text-sm font-bold text-[#0F766E] mb-1 uppercase tracking-wider">{MOCK_DATA.courses[1].category} Bootcamp</h3>
+                <p className="text-lg font-bold font-display group-hover:text-[#0F766E] transition-colors">{MOCK_DATA.courses[1].title}</p>
             </div>
 
           </div>
         </div>
 
-        {/* Global Stats */}
-        <h2 className="text-sm font-bold text-[#64748B] uppercase tracking-wider mb-3">Popular Topics</h2>
+        {/* Popular Topics */}
+        <h2 className="text-sm font-bold text-[#78716C] uppercase tracking-wider mb-3">Popular Topics</h2>
         <div className="flex flex-wrap gap-3 relative z-10">
           {[
-            { label: 'Array', count: 342, color: '#06B6D4' },
-            { label: 'String', count: 156, color: '#7C3AED' },
-            { label: 'Hash Table', count: 89, color: '#F59E0B' },
-            { label: 'Math', count: 214, color: '#10B981' },
-            { label: 'Dynamic Programming', count: 412, color: '#EF4444' }
+            { label: 'Array', count: 342 },
+            { label: 'String', count: 156 },
+            { label: 'Hash Table', count: 89 },
+            { label: 'Math', count: 214 },
+            { label: 'Dynamic Programming', count: 412 }
           ].map((tag, idx) => (
             <button 
               key={idx} 
               onClick={() => setTagFilter(tagFilter === tag.label ? 'All' : tag.label)}
-              className={`flex items-center gap-2 px-4 py-2 rounded-full border text-[13px] font-semibold transition-colors ${
-                tagFilter === tag.label ? 'bg-[#7C3AED]/20 border-[#7C3AED] text-[#FFFFFF]' : 'bg-[#151D2F] border-[#263248] text-[#CBD5E1] hover:border-[#7C3AED]/50 hover:bg-[#7C3AED]/10'
+              className={`flex items-center gap-2 px-4 py-2 rounded-full border text-[13px] font-semibold transition-colors cursor-pointer ${
+                tagFilter === tag.label ? 'bg-[#F0FDFA] border-[#0F766E] text-[#0F766E]' : 'bg-white border-[#E7E5E4] text-[#44403C] hover:border-[#0F766E] hover:bg-[#F0FDFA]'
               }`}
             >
               <span>{tag.label}</span>
-              <span className="text-[10px] px-1.5 py-0.5 rounded-full" style={{ backgroundColor: `${tag.color}20`, color: tag.color }}>{tag.count}</span>
+              <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-[#F0FDFA] text-[#0F766E] border border-[#CCFBF1]">{tag.count}</span>
             </button>
           ))}
         </div>
@@ -117,19 +117,19 @@ const Practice = () => {
       <div className="premium-card !p-6 sm:!p-8">
         
         {/* Controls Row */}
-        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-5 mb-8 border-b border-[#263248] pb-6">
-          <div className="flex gap-2 p-1 bg-[#111827] border border-[#263248] rounded-[14px]">
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-5 mb-8 border-b border-[#E7E5E4] pb-6">
+          <div className="flex gap-2 p-1 bg-[#FAFAF9] border border-[#E7E5E4] rounded-[14px]">
             <button 
               onClick={() => setActiveTab('all')}
-              className={`px-5 py-2 text-[13px] font-bold rounded-[10px] transition-all ${activeTab === 'all' ? 'bg-[#263248] text-[#F8FAFC] shadow-sm' : 'text-[#94A3B8] hover:text-[#F8FAFC]'}`}
+              className={`px-5 py-2 text-[13px] font-bold rounded-[10px] transition-all cursor-pointer ${activeTab === 'all' ? 'bg-[#0F766E] text-white shadow-xs' : 'text-[#78716C] hover:text-[#1C1917]'}`}
             >
               All Topics
             </button>
             <button 
               onClick={() => setActiveTab('algorithms')}
-              className={`px-5 py-2 text-[13px] font-bold rounded-[10px] transition-all flex items-center gap-2 ${activeTab === 'algorithms' ? 'bg-[#263248] text-[#F8FAFC] shadow-sm' : 'text-[#94A3B8] hover:text-[#F8FAFC]'}`}
+              className={`px-5 py-2 text-[13px] font-bold rounded-[10px] transition-all flex items-center gap-2 cursor-pointer ${activeTab === 'algorithms' ? 'bg-[#0F766E] text-white shadow-xs' : 'text-[#78716C] hover:text-[#1C1917]'}`}
             >
-              <FiTrendingUp className={activeTab === 'algorithms' ? 'text-[#06B6D4]' : ''} /> Algorithms
+              <FiTrendingUp className={activeTab === 'algorithms' ? 'text-white' : 'text-[#0F766E]'} /> Algorithms
             </button>
           </div>
           
@@ -140,29 +140,29 @@ const Practice = () => {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search problems, questions or tags..."
-              className="form-input !h-11 !rounded-[12px]" 
+              className="form-input !h-11 !rounded-[12px] bg-white border border-[#E7E5E4] text-[#1C1917] focus:border-[#0F766E]" 
             />
           </div>
         </div>
         
         {/* Filters */}
         <div className="flex flex-wrap items-center gap-4 mb-8">
-          <div className="flex items-center gap-2 text-[#64748B] font-medium text-[13px] mr-2">
+          <div className="flex items-center gap-2 text-[#78716C] font-medium text-[13px] mr-2">
             <FiFilter /> Filters:
           </div>
-          <select value={difficultyFilter} onChange={(e) => setDifficultyFilter(e.target.value)} className="form-input !w-[160px] !h-10 !py-0 !text-[13px] !bg-[#0B1020]">
+          <select value={difficultyFilter} onChange={(e) => setDifficultyFilter(e.target.value)} className="form-input !w-[160px] !h-10 !py-0 !text-[13px] !bg-white border-[#E7E5E4] text-[#1C1917] focus:border-[#0F766E]">
             <option value="All">All Difficulties</option>
             <option value="Easy">Easy</option>
             <option value="Medium">Medium</option>
             <option value="Hard">Hard</option>
           </select>
-          <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)} className="form-input !w-[160px] !h-10 !py-0 !text-[13px] !bg-[#0B1020]">
+          <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)} className="form-input !w-[160px] !h-10 !py-0 !text-[13px] !bg-white border-[#E7E5E4] text-[#1C1917] focus:border-[#0F766E]">
             <option value="All">All Statuses</option>
             <option value="solved">Solved</option>
             <option value="attempted">Attempted</option>
             <option value="unsolved">Unsolved</option>
           </select>
-          <select value={companyFilter} onChange={(e) => setCompanyFilter(e.target.value)} className="form-input !w-[160px] !h-10 !py-0 !text-[13px] !bg-[#0B1020] text-[#7C3AED] font-semibold border-[#7C3AED]/30">
+          <select value={companyFilter} onChange={(e) => setCompanyFilter(e.target.value)} className="form-input !w-[160px] !h-10 !py-0 !text-[13px] !bg-white text-[#0F766E] font-semibold border-[#CCFBF1] focus:border-[#0F766E]">
             <option value="All">All Companies</option>
             <option value="Google">Google</option>
             <option value="Amazon">Amazon</option>
