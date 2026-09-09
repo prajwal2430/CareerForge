@@ -1,164 +1,731 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FiSend, FiUser, FiCpu, FiBriefcase, FiCode, FiFileText } from 'react-icons/fi';
-import { Sparkles, Bot } from 'lucide-react';
+import {
+  Bot,
+  Sparkles,
+  Send,
+  RefreshCw,
+  User,
+  Brain,
+  CheckCircle2,
+  AlertTriangle,
+  Code,
+  Briefcase,
+  BookOpen,
+  Target,
+  ArrowRight,
+  TrendingUp,
+  Award,
+  Zap,
+  Play,
+  FileText,
+  Clock,
+  ChevronRight,
+  MessageSquare
+} from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
+import api from '../services/api';
+
+// Human-friendly mapping for specialized agent tags
+const AGENT_LABELS = {
+  learning_recommendation: {
+    label: 'Learning Mentor',
+    icon: BookOpen,
+    bg: 'bg-emerald-50',
+    border: 'border-emerald-200',
+    text: 'text-emerald-700'
+  },
+  coding_mentor: {
+    label: 'Coding Mentor',
+    icon: Code,
+    bg: 'bg-indigo-50',
+    border: 'border-indigo-200',
+    text: 'text-indigo-700'
+  },
+  interview_mentor: {
+    label: 'Interview Mentor',
+    icon: Briefcase,
+    bg: 'bg-purple-50',
+    border: 'border-purple-200',
+    text: 'text-purple-700'
+  },
+  progress_analytics: {
+    label: 'Analytics Mentor',
+    icon: TrendingUp,
+    bg: 'bg-amber-50',
+    border: 'border-amber-200',
+    text: 'text-amber-700'
+  },
+  skill_assessment: {
+    label: 'Assessment Mentor',
+    icon: Target,
+    bg: 'bg-rose-50',
+    border: 'border-rose-200',
+    text: 'text-rose-700'
+  },
+  coordinator: {
+    label: 'Placement Coordinator',
+    icon: Bot,
+    bg: 'bg-teal-50',
+    border: 'border-teal-200',
+    text: 'text-teal-700'
+  }
+};
+
+const SUGGESTED_PROMPTS = [
+  { icon: BookOpen, label: 'What should I study today?' },
+  { icon: TrendingUp, label: 'Am I placement ready?' },
+  { icon: Code, label: 'Help me debug this code' },
+  { icon: Briefcase, label: 'Start an HR interview' },
+  { icon: Target, label: 'I want to know my weak areas' },
+  { icon: Sparkles, label: 'Create my preparation plan' }
+];
 
 const AIMentor = () => {
+  const { user } = useAuth();
+  const navigate = useNavigate();
+
+  // Student Identity
+  const studentId = user?._id || user?.id || 'demo_student';
+  const studentName = user?.name || 'Candidate';
+  const branch = user?.branch || 'Computer Science & Engineering';
+  const year = user?.year || '4th Year';
+  const careerGoal = user?.careerGoal || user?.targetRole || 'Software Development Engineer (SDE-1)';
+
+  // Chat State
   const [messages, setMessages] = useState([
-    { id: 1, sender: 'ai', text: 'Hello! I am your LearnHub AI Mentor. How can I help you with your placement preparation today?' }
+    {
+      id: 'msg_welcome',
+      sender: 'ai',
+      agent: 'coordinator',
+      text: `Hello ${studentName}! I am your CareerForge AI Placement Mentor.\n\nI dynamically coordinate across your specialized mentors (Assessment, Learning, Coding, Interview, and Analytics) to prepare you for placement drives.\n\nHow can I accelerate your placement journey today?`,
+      actions: [
+        { label: 'Check Readiness', message: 'Am I placement ready?' },
+        { label: "Today's Study Plan", message: 'What should I study today?' },
+        { label: 'Start HR Interview', message: 'Start an HR interview' }
+      ],
+      timestamp: new Date()
+    }
   ]);
   const [input, setInput] = useState('');
   const [isTyping, setIsTyping] = useState(false);
-  const endOfMessagesRef = useRef(null);
+  const messagesEndRef = useRef(null);
 
+  // Context & Performance State
+  const [readinessData, setReadinessData] = useState({
+    readinessScore: 72,
+    status: 'Needs Improvement',
+    skills: { dsa: 80, java: 70, sql: 65, aptitude: 85, interview: 75 },
+    strongAreas: ['Quantitative Aptitude', 'Core DSA'],
+    weakAreas: ['Dynamic Programming', 'SQL Normalization', 'System Design']
+  });
+  const [analyticsData, setAnalyticsData] = useState({
+    weeklyHours: 3.5,
+    trend: 'steady',
+    activitySummary: { assessmentsCompleted: 3, codingSubmissions: 4, mockInterviews: 2 }
+  });
+  const [loadingContext, setLoadingContext] = useState(true);
+
+  // Auto-scroll to bottom of messages
   const scrollToBottom = () => {
-    endOfMessagesRef.current?.scrollIntoView({ behavior: 'smooth' });
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
   useEffect(() => {
     scrollToBottom();
   }, [messages, isTyping]);
 
-  const handleSend = (e) => {
-    e.preventDefault();
-    if (!input.trim()) return;
+  // Fetch real-time student context and placement readiness
+  useEffect(() => {
+    let isMounted = true;
+    const fetchStudentMetrics = async () => {
+      try {
+        setLoadingContext(true);
+        // Call Node.js backend proxy
+        const [readinessRes, analyticsRes] = await Promise.allSettled([
+          api.get(`/ai/readiness/${studentId}`),
+          api.get(`/ai/analytics/${studentId}`)
+        ]);
 
-    const userMsg = { id: Date.now(), sender: 'user', text: input };
-    setMessages(prev => [...prev, userMsg]);
+        if (isMounted) {
+          if (readinessRes.status === 'fulfilled' && readinessRes.value?.data) {
+            setReadinessData(readinessRes.value.data);
+          }
+          if (analyticsRes.status === 'fulfilled' && analyticsRes.value?.data) {
+            setAnalyticsData(analyticsRes.value.data);
+          }
+        }
+      } catch (err) {
+        console.warn('Could not load live student metrics from backend:', err);
+      } finally {
+        if (isMounted) setLoadingContext(false);
+      }
+    };
+
+    fetchStudentMetrics();
+    return () => {
+      isMounted = false;
+    };
+  }, [studentId]);
+
+  // Send message to AI Coordinator via Node.js Backend API
+  const handleSend = async (textToSend) => {
+    const query = (typeof textToSend === 'string' ? textToSend : input).trim();
+    if (!query || isTyping) return;
+
+    const userMsg = {
+      id: `user_${Date.now()}`,
+      sender: 'user',
+      text: query,
+      timestamp: new Date()
+    };
+
+    setMessages((prev) => [...prev, userMsg]);
     setInput('');
     setIsTyping(true);
 
-    // Mock AI response
-    setTimeout(() => {
-      setIsTyping(false);
-      const aiMsg = { 
-        id: Date.now() + 1, 
-        sender: 'ai', 
-        text: 'Based on your recent activity, I suggest focusing on Dynamic Programming. Would you like me to generate a 3-day study plan for DP?' 
+    try {
+      // POST to Node.js proxy route: /api/ai/mentor/chat
+      const response = await api.post('/ai/mentor/chat', {
+        studentId,
+        message: query
+      });
+
+      const responseData = response.data;
+      const aiMsg = {
+        id: `ai_${Date.now()}`,
+        sender: 'ai',
+        agent: responseData.agent || 'coordinator',
+        text: responseData.response || 'I have analyzed your profile and updated your placement strategy.',
+        actions: responseData.actions || [],
+        data: responseData.data || {},
+        timestamp: new Date()
       };
-      setMessages(prev => [...prev, aiMsg]);
-    }, 1500);
+
+      setMessages((prev) => [...prev, aiMsg]);
+
+      // If response updated readiness or data, refresh context
+      if (responseData.data?.readinessScore !== undefined) {
+        setReadinessData((prev) => ({
+          ...prev,
+          readinessScore: responseData.data.readinessScore,
+          status: responseData.data.status || prev.status
+        }));
+      }
+    } catch (error) {
+      console.error('Error communicating with AI Mentor:', error);
+      const errorMsg = {
+        id: `err_${Date.now()}`,
+        sender: 'ai',
+        agent: 'coordinator',
+        text: 'I encountered a temporary connection issue reaching the AI service. Please ensure the AI microservice is active or try again shortly.',
+        actions: [
+          { label: 'Retry Question', message: query }
+        ],
+        timestamp: new Date()
+      };
+      setMessages((prev) => [...prev, errorMsg]);
+    } finally {
+      setIsTyping(false);
+    }
   };
 
-  const SUGGESTED_PROMPTS = [
-    { icon: <FiCode />, label: 'Generate DP Study Plan' },
-    { icon: <FiBriefcase />, label: 'Conduct Mock Interview' },
-    { icon: <FiFileText />, label: 'Review my Resume' },
-  ];
+  // Quick Action Triggers
+  const handleQuickAction = (actionKey) => {
+    switch (actionKey) {
+      case 'assessment':
+        handleSend('I want to take a placement assessment in my weakest topic.');
+        break;
+      case 'coding':
+        navigate('/practice');
+        break;
+      case 'aptitude':
+        handleSend('I want to practice aptitude and logical reasoning questions.');
+        break;
+      case 'hr_interview':
+        handleSend('Start an HR interview.');
+        break;
+      case 'technical_interview':
+        handleSend('Start a technical mock interview.');
+        break;
+      case 'roadmap':
+        handleSend('Generate my personalized placement roadmap.');
+        break;
+      case 'readiness':
+        handleSend('Am I placement ready? Check my placement readiness.');
+        break;
+      default:
+        break;
+    }
+  };
+
+  // Execute interactive action returned from AI
+  const handleActionClick = (action) => {
+    if (action.target) {
+      navigate(action.target);
+    } else if (action.message) {
+      handleSend(action.message);
+    } else if (action.action === 'navigate' && action.target) {
+      navigate(action.target);
+    } else if (action.label) {
+      handleSend(action.label);
+    }
+  };
+
+  const handleResetChat = () => {
+    setMessages([
+      {
+        id: `welcome_${Date.now()}`,
+        sender: 'ai',
+        agent: 'coordinator',
+        text: `Chat session refreshed. How can I assist your placement preparation, ${studentName}?`,
+        actions: [
+          { label: 'Check Readiness', message: 'Am I placement ready?' },
+          { label: "Today's Study Plan", message: 'What should I study today?' }
+        ],
+        timestamp: new Date()
+      }
+    ]);
+  };
 
   return (
-    <div className="pb-12 max-w-5xl mx-auto h-[calc(100vh-100px)] flex flex-col pt-4">
-      <div className="mb-6 flex flex-col md:flex-row md:items-end justify-between gap-4 px-2">
-        <div>
-          <h1 className="text-3xl font-display font-bold text-[#F8FAFC] mb-2 flex items-center gap-3">
-            <span className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#7C3AED] to-[#06B6D4] flex items-center justify-center shadow-[0_0_20px_rgba(124,58,237,0.3)]">
-              <Sparkles size={20} className="text-white" />
-            </span>
-            AI Placement Mentor
-          </h1>
-          <p className="text-[#94A3B8]">Your premium career co-pilot for mock interviews and study plans.</p>
+    <div className="max-w-7xl mx-auto space-y-6 pb-12">
+      {/* ─────────────────────────────────────────────────────────────
+          1. HEADER & STUDENT CONTEXT BANNER
+      ───────────────────────────────────────────────────────────── */}
+      <div className="bg-white border border-[#E7E5E4] rounded-2xl p-5 sm:p-6 shadow-xs relative overflow-hidden">
+        <div className="absolute top-0 right-0 -mt-8 -mr-8 w-40 h-40 bg-[#0F766E]/5 rounded-full blur-2xl pointer-events-none" />
+        
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 relative z-10">
+          <div>
+            <div className="flex items-center gap-2.5">
+              <div className="w-9 h-9 rounded-xl bg-[#F0FDFA] border border-[#CCFBF1] flex items-center justify-center text-[#0F766E] shadow-xs">
+                <Sparkles size={18} />
+              </div>
+              <h1 className="text-xl sm:text-2xl font-bold text-[#1C1917] tracking-tight">
+                AI Placement Mentor
+              </h1>
+              <span className="px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-[#F0FDFA] border border-[#CCFBF1] text-[#0F766E]">
+                Multi-Agent Cluster Active
+              </span>
+            </div>
+            <p className="text-xs sm:text-sm text-[#78716C] mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1">
+              <span>Candidate: <strong className="text-[#1C1917]">{studentName}</strong></span>
+              <span className="text-[#D6D3D1]">•</span>
+              <span>{year} ({branch})</span>
+              <span className="text-[#D6D3D1]">•</span>
+              <span>Target: <strong className="text-[#0F766E]">{careerGoal}</strong></span>
+            </p>
+          </div>
+
+          {/* Placement Readiness Badge */}
+          <div className="flex items-center gap-3 bg-[#FAFAF9] border border-[#E7E5E4] rounded-xl p-2.5 sm:px-4 sm:py-2.5 shrink-0">
+            <div className="relative flex items-center justify-center w-11 h-11">
+              <svg className="w-11 h-11 transform -rotate-90" viewBox="0 0 36 36">
+                <path
+                  className="text-[#E7E5E4]"
+                  strokeWidth="3.5"
+                  stroke="currentColor"
+                  fill="none"
+                  d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                />
+                <path
+                  className={
+                    readinessData.readinessScore >= 80
+                      ? 'text-emerald-500'
+                      : readinessData.readinessScore >= 70
+                      ? 'text-amber-500'
+                      : 'text-rose-500'
+                  }
+                  strokeDasharray={`${readinessData.readinessScore || 70}, 100`}
+                  strokeWidth="3.5"
+                  strokeLinecap="round"
+                  stroke="currentColor"
+                  fill="none"
+                  d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                />
+              </svg>
+              <span className="absolute text-xs font-bold text-[#1C1917]">
+                {Math.round(readinessData.readinessScore || 72)}%
+              </span>
+            </div>
+
+            <div>
+              <div className="text-[10px] font-semibold uppercase tracking-wider text-[#A8A29E]">
+                Placement Readiness
+              </div>
+              <div className="text-xs font-bold text-[#1C1917] flex items-center gap-1.5 mt-0.5">
+                <span>{readinessData.status || 'Needs Improvement'}</span>
+                <span className="w-1.5 h-1.5 rounded-full bg-amber-500" />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* ─────────────────────────────────────────────────────────────
+            QUICK ACTION BAR (USER REQUEST REQUIREMENT)
+        ───────────────────────────────────────────────────────────── */}
+        <div className="mt-5 pt-4 border-t border-[#E7E5E4]/80">
+          <div className="text-[11px] font-semibold text-[#78716C] uppercase tracking-wider mb-2.5">
+            Quick Actions:
+          </div>
+          <div className="flex flex-wrap gap-2">
+            <button
+              onClick={() => handleQuickAction('assessment')}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#FAFAF9] border border-[#E7E5E4] hover:border-[#0F766E] hover:bg-[#F0FDFA] text-xs font-medium text-[#1C1917] transition-all cursor-pointer shadow-2xs"
+            >
+              <Target size={13} className="text-[#0F766E]" />
+              <span>Take Assessment</span>
+            </button>
+
+            <button
+              onClick={() => handleQuickAction('coding')}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#FAFAF9] border border-[#E7E5E4] hover:border-[#0F766E] hover:bg-[#F0FDFA] text-xs font-medium text-[#1C1917] transition-all cursor-pointer shadow-2xs"
+            >
+              <Code size={13} className="text-[#2563EB]" />
+              <span>Practice Coding</span>
+            </button>
+
+            <button
+              onClick={() => handleQuickAction('aptitude')}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#FAFAF9] border border-[#E7E5E4] hover:border-[#0F766E] hover:bg-[#F0FDFA] text-xs font-medium text-[#1C1917] transition-all cursor-pointer shadow-2xs"
+            >
+              <Zap size={13} className="text-[#D97706]" />
+              <span>Practice Aptitude</span>
+            </button>
+
+            <button
+              onClick={() => handleQuickAction('hr_interview')}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#FAFAF9] border border-[#E7E5E4] hover:border-[#0F766E] hover:bg-[#F0FDFA] text-xs font-medium text-[#1C1917] transition-all cursor-pointer shadow-2xs"
+            >
+              <Briefcase size={13} className="text-[#7C3AED]" />
+              <span>Start HR Interview</span>
+            </button>
+
+            <button
+              onClick={() => handleQuickAction('technical_interview')}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#FAFAF9] border border-[#E7E5E4] hover:border-[#0F766E] hover:bg-[#F0FDFA] text-xs font-medium text-[#1C1917] transition-all cursor-pointer shadow-2xs"
+            >
+              <Code size={13} className="text-[#0F766E]" />
+              <span>Start Technical Interview</span>
+            </button>
+
+            <button
+              onClick={() => handleQuickAction('roadmap')}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#FAFAF9] border border-[#E7E5E4] hover:border-[#0F766E] hover:bg-[#F0FDFA] text-xs font-medium text-[#1C1917] transition-all cursor-pointer shadow-2xs"
+            >
+              <BookOpen size={13} className="text-[#059669]" />
+              <span>Generate My Roadmap</span>
+            </button>
+
+            <button
+              onClick={() => handleQuickAction('readiness')}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#F0FDFA] border border-[#CCFBF1] text-[#0F766E] hover:bg-[#CCFBF1] text-xs font-semibold transition-all cursor-pointer shadow-2xs"
+            >
+              <Award size={13} className="text-[#0F766E]" />
+              <span>Check Readiness</span>
+            </button>
+          </div>
         </div>
       </div>
 
-      <div className="flex-1 overflow-hidden flex flex-col rounded-[24px] border border-[#263248] bg-[#111827] shadow-[0_10px_40px_-10px_rgba(0,0,0,0.5)] relative">
-        
-        {/* Decorative ambient glow */}
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-3/4 h-[300px] bg-[#7C3AED] opacity-[0.03] blur-[100px] pointer-events-none rounded-full" />
-        
-        {/* Chat Area */}
-        <div className="flex-1 overflow-y-auto p-4 sm:p-8 space-y-6 relative z-10 scrollbar-thin">
-          <AnimatePresence initial={false}>
-            {messages.map(msg => (
-              <motion.div 
-                key={msg.id}
-                initial={{ opacity: 0, y: 10, scale: 0.98 }}
-                animate={{ opacity: 1, y: 0, scale: 1 }}
-                className={`flex gap-4 ${msg.sender === 'user' ? 'flex-row-reverse' : ''}`}
-              >
-                {/* Avatar */}
-                <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 border ${
-                  msg.sender === 'user' 
-                    ? 'bg-[#151D2F] border-[#263248] text-[#F8FAFC]' 
-                    : 'bg-gradient-to-br from-[#7C3AED] to-[#06B6D4] border-transparent text-white shadow-[0_0_15px_rgba(6,182,212,0.4)]'
-                }`}>
-                  {msg.sender === 'user' ? <FiUser size={18} /> : <Bot size={20} />}
-                </div>
+      {/* ─────────────────────────────────────────────────────────────
+          2. MAIN 2-COLUMN LAYOUT: CHAT (LEFT) + DIAGNOSTICS (RIGHT)
+      ───────────────────────────────────────────────────────────── */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+        {/* LEFT COLUMN: CHAT INTERFACE (8 COLS) */}
+        <div className="lg:col-span-8 bg-white border border-[#E7E5E4] rounded-2xl shadow-xs flex flex-col h-[650px] overflow-hidden">
+          {/* Chat Header */}
+          <div className="p-3.5 sm:px-5 sm:py-3 border-b border-[#E7E5E4] flex items-center justify-between bg-[#FAFAF9]">
+            <div className="flex items-center gap-2">
+              <div className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" />
+              <span className="text-xs font-bold text-[#1C1917]">Coordinator Chat Session</span>
+              <span className="text-[11px] text-[#A8A29E] hidden sm:inline">| Connected to internal AI microservice</span>
+            </div>
 
-                {/* Message Bubble */}
-                <div className={`max-w-[85%] sm:max-w-[75%] p-4 sm:p-5 shadow-sm ${
-                  msg.sender === 'user' 
-                    ? 'bg-[#7C3AED]/10 border border-[#7C3AED]/30 rounded-[20px] rounded-tr-[4px] text-[#F8FAFC]' 
-                    : 'bg-[#151D2F] border border-[#263248] rounded-[20px] rounded-tl-[4px] text-[#CBD5E1]'
-                }`}>
-                  <p className="text-[15px] leading-relaxed">{msg.text}</p>
-                </div>
-              </motion.div>
-            ))}
-            
-            {/* Typing Indicator */}
-            {isTyping && (
-              <motion.div 
-                initial={{ opacity: 0, y: 10 }} 
-                animate={{ opacity: 1, y: 0 }} 
-                exit={{ opacity: 0, scale: 0.95 }}
-                className="flex gap-4"
-              >
-                 <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#7C3AED] to-[#06B6D4] border-transparent flex items-center justify-center shrink-0 text-white shadow-[0_0_15px_rgba(6,182,212,0.4)]">
-                  <Bot size={20} />
-                </div>
-                <div className="px-5 py-4 bg-[#151D2F] border border-[#263248] rounded-[20px] rounded-tl-[4px] flex items-center gap-1.5 h-[52px]">
-                  <motion.div animate={{ y: [0, -5, 0] }} transition={{ duration: 0.6, repeat: Infinity, delay: 0 }} className="w-2 h-2 bg-[#7C3AED] rounded-full" />
-                  <motion.div animate={{ y: [0, -5, 0] }} transition={{ duration: 0.6, repeat: Infinity, delay: 0.2 }} className="w-2 h-2 bg-[#7C3AED] rounded-full" />
-                  <motion.div animate={{ y: [0, -5, 0] }} transition={{ duration: 0.6, repeat: Infinity, delay: 0.4 }} className="w-2 h-2 bg-[#06B6D4] rounded-full" />
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
-          <div ref={endOfMessagesRef} className="h-2" />
-        </div>
+            <button
+              onClick={handleResetChat}
+              className="flex items-center gap-1 px-2.5 py-1 text-xs text-[#78716C] hover:text-[#1C1917] hover:bg-white rounded-md transition-all cursor-pointer"
+              title="Reset conversation"
+            >
+              <RefreshCw size={12} />
+              <span>Reset</span>
+            </button>
+          </div>
 
-        {/* Input Area */}
-        <div className="p-4 sm:p-6 bg-[#111827] border-t border-[#263248] relative z-10">
-          <div className="max-w-4xl mx-auto">
-            {/* Suggested Prompts */}
-            {messages.length < 3 && !isTyping && (
-              <motion.div 
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="flex gap-3 mb-4 overflow-x-auto scrollbar-hide pb-2"
-              >
-                {SUGGESTED_PROMPTS.map((prompt, idx) => (
-                  <button 
-                    key={idx} 
-                    type="button"
-                    onClick={() => setInput(prompt.label)}
-                    className="flex items-center gap-2 text-[13px] font-medium bg-[#151D2F] border border-[#263248] text-[#CBD5E1] px-4 py-2 rounded-full whitespace-nowrap hover:bg-[#7C3AED]/10 hover:border-[#7C3AED]/40 hover:text-[#F8FAFC] transition-all"
+          {/* Messages Feed */}
+          <div className="flex-1 overflow-y-auto p-4 sm:p-5 space-y-4 scrollbar-thin">
+            <AnimatePresence initial={false}>
+              {messages.map((msg) => {
+                const agentMeta = AGENT_LABELS[msg.agent] || AGENT_LABELS.coordinator;
+                const AgentIcon = agentMeta.icon;
+
+                return (
+                  <motion.div
+                    key={msg.id}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.2 }}
+                    className={`flex gap-3 ${msg.sender === 'user' ? 'flex-row-reverse' : 'flex-row'}`}
                   >
-                    <span className="text-[#06B6D4]">{prompt.icon}</span>
-                    {prompt.label}
-                  </button>
-                ))}
-              </motion.div>
-            )}
-            
-            <form onSubmit={handleSend} className="relative flex items-center group">
-              <input 
-                type="text" 
+                    {/* Avatar */}
+                    <div
+                      className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 text-xs font-bold border ${
+                        msg.sender === 'user'
+                          ? 'bg-[#F0FDFA] border-[#CCFBF1] text-[#0F766E]'
+                          : `${agentMeta.bg} ${agentMeta.border} ${agentMeta.text}`
+                      }`}
+                    >
+                      {msg.sender === 'user' ? <User size={15} /> : <AgentIcon size={16} />}
+                    </div>
+
+                    {/* Message Body */}
+                    <div className={`max-w-[88%] sm:max-w-[80%] space-y-1.5 ${msg.sender === 'user' ? 'items-end' : 'items-start'}`}>
+                      {/* Subtle specialized capability indicator */}
+                      {msg.sender === 'ai' && (
+                        <div className="flex items-center gap-1.5 pl-1">
+                          <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-bold tracking-wide uppercase ${agentMeta.bg} ${agentMeta.border} border ${agentMeta.text}`}>
+                            <AgentIcon size={11} />
+                            <span>{agentMeta.label}</span>
+                          </span>
+                        </div>
+                      )}
+
+                      {/* Bubble */}
+                      <div
+                        className={`px-4 py-3 rounded-2xl text-xs sm:text-sm leading-relaxed whitespace-pre-line shadow-2xs ${
+                          msg.sender === 'user'
+                            ? 'bg-[#0F766E] text-white rounded-tr-xs'
+                            : 'bg-[#FAFAF9] border border-[#E7E5E4] text-[#1C1917] rounded-tl-xs'
+                        }`}
+                      >
+                        {msg.text}
+                      </div>
+
+                      {/* Interactive Suggested Action Buttons */}
+                      {msg.actions && msg.actions.length > 0 && (
+                        <div className="flex flex-wrap gap-1.5 pt-1 pl-1">
+                          {msg.actions.map((act, idx) => (
+                            <button
+                              key={idx}
+                              onClick={() => handleActionClick(act)}
+                              className="inline-flex items-center gap-1 px-2.5 py-1 text-[11px] font-semibold rounded-lg bg-white border border-[#E7E5E4] text-[#0F766E] hover:bg-[#F0FDFA] hover:border-[#0F766E] transition-all cursor-pointer shadow-2xs"
+                            >
+                              <span>{act.label}</span>
+                              <ChevronRight size={12} />
+                            </button>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  </motion.div>
+                );
+              })}
+
+              {/* Typing Indicator */}
+              {isTyping && (
+                <motion.div
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0 }}
+                  className="flex gap-3"
+                >
+                  <div className="w-8 h-8 rounded-lg bg-[#F0FDFA] border border-[#CCFBF1] text-[#0F766E] flex items-center justify-center shrink-0">
+                    <Bot size={16} />
+                  </div>
+                  <div className="px-4 py-2.5 bg-[#FAFAF9] border border-[#E7E5E4] rounded-2xl rounded-tl-xs flex items-center gap-1.5 h-9">
+                    <span className="w-1.5 h-1.5 bg-[#0F766E] rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
+                    <span className="w-1.5 h-1.5 bg-[#0F766E] rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
+                    <span className="w-1.5 h-1.5 bg-[#0F766E] rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+            <div ref={messagesEndRef} className="h-1" />
+          </div>
+
+          {/* Suggested Prompts Pill Bar */}
+          <div className="px-4 py-2 bg-[#FAFAF9] border-t border-[#E7E5E4] flex items-center gap-2 overflow-x-auto scrollbar-hide">
+            <span className="text-[10px] uppercase font-bold text-[#A8A29E] shrink-0">Try:</span>
+            {SUGGESTED_PROMPTS.map((p, idx) => {
+              const PIcon = p.icon;
+              return (
+                <button
+                  key={idx}
+                  onClick={() => handleSend(p.label)}
+                  className="flex items-center gap-1 text-[11px] font-medium px-2.5 py-1 rounded-full bg-white border border-[#E7E5E4] text-[#78716C] hover:text-[#0F766E] hover:border-[#0F766E] hover:bg-[#F0FDFA] whitespace-nowrap transition-all cursor-pointer shrink-0"
+                >
+                  <PIcon size={11} className="text-[#0F766E]" />
+                  <span>{p.label}</span>
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Input Area */}
+          <div className="p-3 sm:p-4 bg-white border-t border-[#E7E5E4]">
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                handleSend();
+              }}
+              className="relative flex items-center"
+            >
+              <input
+                type="text"
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
-                placeholder="Ask your AI mentor anything..."
-                className="w-full bg-[#151D2F] border border-[#263248] rounded-2xl pl-5 pr-14 py-4 text-[15px] text-[#F8FAFC] placeholder:text-[#64748B] focus:outline-none focus:border-[#7C3AED] focus:ring-4 focus:ring-[#7C3AED]/10 transition-all shadow-sm"
+                placeholder="Ask anything: 'What should I study today?', 'Debug this code', 'Start an interview'..."
+                className="w-full bg-[#FAFAF9] border border-[#E7E5E4] rounded-xl pl-4 pr-12 py-2.5 sm:py-3 text-xs sm:text-sm text-[#1C1917] placeholder:text-[#A8A29E] focus:outline-none focus:border-[#0F766E] focus:ring-2 focus:ring-[#0F766E]/15 transition-all"
               />
-              <button 
-                type="submit" 
-                disabled={!input.trim()}
-                className="absolute right-2 top-1/2 -translate-y-1/2 w-10 h-10 rounded-xl bg-gradient-to-br from-[#7C3AED] to-[#6366F1] text-white flex items-center justify-center hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-[0_4px_14px_rgba(124,58,237,0.4)] disabled:shadow-none"
+              <button
+                type="submit"
+                disabled={!input.trim() || isTyping}
+                className="absolute right-2 w-8 h-8 rounded-lg bg-[#0F766E] hover:bg-[#115E59] text-white flex items-center justify-center disabled:opacity-40 disabled:cursor-not-allowed transition-all shadow-xs cursor-pointer"
+                aria-label="Send message"
               >
-                <FiSend size={18} className="translate-x-[-1px] translate-y-[1px]" />
+                <Send size={14} />
               </button>
             </form>
-            <div className="text-center mt-3">
-               <span className="text-[11px] text-[#64748B] font-medium">AI can make mistakes. Verify important career advice.</span>
+          </div>
+        </div>
+
+        {/* RIGHT COLUMN: DIAGNOSTICS, WEAK AREAS & TODAY'S RECOMMENDED TASKS (4 COLS) */}
+        <div className="lg:col-span-4 space-y-5">
+          {/* CARD 1: CURRENT WEAK AREAS */}
+          <div className="bg-white border border-[#E7E5E4] rounded-2xl p-4 sm:p-5 shadow-xs">
+            <div className="flex items-center justify-between mb-3">
+              <div className="flex items-center gap-2">
+                <AlertTriangle size={16} className="text-rose-500" />
+                <h2 className="text-xs sm:text-sm font-bold text-[#1C1917]">
+                  Current Weak Areas
+                </h2>
+              </div>
+              <span className="text-[10px] font-semibold text-[#A8A29E] uppercase">
+                Diagnostic Gaps
+              </span>
+            </div>
+
+            <p className="text-[11px] text-[#78716C] mb-3 leading-relaxed">
+              Targeted concepts requiring remediation before interview rounds. Click to drill with Mentor:
+            </p>
+
+            <div className="flex flex-wrap gap-1.5">
+              {(readinessData.weakAreas && readinessData.weakAreas.length > 0
+                ? readinessData.weakAreas
+                : ['Dynamic Programming', 'SQL Indexing', 'System Design']
+              ).map((topic, idx) => (
+                <button
+                  key={idx}
+                  onClick={() => handleSend(`How do I master ${topic} for my placement interview?`)}
+                  className="px-2.5 py-1 rounded-lg text-xs font-medium bg-rose-50 border border-rose-200 text-rose-700 hover:bg-rose-100 transition-all cursor-pointer text-left"
+                >
+                  {topic}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* CARD 2: TODAY'S RECOMMENDED TASKS */}
+          <div className="bg-white border border-[#E7E5E4] rounded-2xl p-4 sm:p-5 shadow-xs">
+            <div className="flex items-center justify-between mb-3">
+              <div className="flex items-center gap-2">
+                <CheckCircle2 size={16} className="text-[#0F766E]" />
+                <h2 className="text-xs sm:text-sm font-bold text-[#1C1917]">
+                  Today's Recommended Tasks
+                </h2>
+              </div>
+              <span className="text-[10px] font-semibold text-[#0F766E] bg-[#F0FDFA] border border-[#CCFBF1] px-2 py-0.5 rounded-md">
+                Active
+              </span>
+            </div>
+
+            <div className="space-y-2.5">
+              <div className="flex items-start gap-2.5 p-2.5 rounded-xl bg-[#FAFAF9] border border-[#E7E5E4]/70">
+                <div className="w-5 h-5 rounded-md bg-[#F0FDFA] border border-[#CCFBF1] flex items-center justify-center text-[#0F766E] shrink-0 mt-0.5">
+                  <Code size={12} />
+                </div>
+                <div className="text-xs flex-1">
+                  <div className="font-semibold text-[#1C1917]">DSA Coding Drill</div>
+                  <div className="text-[#78716C] text-[11px]">Solve 1 Medium LeetCode problem in Dynamic Programming.</div>
+                </div>
+                <button
+                  onClick={() => navigate('/practice')}
+                  className="text-[11px] font-semibold text-[#0F766E] hover:underline shrink-0 cursor-pointer"
+                >
+                  Start
+                </button>
+              </div>
+
+              <div className="flex items-start gap-2.5 p-2.5 rounded-xl bg-[#FAFAF9] border border-[#E7E5E4]/70">
+                <div className="w-5 h-5 rounded-md bg-amber-50 border border-amber-200 flex items-center justify-center text-amber-700 shrink-0 mt-0.5">
+                  <Zap size={12} />
+                </div>
+                <div className="text-xs flex-1">
+                  <div className="font-semibold text-[#1C1917]">Timed Aptitude Drill</div>
+                  <div className="text-[#78716C] text-[11px]">Complete 5 probability and logical deduction questions.</div>
+                </div>
+                <button
+                  onClick={() => handleSend('Start an aptitude diagnostic quiz')}
+                  className="text-[11px] font-semibold text-amber-700 hover:underline shrink-0 cursor-pointer"
+                >
+                  Start
+                </button>
+              </div>
+
+              <div className="flex items-start gap-2.5 p-2.5 rounded-xl bg-[#FAFAF9] border border-[#E7E5E4]/70">
+                <div className="w-5 h-5 rounded-md bg-purple-50 border border-purple-200 flex items-center justify-center text-purple-700 shrink-0 mt-0.5">
+                  <Briefcase size={12} />
+                </div>
+                <div className="text-xs flex-1">
+                  <div className="font-semibold text-[#1C1917]">Mock Interview Round</div>
+                  <div className="text-[#78716C] text-[11px]">Practice STAR method response for behavioral questions.</div>
+                </div>
+                <button
+                  onClick={() => handleSend('Start an HR interview')}
+                  className="text-[11px] font-semibold text-purple-700 hover:underline shrink-0 cursor-pointer"
+                >
+                  Start
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {/* CARD 3: RECENT ASSESSMENT SUMMARY */}
+          <div className="bg-white border border-[#E7E5E4] rounded-2xl p-4 sm:p-5 shadow-xs">
+            <div className="flex items-center justify-between mb-3">
+              <div className="flex items-center gap-2">
+                <Award size={16} className="text-[#D97706]" />
+                <h2 className="text-xs sm:text-sm font-bold text-[#1C1917]">
+                  Recent Assessment Summary
+                </h2>
+              </div>
+              <span className="text-[10px] text-[#78716C]">Multi-Domain</span>
+            </div>
+
+            <div className="space-y-2">
+              {Object.entries(readinessData.skills || {}).map(([key, val]) => (
+                <div key={key} className="space-y-1">
+                  <div className="flex justify-between text-[11px]">
+                    <span className="font-medium text-[#78716C] uppercase">{key}</span>
+                    <span className="font-bold text-[#1C1917]">{Math.round(val)}%</span>
+                  </div>
+                  <div className="w-full h-1.5 bg-[#E7E5E4] rounded-full overflow-hidden">
+                    <div
+                      className={`h-full rounded-full ${
+                        val >= 75 ? 'bg-[#0F766E]' : val >= 65 ? 'bg-amber-500' : 'bg-rose-500'
+                      }`}
+                      style={{ width: `${Math.min(100, Math.max(5, val))}%` }}
+                    />
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <div className="mt-4 pt-3 border-t border-[#E7E5E4] flex items-center justify-between text-xs">
+              <span className="text-[#78716C]">Weekly Practice Hours:</span>
+              <strong className="text-[#1C1917]">{analyticsData.weeklyHours || 3.5} hrs</strong>
             </div>
           </div>
         </div>
