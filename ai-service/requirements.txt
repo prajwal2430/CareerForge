@@ -1,0 +1,15 @@
+# ==============================================================================
+# CareerForge AI Service - Requirements Specification
+# Python 3.12+ (FastAPI + CrewAI + Google Gemini + MongoDB)
+# ==============================================================================
+
+fastapi>=0.115.0
+uvicorn[standard]>=0.30.0
+pydantic>=2.10.0
+pydantic-settings>=2.6.0
+python-dotenv>=1.0.1
+pymongo>=4.9.0
+motor>=3.6.0
+google-genai>=2.0.0
+crewai>=1.0.0
+httpx>=0.28.0
