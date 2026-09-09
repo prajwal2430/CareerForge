@@ -13,20 +13,27 @@ import {
   FiTrendingUp,
   FiAward,
   FiUser,
-  FiSearch
+  FiSearch,
+  FiBriefcase,
+  FiHelpCircle,
+  FiCompass,
+  FiX
 } from 'react-icons/fi';
 import toast from 'react-hot-toast';
 import Modal from '../components/ui/Modal';
 import { useAuth } from '../context/AuthContext';
+import { getAuthorDetails } from '../utils/userHelper';
 
 const STORAGE_KEY = 'learnhub_community_posts';
 
 const INITIAL_POSTS = [
   {
     id: 'post-1',
-    author: 'Priya Patel',
-    role: 'SDE at Google',
-    avatar: 'P',
+    author: {
+      name: 'Priya Patel',
+      role: 'SDE at Google',
+      avatar: 'P'
+    },
     category: 'Interview Experiences',
     time: '2 hours ago',
     title: 'My Google Interview Experience (Off-campus 2024)',
@@ -41,9 +48,11 @@ const INITIAL_POSTS = [
   },
   {
     id: 'post-2',
-    author: 'Rahul Sharma',
-    role: 'Final Year Student',
-    avatar: 'R',
+    author: {
+      name: 'Rahul Sharma',
+      role: 'Final Year Student',
+      avatar: 'R'
+    },
     category: 'Doubt Resolution',
     time: '5 hours ago',
     title: 'Need help with System Design resources & LLD practice',
@@ -57,9 +66,11 @@ const INITIAL_POSTS = [
   },
   {
     id: 'post-3',
-    author: 'Devansh Verma',
-    role: 'Full Stack Developer',
-    avatar: 'D',
+    author: {
+      name: 'Devansh Verma',
+      role: 'Full Stack Developer',
+      avatar: 'D'
+    },
     category: 'Project Showcase',
     time: '1 day ago',
     title: 'Built an AI Mock Interviewer with real-time feedback 🚀',
@@ -73,17 +84,48 @@ const INITIAL_POSTS = [
   }
 ];
 
+const CATEGORY_OPTIONS = [
+  {
+    id: 'Interview Experiences',
+    label: 'Interview Experience',
+    desc: 'Company interview rounds & tips',
+    icon: FiBriefcase,
+    color: 'from-blue-500 to-indigo-500'
+  },
+  {
+    id: 'Doubt Resolution',
+    label: 'Doubt Resolution',
+    desc: 'DSA, System Design & bugs',
+    icon: FiHelpCircle,
+    color: 'from-amber-500 to-orange-500'
+  },
+  {
+    id: 'Project Showcase',
+    label: 'Project Showcase',
+    desc: 'Share your work & get feedback',
+    icon: FiCompass,
+    color: 'from-teal-500 to-cyan-500'
+  },
+  {
+    id: 'General Discussion',
+    label: 'Discussion',
+    desc: 'Careers, tips & questions',
+    icon: FiMessageSquare,
+    color: 'from-purple-500 to-pink-500'
+  }
+];
+
 const POPULAR_TAGS = [
-  'Interview Experience',
   'Google',
   'Amazon',
   'Microsoft',
-  'System Design',
+  'Interview Experience',
   'DSA',
+  'System Design',
   'React',
   'Resume',
-  'Project Showcase',
-  'Question'
+  'Offer',
+  'Web Dev'
 ];
 
 const CATEGORIES = [
@@ -94,17 +136,54 @@ const CATEGORIES = [
   'General Discussion'
 ];
 
-const Community = () => {
-  const { user } = useAuth();
+// Helper to normalize any post's author data
+const normalizeAuthor = (post) => {
+  let name = '';
+  let role = 'Student';
+  let avatar = 'U';
 
-  // Load posts from localStorage or initialize with defaults
+  if (typeof post.author === 'object' && post.author !== null) {
+    name = post.author.name || post.author.fullName || post.author.username || '';
+    role = post.author.role || post.author.headline || 'Student';
+    avatar = post.author.avatar || (name ? name.charAt(0).toUpperCase() : 'U');
+  } else if (typeof post.author === 'string') {
+    name = post.author;
+    role = post.role || 'Student';
+    avatar = post.avatar || (name ? name.charAt(0).toUpperCase() : 'U');
+  }
+
+  // Self-heal previous bug where author was "Community Member" and role was actually the user's name
+  if (name === 'Community Member' && role && !['Student', 'Software Engineer', 'Tech Aspirant', 'Community Admin', 'Learner'].includes(role)) {
+    name = role;
+    role = 'Student';
+    avatar = name.charAt(0).toUpperCase();
+  }
+
+  if (!name || name.trim().length === 0) {
+    name = 'Community Member';
+  }
+
+  return { name: name.trim(), role: role.trim(), avatar };
+};
+
+const Community = () => {
+  const { user, updateUser } = useAuth();
+
+  // Load posts from localStorage and sanitize author format
   const [posts, setPosts] = useState(() => {
     try {
       const saved = localStorage.getItem(STORAGE_KEY);
       if (saved) {
         const parsed = JSON.parse(saved);
         if (Array.isArray(parsed) && parsed.length > 0) {
-          return parsed;
+          // Normalize all loaded posts to clean author structure
+          return parsed.map((p) => {
+            const authorData = normalizeAuthor(p);
+            return {
+              ...p,
+              author: authorData
+            };
+          });
         }
       }
     } catch (err) {
@@ -122,6 +201,9 @@ const Community = () => {
     }
   }, [posts]);
 
+  // Current authenticated author details
+  const currentAuthorDetails = getAuthorDetails(user);
+
   // UI state
   const [activeCategory, setActiveCategory] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
@@ -131,12 +213,23 @@ const Community = () => {
   const [activeMenuPostId, setActiveMenuPostId] = useState(null);
 
   // Create Post Form State
+  const [postAuthorName, setPostAuthorName] = useState('');
+  const [newPostRole, setNewPostRole] = useState('Student');
   const [newPostTitle, setNewPostTitle] = useState('');
   const [newPostCategory, setNewPostCategory] = useState('Interview Experiences');
-  const [newPostRole, setNewPostRole] = useState(user?.role === 'admin' ? 'Community Admin' : 'Student & Aspiring Dev');
   const [newPostContent, setNewPostContent] = useState('');
-  const [selectedTags, setSelectedTags] = useState(['Interview Experience']);
+  const [selectedTags, setSelectedTags] = useState(['Interview Experience', 'Google']);
   const [customTagInput, setCustomTagInput] = useState('');
+
+  // Sync author state when modal opens or user details change
+  useEffect(() => {
+    if (isCreateModalOpen) {
+      const details = getAuthorDetails(user);
+      const initialName = details.name !== 'Community Member' ? details.name : '';
+      setPostAuthorName(initialName);
+      setNewPostRole(details.role || 'Student');
+    }
+  }, [isCreateModalOpen, user]);
 
   // Handle Tag Selection
   const toggleTag = (tag) => {
@@ -158,33 +251,72 @@ const Community = () => {
     }
   };
 
+  const removeTag = (tagToRemove) => {
+    setSelectedTags(selectedTags.filter((t) => t !== tagToRemove));
+  };
+
   // Submit New Post
   const handleCreatePost = (e) => {
     e.preventDefault();
 
+    const fallbackAuthor = getAuthorDetails(user);
+
+    // Resolve Author Name with strict priority:
+    // 1. Form input author name (if entered)
+    // 2. user.name
+    // 3. user.fullName
+    // 4. user.username
+    // 5. Fallback: "Community Member"
+    let resolvedAuthorName = postAuthorName.trim();
+    if (!resolvedAuthorName || resolvedAuthorName === 'Community Member') {
+      resolvedAuthorName = user?.name || user?.fullName || user?.username || fallbackAuthor.name;
+    }
+
+    if (!resolvedAuthorName || !resolvedAuthorName.trim()) {
+      toast.error('Please enter your name as the author.');
+      return;
+    }
+
     if (!newPostTitle.trim()) {
-      toast.error('Please enter a title for your post.');
+      toast.error('Please enter a descriptive post title.');
       return;
     }
 
     if (!newPostContent.trim()) {
-      toast.error('Please write some content for your post.');
+      toast.error('Please provide some details in the post content.');
       return;
     }
 
-    const postAuthorName = user?.name || 'Community Member';
-    const postAvatar = postAuthorName.charAt(0).toUpperCase() || 'U';
+    const resolvedRole = newPostRole.trim() || fallbackAuthor.role || 'Student';
+    const resolvedAvatar = resolvedAuthorName.charAt(0).toUpperCase() || 'U';
+
+    // If user entered their name and user state was guest, persist it
+    if (resolvedAuthorName !== 'Community Member' && (!user || !user.name)) {
+      if (updateUser) {
+        updateUser({ name: resolvedAuthorName, role: resolvedRole });
+      } else {
+        try {
+          const prevUser = JSON.parse(localStorage.getItem('user') || '{}');
+          localStorage.setItem('user', JSON.stringify({ ...prevUser, name: resolvedAuthorName, role: resolvedRole }));
+        } catch (err) {
+          console.error(err);
+        }
+      }
+    }
 
     const createdPost = {
       id: `post-${Date.now()}`,
-      author: postAuthorName,
-      role: newPostRole.trim() || 'Learner',
-      avatar: postAvatar,
-      category: newPostCategory,
-      time: 'Just now',
+      author: {
+        name: resolvedAuthorName,
+        avatar: resolvedAvatar,
+        role: resolvedRole
+      },
       title: newPostTitle.trim(),
       content: newPostContent.trim(),
+      category: newPostCategory,
       tags: selectedTags.length > 0 ? selectedTags : [newPostCategory],
+      createdAt: new Date().toISOString(),
+      time: 'Just now',
       likes: 0,
       liked: false,
       comments: [],
@@ -192,7 +324,7 @@ const Community = () => {
     };
 
     setPosts([createdPost, ...posts]);
-    toast.success('Post published to Community!');
+    toast.success('Your post has been published!');
 
     // Reset Form & Close Modal
     setNewPostTitle('');
@@ -232,10 +364,11 @@ const Community = () => {
     const commentText = (commentInputs[postId] || '').trim();
     if (!commentText) return;
 
-    const authorName = user?.name || 'You';
+    const authorInfo = getAuthorDetails(user);
     const newComment = {
       id: `c-${Date.now()}`,
-      author: authorName,
+      author: authorInfo.name,
+      avatar: authorInfo.avatar,
       time: 'Just now',
       content: commentText
     };
@@ -276,6 +409,7 @@ const Community = () => {
 
   // Filter posts based on category and search query
   const filteredPosts = posts.filter((post) => {
+    const authorData = normalizeAuthor(post);
     const matchesCategory =
       activeCategory === 'All' ||
       post.category === activeCategory ||
@@ -286,28 +420,28 @@ const Community = () => {
       !query ||
       post.title?.toLowerCase().includes(query) ||
       post.content?.toLowerCase().includes(query) ||
-      post.author?.toLowerCase().includes(query) ||
+      authorData.name.toLowerCase().includes(query) ||
       post.tags?.some((t) => t.toLowerCase().includes(query));
 
     return matchesCategory && matchesSearch;
   });
 
   return (
-    <div className="pb-16 max-w-6xl mx-auto px-2 sm:px-4">
+    <div className="pb-16 max-w-6xl mx-auto px-3 sm:px-6">
       {/* Header Banner */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
         <div>
-          <h1 className="text-3xl font-bold text-slate-900 dark:text-white tracking-tight">
-            Community
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-[#0F172A] tracking-tight">
+            Community Hub
           </h1>
-          <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
-            Connect with peers, share interview breakdowns, ask technical doubts, and showcase projects.
+          <p className="text-xs sm:text-sm text-[#64748B] mt-1">
+            Connect with tech peers, share interview breakdowns, ask doubts, and showcase projects.
           </p>
         </div>
 
         <button
           onClick={() => setIsCreateModalOpen(true)}
-          className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-teal-600 to-cyan-600 hover:from-teal-700 hover:to-cyan-700 text-white font-semibold text-sm shadow-md shadow-teal-500/20 hover:shadow-lg hover:shadow-teal-500/30 active:scale-95 transition-all self-start sm:self-auto"
+          className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-[#0F766E] hover:bg-[#115E59] text-white font-semibold text-xs sm:text-sm shadow-xs active:scale-95 transition-all self-start sm:self-auto cursor-pointer"
         >
           <FiPlus size={18} strokeWidth={2.5} />
           <span>Create Post</span>
@@ -321,18 +455,18 @@ const Community = () => {
           <div className="space-y-3">
             {/* Search Input */}
             <div className="relative">
-              <FiSearch className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" size={17} />
+              <FiSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-[#A8A29E]" size={17} />
               <input
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search posts by topic, company, tag, or author..."
-                className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-sm text-slate-800 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-500/30 focus:border-teal-500 transition-all shadow-sm"
+                className="w-full pl-11 pr-4 py-2.5 sm:py-3 rounded-xl bg-white border border-[#E7E5E4] text-xs sm:text-sm text-[#1C1917] placeholder-[#A8A29E] focus:outline-none focus:border-[#0F766E] focus:ring-2 focus:ring-[#0F766E]/15 transition-all shadow-xs"
               />
               {searchQuery && (
                 <button
                   onClick={() => setSearchQuery('')}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
+                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-xs text-[#78716C] hover:text-[#1C1917] px-2 py-0.5 rounded-md bg-[#FAFAF9] border border-[#E7E5E4]"
                 >
                   Clear
                 </button>
@@ -347,10 +481,10 @@ const Community = () => {
                   <button
                     key={cat}
                     onClick={() => setActiveCategory(cat)}
-                    className={`px-4 py-1.5 rounded-full font-medium whitespace-nowrap transition-all ${
+                    className={`px-4 py-2 rounded-xl font-medium whitespace-nowrap transition-all cursor-pointer ${
                       isActive
-                        ? 'bg-teal-600 text-white shadow-sm shadow-teal-500/25'
-                        : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-800 hover:text-slate-900 dark:hover:text-white hover:border-slate-300'
+                        ? 'bg-[#0F766E] text-white shadow-xs font-semibold'
+                        : 'bg-white text-[#78716C] border border-[#E7E5E4] hover:text-[#0F766E] hover:bg-[#F0FDFA]'
                     }`}
                   >
                     {cat}
@@ -362,21 +496,21 @@ const Community = () => {
 
           {/* Posts List */}
           {filteredPosts.length === 0 ? (
-            <div className="text-center py-16 px-4 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-sm">
-              <div className="w-16 h-16 rounded-2xl bg-teal-50 dark:bg-teal-950/40 text-teal-600 dark:text-teal-400 mx-auto flex items-center justify-center mb-3">
+            <div className="text-center py-16 px-4 bg-white rounded-2xl border border-[#E7E5E4] shadow-xs">
+              <div className="w-16 h-16 rounded-2xl bg-[#F0FDFA] text-[#0F766E] mx-auto flex items-center justify-center mb-3 border border-[#CCFBF1]">
                 <FiMessageSquare size={28} />
               </div>
-              <h3 className="text-lg font-bold text-slate-800 dark:text-white mb-1">
+              <h3 className="text-lg font-bold text-[#1C1917] mb-1">
                 No posts found
               </h3>
-              <p className="text-sm text-slate-500 dark:text-slate-400 max-w-sm mx-auto mb-5">
+              <p className="text-sm text-[#78716C] max-w-sm mx-auto mb-5">
                 {searchQuery
                   ? `No posts matching "${searchQuery}". Try a different keyword.`
                   : 'Be the first to share an interview experience or ask a question in this category!'}
               </p>
               <button
                 onClick={() => setIsCreateModalOpen(true)}
-                className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-teal-600 hover:bg-teal-700 text-white text-sm font-medium transition-colors"
+                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#0F766E] hover:bg-[#115E59] text-white text-sm font-medium transition-colors shadow-xs"
               >
                 <FiPlus size={16} /> Create First Post
               </button>
@@ -387,31 +521,37 @@ const Community = () => {
               const isMenuOpen = activeMenuPostId === post.id;
               const commentsList = post.comments || [];
 
+              // Cleanly extract author data matching the second post design
+              const authorData = normalizeAuthor(post);
+              const displayTime = post.time || 'Just now';
+
               return (
                 <div
                   key={post.id}
                   id={post.id}
-                  className="bg-white dark:bg-slate-900 rounded-2xl p-5 sm:p-6 border border-slate-200/80 dark:border-slate-800 shadow-sm hover:shadow-md transition-all relative"
+                  className="bg-white rounded-2xl p-5 sm:p-6 border border-[#E7E5E4] shadow-[0_4px_12px_rgba(28,25,23,0.05)] hover:border-[#0F766E] transition-all relative"
                 >
                   {/* Post Header */}
                   <div className="flex justify-between items-start mb-3.5">
                     <div className="flex gap-3 items-center">
-                      <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-teal-500 to-cyan-500 flex items-center justify-center font-bold text-white shadow-sm flex-shrink-0">
-                        {post.avatar || (post.author ? post.author.charAt(0).toUpperCase() : 'U')}
+                      <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-[#0F766E] to-[#14B8A6] flex items-center justify-center font-bold text-white shadow-xs flex-shrink-0">
+                        {authorData.avatar}
                       </div>
+
                       <div>
-                        <div className="flex items-center gap-2">
-                          <p className="font-semibold text-slate-900 dark:text-white leading-tight">
-                            {post.author}
-                          </p>
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <h4 className="font-bold text-[#1C1917] text-sm sm:text-base leading-tight">
+                            {authorData.name}
+                          </h4>
                           {post.category && (
-                            <span className="hidden sm:inline-block text-[11px] px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-medium">
+                            <span className="text-[11px] px-2.5 py-0.5 rounded-full bg-[#F0FDFA] text-[#0F766E] border border-[#CCFBF1] font-medium">
                               {post.category}
                             </span>
                           )}
                         </div>
-                        <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-                          {post.role} • {post.time}
+
+                        <p className="text-xs text-[#78716C] mt-0.5">
+                          {authorData.role} • {displayTime}
                         </p>
                       </div>
                     </div>
@@ -420,26 +560,26 @@ const Community = () => {
                     <div className="relative">
                       <button
                         onClick={() => setActiveMenuPostId(isMenuOpen ? null : post.id)}
-                        className="p-1.5 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                        className="p-1.5 rounded-lg text-[#78716C] hover:text-[#1C1917] hover:bg-[#FAFAF9] transition-colors cursor-pointer"
                         aria-label="Post actions"
                       >
                         <FiMoreHorizontal size={18} />
                       </button>
 
                       {isMenuOpen && (
-                        <div className="absolute right-0 mt-1 w-40 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl shadow-lg z-20 py-1.5 text-xs">
+                        <div className="absolute right-0 mt-1 w-40 bg-white border border-[#E7E5E4] rounded-xl shadow-lg z-20 py-1.5 text-xs">
                           <button
                             onClick={() => {
                               handleSharePost(post);
                               setActiveMenuPostId(null);
                             }}
-                            className="w-full text-left px-3.5 py-2 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 flex items-center gap-2"
+                            className="w-full text-left px-3.5 py-2 text-[#44403C] hover:bg-[#F0FDFA] hover:text-[#0F766E] flex items-center gap-2 cursor-pointer"
                           >
                             <FiShare2 size={14} /> Copy Post Link
                           </button>
                           <button
                             onClick={() => handleDeletePost(post.id)}
-                            className="w-full text-left px-3.5 py-2 text-red-600 hover:bg-red-50 dark:hover:bg-red-950/30 flex items-center gap-2"
+                            className="w-full text-left px-3.5 py-2 text-red-600 hover:bg-red-50 flex items-center gap-2 cursor-pointer"
                           >
                             <FiTrash2 size={14} /> Delete Post
                           </button>
@@ -449,12 +589,12 @@ const Community = () => {
                   </div>
 
                   {/* Post Title */}
-                  <h3 className="text-lg sm:text-xl font-bold text-slate-900 dark:text-white mb-2 leading-snug">
+                  <h3 className="text-base sm:text-lg font-bold text-[#1C1917] mb-2 leading-snug">
                     {post.title}
                   </h3>
 
                   {/* Post Content */}
-                  <div className="text-slate-700 dark:text-slate-300 text-sm mb-4 leading-relaxed whitespace-pre-line">
+                  <div className="text-[#44403C] text-xs sm:text-sm mb-4 leading-relaxed whitespace-pre-line">
                     {post.content}
                   </div>
 
@@ -465,7 +605,7 @@ const Community = () => {
                         <span
                           key={idx}
                           onClick={() => setSearchQuery(tag)}
-                          className="cursor-pointer text-xs bg-teal-50 hover:bg-teal-100 dark:bg-teal-950/40 dark:hover:bg-teal-900/50 text-teal-700 dark:text-teal-300 border border-teal-200/60 dark:border-teal-800/40 px-2.5 py-0.5 rounded-full font-medium transition-colors"
+                          className="cursor-pointer text-xs bg-[#F0FDFA] hover:bg-[#CCFBF1] text-[#0F766E] border border-[#CCFBF1] px-3 py-0.5 rounded-full font-medium transition-colors"
                         >
                           #{tag}
                         </span>
@@ -474,19 +614,19 @@ const Community = () => {
                   )}
 
                   {/* Actions Footer */}
-                  <div className="flex items-center gap-6 pt-3.5 border-t border-slate-100 dark:border-slate-800 text-sm">
+                  <div className="flex items-center gap-6 pt-3.5 border-t border-[#E7E5E4] text-xs sm:text-sm">
                     {/* Like Button */}
                     <button
                       onClick={() => handleToggleLike(post.id)}
-                      className={`flex items-center gap-2 font-medium transition-colors ${
+                      className={`flex items-center gap-2 font-medium transition-colors cursor-pointer ${
                         post.liked
-                          ? 'text-red-500 hover:text-red-600'
-                          : 'text-slate-500 dark:text-slate-400 hover:text-red-500'
+                          ? 'text-[#F97360] hover:text-[#EA6250]'
+                          : 'text-[#78716C] hover:text-[#F97360]'
                       }`}
                     >
                       <FiHeart
                         size={17}
-                        className={post.liked ? 'fill-red-500 text-red-500' : ''}
+                        className={post.liked ? 'fill-[#F97360] text-[#F97360]' : ''}
                       />
                       <span>{post.likes}</span>
                     </button>
@@ -494,7 +634,7 @@ const Community = () => {
                     {/* Comments Button */}
                     <button
                       onClick={() => toggleComments(post.id)}
-                      className="flex items-center gap-2 text-slate-500 dark:text-slate-400 hover:text-teal-600 dark:hover:text-teal-400 transition-colors font-medium"
+                      className="flex items-center gap-2 text-[#78716C] hover:text-[#0F766E] transition-colors font-medium cursor-pointer"
                     >
                       <FiMessageSquare size={17} />
                       <span>{commentsList.length} Comments</span>
@@ -503,7 +643,7 @@ const Community = () => {
                     {/* Share Button */}
                     <button
                       onClick={() => handleSharePost(post)}
-                      className="flex items-center gap-2 text-slate-500 dark:text-slate-400 hover:text-teal-600 dark:hover:text-teal-400 transition-colors font-medium ml-auto"
+                      className="flex items-center gap-2 text-[#78716C] hover:text-[#0F766E] transition-colors font-medium ml-auto cursor-pointer"
                     >
                       <FiShare2 size={16} />
                       <span className="hidden sm:inline">Share</span>
@@ -512,28 +652,31 @@ const Community = () => {
 
                   {/* Expandable Comments Section */}
                   {isCommentsOpen && (
-                    <div className="mt-4 pt-4 border-t border-slate-100 dark:border-slate-800 space-y-3">
+                    <div className="mt-4 pt-4 border-t border-[#E7E5E4] space-y-3">
                       {/* Comments List */}
                       {commentsList.length > 0 && (
                         <div className="space-y-2.5 mb-3">
-                          {commentsList.map((comment) => (
-                            <div
-                              key={comment.id}
-                              className="bg-slate-50 dark:bg-slate-800/60 rounded-xl p-3 text-xs"
-                            >
-                              <div className="flex justify-between items-center mb-1">
-                                <span className="font-semibold text-slate-800 dark:text-slate-200">
-                                  {comment.author}
-                                </span>
-                                <span className="text-slate-400 text-[10px]">
-                                  {comment.time}
-                                </span>
+                          {commentsList.map((comment) => {
+                            const cAuthor = typeof comment.author === 'object' ? comment.author?.name : comment.author;
+                            return (
+                              <div
+                                key={comment.id}
+                                className="bg-[#FAFAF9] border border-[#E7E5E4] rounded-xl p-3 text-xs"
+                              >
+                                <div className="flex justify-between items-center mb-1">
+                                  <span className="font-semibold text-[#1C1917]">
+                                    {cAuthor}
+                                  </span>
+                                  <span className="text-[#A8A29E] text-[10px]">
+                                    {comment.time}
+                                  </span>
+                                </div>
+                                <p className="text-[#44403C]">
+                                  {comment.content}
+                                </p>
                               </div>
-                              <p className="text-slate-600 dark:text-slate-300">
-                                {comment.content}
-                              </p>
-                            </div>
-                          ))}
+                            );
+                          })}
                         </div>
                       )}
 
@@ -541,7 +684,7 @@ const Community = () => {
                       <div className="flex gap-2">
                         <input
                           type="text"
-                          placeholder="Write a helpful response or comment..."
+                          placeholder="Write a helpful response..."
                           value={commentInputs[post.id] || ''}
                           onChange={(e) =>
                             setCommentInputs({
@@ -555,11 +698,11 @@ const Community = () => {
                               handleAddComment(post.id);
                             }
                           }}
-                          className="flex-1 px-3.5 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-500/40"
+                          className="flex-1 px-3.5 py-2 rounded-xl bg-white border border-[#E7E5E4] text-xs text-[#1C1917] placeholder-[#A8A29E] focus:outline-none focus:border-[#0F766E]"
                         />
                         <button
                           onClick={() => handleAddComment(post.id)}
-                          className="px-3.5 py-2 rounded-xl bg-teal-600 hover:bg-teal-700 text-white text-xs font-semibold flex items-center gap-1.5 transition-colors"
+                          className="px-4 py-2 rounded-xl bg-[#0F766E] hover:bg-[#115E59] text-white text-xs font-semibold flex items-center gap-1.5 transition-colors cursor-pointer"
                         >
                           <FiSend size={13} />
                           <span>Reply</span>
@@ -576,25 +719,25 @@ const Community = () => {
         {/* Right Sidebar */}
         <div className="w-full lg:w-80 space-y-6">
           {/* Create Post Prompt Card */}
-          <div className="bg-gradient-to-br from-teal-500/10 via-cyan-500/5 to-transparent dark:from-teal-950/30 dark:via-cyan-950/10 border border-teal-200/50 dark:border-teal-800/50 rounded-2xl p-5 text-slate-900 dark:text-white">
-            <h3 className="font-bold text-base mb-1.5 flex items-center gap-2 text-teal-800 dark:text-teal-300">
-              <FiAward className="text-teal-600 dark:text-teal-400" /> Share Your Story
+          <div className="bg-[#F0FDFA] border border-[#CCFBF1] rounded-2xl p-5 shadow-xs">
+            <h3 className="font-bold text-base mb-1.5 flex items-center gap-2 text-[#0F766E]">
+              <FiAward className="text-[#0F766E]" /> Share Your Story
             </h3>
-            <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed mb-4">
-              Recently interviewed or cracked an offer? Your guidance helps hundreds of candidates on LearnHub prepare better!
+            <p className="text-xs text-[#115E59] leading-relaxed mb-4">
+              Recently interviewed or cracked an offer? Your guidance helps candidates prepare better!
             </p>
             <button
               onClick={() => setIsCreateModalOpen(true)}
-              className="w-full py-2 px-3 rounded-xl bg-teal-600 hover:bg-teal-700 text-white text-xs font-semibold transition-colors flex items-center justify-center gap-1.5 shadow-sm"
+              className="w-full py-2.5 px-4 rounded-xl bg-[#0F766E] hover:bg-[#115E59] text-white text-xs font-semibold transition-all flex items-center justify-center gap-2 shadow-xs cursor-pointer"
             >
               <FiPlus size={15} /> Write an Experience
             </button>
           </div>
 
           {/* Trending Topics */}
-          <div className="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-2xl p-5 shadow-sm">
-            <h3 className="font-bold text-sm text-slate-900 dark:text-white mb-3.5 pb-2.5 border-b border-slate-100 dark:border-slate-800 flex items-center gap-2">
-              <FiTrendingUp className="text-teal-600 dark:text-teal-400" /> Trending Topics
+          <div className="bg-white border border-[#E7E5E4] rounded-2xl p-5 shadow-[0_4px_12px_rgba(28,25,23,0.05)]">
+            <h3 className="font-bold text-sm text-[#1C1917] mb-3.5 pb-2.5 border-b border-[#E7E5E4] flex items-center gap-2">
+              <FiTrendingUp className="text-[#0F766E]" /> Trending Topics
             </h3>
             <div className="space-y-3.5">
               {[
@@ -608,10 +751,10 @@ const Community = () => {
                   onClick={() => setSearchQuery(item.tag)}
                   className="cursor-pointer group flex justify-between items-center"
                 >
-                  <p className="text-xs font-semibold text-slate-800 dark:text-slate-200 group-hover:text-teal-600 dark:group-hover:text-teal-400 transition-colors">
+                  <p className="text-xs font-semibold text-[#475569] group-hover:text-[#2563EB] transition-colors">
                     #{item.tag}
                   </p>
-                  <span className="text-[11px] text-slate-400 group-hover:text-slate-600 dark:group-hover:text-slate-300">
+                  <span className="text-[11px] text-[#94A3B8] group-hover:text-[#64748B]">
                     {item.count}
                   </span>
                 </div>
@@ -620,25 +763,25 @@ const Community = () => {
           </div>
 
           {/* Top Contributors */}
-          <div className="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-2xl p-5 shadow-sm">
-            <h3 className="font-bold text-sm text-slate-900 dark:text-white mb-3.5 pb-2.5 border-b border-slate-100 dark:border-slate-800 flex items-center gap-2">
-              <FiUser className="text-teal-600 dark:text-teal-400" /> Top Contributors
+          <div className="bg-white border border-[#E2E8F0] rounded-2xl p-5 shadow-[0_4px_12px_rgba(15,23,42,0.06)]">
+            <h3 className="font-bold text-sm text-[#0F172A] mb-3.5 pb-2.5 border-b border-[#E2E8F0] flex items-center gap-2">
+              <FiUser className="text-[#14B8A6]" /> Top Contributors
             </h3>
             <div className="space-y-3">
               {[
-                { name: 'Amit Kumar', rep: '15.4k rep', initial: 'A', bg: 'from-amber-500 to-orange-500' },
-                { name: 'Sneha Rao', rep: '12.8k rep', initial: 'S', bg: 'from-teal-500 to-emerald-500' },
-                { name: 'Priya Patel', rep: '9.2k rep', initial: 'P', bg: 'from-cyan-500 to-blue-500' }
+                { name: 'Amit Kumar', rep: '15.4k rep', initial: 'A', bg: 'bg-[#F97316]' },
+                { name: 'Sneha Rao', rep: '12.8k rep', initial: 'S', bg: 'bg-[#14B8A6]' },
+                { name: 'Priya Patel', rep: '9.2k rep', initial: 'P', bg: 'bg-[#2563EB]' }
               ].map((contributor) => (
                 <div key={contributor.name} className="flex items-center gap-3">
-                  <div className={`w-8 h-8 rounded-full bg-gradient-to-tr ${contributor.bg} flex items-center justify-center font-bold text-white text-xs shadow-sm flex-shrink-0`}>
+                  <div className={`w-8 h-8 rounded-full ${contributor.bg} flex items-center justify-center font-bold text-white text-xs shadow-sm flex-shrink-0`}>
                     {contributor.initial}
                   </div>
                   <div>
-                    <p className="text-xs font-semibold text-slate-800 dark:text-slate-200 leading-tight">
+                    <p className="text-xs font-semibold text-[#0F172A] leading-tight">
                       {contributor.name}
                     </p>
-                    <p className="text-[11px] text-slate-400">{contributor.rep}</p>
+                    <p className="text-[11px] text-[#64748B]">{contributor.rep}</p>
                   </div>
                 </div>
               ))}
@@ -647,81 +790,137 @@ const Community = () => {
         </div>
       </div>
 
-      {/* CREATE POST MODAL */}
+      {/* PROFESSIONAL CREATE POST MODAL */}
       <Modal
         isOpen={isCreateModalOpen}
         onClose={() => setIsCreateModalOpen(false)}
         title="Create a Community Post"
+        subtitle="Share your interview experience, questions, or projects with fellow developers"
         maxWidth="max-w-2xl"
+        footer={
+          <>
+            <button
+              type="button"
+              onClick={() => setIsCreateModalOpen(false)}
+              className="px-4 py-2 rounded-xl text-xs font-semibold text-[#172554] bg-white border border-[#E2E8F0] hover:bg-[#EFF6FF] transition-colors cursor-pointer"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              form="create-post-form"
+              className="px-5 py-2 rounded-xl bg-[#2563EB] hover:bg-[#1D4ED8] text-white font-semibold text-xs flex items-center gap-1.5 shadow-sm active:scale-95 transition-all cursor-pointer"
+            >
+              <FiSend size={13} />
+              <span>Publish Post</span>
+            </button>
+          </>
+        }
       >
-        <form onSubmit={handleCreatePost} className="space-y-4">
-          {/* Post Category */}
-          <div>
-            <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">
-              Category
-            </label>
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-              {[
-                'Interview Experiences',
-                'Doubt Resolution',
-                'Project Showcase',
-                'General Discussion'
-              ].map((cat) => (
-                <button
-                  type="button"
-                  key={cat}
-                  onClick={() => setNewPostCategory(cat)}
-                  className={`px-3 py-2 rounded-xl text-xs font-medium border text-center transition-all ${
-                    newPostCategory === cat
-                      ? 'border-teal-500 bg-teal-50 dark:bg-teal-950/40 text-teal-700 dark:text-teal-300 font-semibold'
-                      : 'border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:border-slate-300'
-                  }`}
-                >
-                  {cat}
-                </button>
-              ))}
+        <form id="create-post-form" onSubmit={handleCreatePost} className="space-y-4">
+          {/* Author Name and Role / Headline */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <div className="flex justify-between items-center mb-1">
+                <label className="text-xs font-bold text-[#0F172A] uppercase tracking-wider">
+                  Author Name <span className="text-red-500">*</span>
+                </label>
+                <span className="text-[10px] text-[#64748B]">Your display name</span>
+              </div>
+              <input
+                type="text"
+                required
+                value={postAuthorName}
+                onChange={(e) => setPostAuthorName(e.target.value)}
+                placeholder="e.g., Prajwal Patil"
+                className="w-full px-3.5 py-2 rounded-xl bg-white border border-[#E2E8F0] text-xs text-[#0F172A] placeholder-[#94A3B8] focus:outline-none focus:border-[#2563EB] focus:ring-2 focus:ring-[#2563EB]/15 transition-all"
+              />
+            </div>
+
+            <div>
+              <div className="flex justify-between items-center mb-1">
+                <label className="text-xs font-bold text-[#0F172A] uppercase tracking-wider">
+                  Role / Headline
+                </label>
+                <span className="text-[10px] text-[#64748B]">Subtitle under your name</span>
+              </div>
+              <input
+                type="text"
+                value={newPostRole}
+                onChange={(e) => setNewPostRole(e.target.value)}
+                placeholder="e.g., Student, SDE Intern @ Google, 4th Year CSE"
+                className="w-full px-3.5 py-2 rounded-xl bg-white border border-[#E2E8F0] text-xs text-[#0F172A] placeholder-[#94A3B8] focus:outline-none focus:border-[#2563EB] focus:ring-2 focus:ring-[#2563EB]/15 transition-all"
+              />
             </div>
           </div>
 
-          {/* Title */}
+          {/* Category Selector Compact Grid */}
           <div>
-            <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">
-              Title <span className="text-red-500">*</span>
+            <label className="block text-xs font-bold text-[#0F172A] uppercase tracking-wider mb-2">
+              Select Category
             </label>
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+              {CATEGORY_OPTIONS.map((cat) => {
+                const Icon = cat.icon;
+                const isSelected = newPostCategory === cat.id;
+                return (
+                  <button
+                    type="button"
+                    key={cat.id}
+                    onClick={() => setNewPostCategory(cat.id)}
+                    className={`p-2.5 rounded-xl border text-left transition-all flex flex-col items-start gap-1 cursor-pointer ${
+                      isSelected
+                        ? 'bg-[#EFF6FF] border-[#2563EB] text-[#2563EB] ring-1 ring-[#2563EB]/40 shadow-sm'
+                        : 'bg-white border-[#E2E8F0] text-[#64748B] hover:text-[#0F172A] hover:border-slate-300'
+                    }`}
+                  >
+                    <div className="flex items-center justify-between w-full">
+                      <Icon size={15} className={isSelected ? 'text-[#2563EB]' : 'text-[#64748B]'} />
+                      {isSelected && <FiCheck size={12} className="text-[#2563EB]" />}
+                    </div>
+                    <span className="text-xs font-semibold text-[#0F172A] leading-tight truncate w-full">
+                      {cat.label}
+                    </span>
+                    <span className="text-[10px] text-[#64748B] leading-tight line-clamp-1">
+                      {cat.desc}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Post Title */}
+          <div>
+            <div className="flex justify-between items-center mb-1">
+              <label className="text-xs font-bold text-[#0F172A] uppercase tracking-wider">
+                Title <span className="text-red-500">*</span>
+              </label>
+              <span className="text-[10px] text-[#64748B]">
+                {newPostTitle.length}/120
+              </span>
+            </div>
             <input
               type="text"
               required
+              maxLength={120}
               value={newPostTitle}
               onChange={(e) => setNewPostTitle(e.target.value)}
-              placeholder="e.g., How I prepared for Amazon SDE-1 Coding & System Design rounds"
-              className="w-full px-3.5 py-2.5 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-sm text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-500/40 focus:border-teal-500"
-            />
-          </div>
-
-          {/* Author Headline / Role */}
-          <div>
-            <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">
-              Your Headline / Role
-            </label>
-            <input
-              type="text"
-              value={newPostRole}
-              onChange={(e) => setNewPostRole(e.target.value)}
-              placeholder="e.g., SDE Intern @ Uber, 3rd Year CSE Student"
-              className="w-full px-3.5 py-2 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-500/40 focus:border-teal-500"
+              placeholder="e.g., How I cleared Amazon SDE-1 Coding & System Design rounds"
+              className="w-full px-3.5 py-2.5 rounded-xl bg-white border border-[#E2E8F0] text-xs text-[#0F172A] placeholder-[#94A3B8] focus:outline-none focus:border-[#2563EB] focus:ring-2 focus:ring-[#2563EB]/15 transition-all"
             />
           </div>
 
           {/* Tags */}
           <div>
             <div className="flex items-center justify-between mb-1.5">
-              <label className="text-xs font-semibold text-slate-700 dark:text-slate-300 flex items-center gap-1.5">
-                <FiTag size={13} /> Tags & Topics
+              <label className="text-xs font-bold text-[#0F172A] uppercase tracking-wider flex items-center gap-1.5">
+                <FiTag size={12} className="text-[#2563EB]" /> Tags & Topics
               </label>
-              <span className="text-[11px] text-slate-400">Click to add or type custom</span>
+              <span className="text-[10px] text-[#64748B]">Click to add / remove</span>
             </div>
 
-            {/* Quick Popular Tags */}
+            {/* Popular Tags Pills */}
             <div className="flex flex-wrap gap-1.5 mb-2">
               {POPULAR_TAGS.map((tag) => {
                 const isSelected = selectedTags.includes(tag);
@@ -730,18 +929,40 @@ const Community = () => {
                     type="button"
                     key={tag}
                     onClick={() => toggleTag(tag)}
-                    className={`text-xs px-2.5 py-1 rounded-full border transition-all flex items-center gap-1 ${
+                    className={`text-[11px] px-2.5 py-0.5 rounded-lg border transition-all flex items-center gap-1 cursor-pointer ${
                       isSelected
-                        ? 'bg-teal-600 text-white border-teal-600'
-                        : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-slate-700 hover:border-slate-400'
+                        ? 'bg-[#EFF6FF] text-[#2563EB] border-[#BFDBFE] shadow-sm font-semibold'
+                        : 'bg-white text-[#64748B] border-[#E2E8F0] hover:border-slate-300 hover:text-[#0F172A]'
                     }`}
                   >
-                    {isSelected && <FiCheck size={11} />}
+                    {isSelected && <FiCheck size={10} className="text-[#2563EB]" />}
                     <span>{tag}</span>
                   </button>
                 );
               })}
             </div>
+
+            {/* Active Selected Tags Chips */}
+            {selectedTags.length > 0 && (
+              <div className="flex flex-wrap items-center gap-1.5 p-1.5 bg-[#F8FAFC] rounded-xl border border-[#E2E8F0] mb-2">
+                <span className="text-[10px] text-[#64748B] mr-1">Selected:</span>
+                {selectedTags.map((tag) => (
+                  <span
+                    key={tag}
+                    className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-[#EFF6FF] border border-[#BFDBFE] text-[#2563EB] text-[10px]"
+                  >
+                    #{tag}
+                    <button
+                      type="button"
+                      onClick={() => removeTag(tag)}
+                      className="hover:text-red-500 ml-0.5 cursor-pointer"
+                    >
+                      <FiX size={10} />
+                    </button>
+                  </span>
+                ))}
+              </div>
+            )}
 
             {/* Custom Tag Input */}
             <input
@@ -749,42 +970,29 @@ const Community = () => {
               value={customTagInput}
               onChange={(e) => setCustomTagInput(e.target.value)}
               onKeyDown={handleAddCustomTag}
-              placeholder="Type custom tag and press Enter..."
-              className="w-full px-3.5 py-1.5 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-500/40"
+              placeholder="Add custom tag (type and press Enter or comma)..."
+              className="w-full px-3 py-1.5 rounded-xl bg-white border border-[#E2E8F0] text-xs text-[#0F172A] placeholder-[#94A3B8] focus:outline-none focus:border-[#2563EB] focus:ring-2 focus:ring-[#2563EB]/15"
             />
           </div>
 
           {/* Post Content */}
           <div>
-            <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">
-              Content <span className="text-red-500">*</span>
-            </label>
+            <div className="flex justify-between items-center mb-1">
+              <label className="text-xs font-bold text-[#0F172A] uppercase tracking-wider">
+                Post Content <span className="text-red-500">*</span>
+              </label>
+              <span className="text-[10px] text-[#64748B]">
+                Write questions, interview breakdown, or tips
+              </span>
+            </div>
             <textarea
               required
-              rows={6}
+              rows={4}
               value={newPostContent}
               onChange={(e) => setNewPostContent(e.target.value)}
-              placeholder="Write out your interview round breakdown, technical questions, preparation tips, or project details..."
-              className="w-full px-3.5 py-2.5 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-sm text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-500/40 focus:border-teal-500 resize-none leading-relaxed"
+              placeholder="Detail your experience: What questions were asked? What preparation strategy helped? What would you suggest to other candidates?"
+              className="w-full px-3.5 py-2.5 rounded-xl bg-white border border-[#E2E8F0] text-xs text-[#0F172A] placeholder-[#94A3B8] focus:outline-none focus:border-[#2563EB] focus:ring-2 focus:ring-[#2563EB]/15 resize-none leading-relaxed"
             />
-          </div>
-
-          {/* Modal Actions */}
-          <div className="flex items-center justify-end gap-3 pt-3 border-t border-slate-100 dark:border-slate-800">
-            <button
-              type="button"
-              onClick={() => setIsCreateModalOpen(false)}
-              className="px-4 py-2 rounded-xl text-xs font-semibold text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-teal-600 to-cyan-600 hover:from-teal-700 hover:to-cyan-700 text-white font-semibold text-xs flex items-center gap-1.5 shadow-md shadow-teal-500/20 active:scale-95 transition-all"
-            >
-              <FiSend size={14} />
-              <span>Publish Post</span>
-            </button>
           </div>
         </form>
       </Modal>
