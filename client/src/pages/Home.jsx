@@ -26,7 +26,7 @@ const Home = () => {
         {/* CTA Banner */}
         <section style={{
           padding: '6rem 0',
-          background: 'linear-gradient(135deg, #0D9488, #06B6D4)',
+          background: 'linear-gradient(135deg, #0F766E, #115E59)',
           position: 'relative', overflow: 'hidden'
         }}>
           {/* Decorative circles */}
@@ -49,22 +49,22 @@ const Home = () => {
                 Ready to Crack Your Dream Company?
               </h2>
               <p style={{
-                fontSize: '1.1rem', color: 'rgba(255,255,255,0.85)',
+                fontSize: '1.1rem', color: '#F0FDFA',
                 marginBottom: '2.5rem', maxWidth: 520, margin: '0 auto 2.5rem'
               }}>
                 Join 10,000+ students who've transformed their careers with LearnHub. Start free, no credit card required.
               </p>
               <div style={{ display: 'flex', gap: 16, justifyContent: 'center', flexWrap: 'wrap' }}>
                 <Link to="/register" style={{
-                  background: 'white', color: '#0D9488',
+                  background: '#F97360', color: '#FFFFFF',
                   padding: '1rem 2.5rem', borderRadius: 12,
                   fontFamily: "'Poppins', sans-serif",
                   fontWeight: 700, fontSize: '1rem',
                   textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: 8,
-                  boxShadow: '0 4px 20px rgba(0,0,0,0.15)', transition: 'all 0.2s'
+                  boxShadow: '0 4px 20px rgba(249, 115, 96, 0.35)', transition: 'all 0.25s ease'
                 }}
-                  onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 8px 30px rgba(0,0,0,0.2)'; }}
-                  onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = '0 4px 20px rgba(0,0,0,0.15)'; }}
+                  onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.background = '#EA6250'; }}
+                  onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.background = '#F97360'; }}
                 >
                   Start for Free <FiArrowRight />
                 </Link>
@@ -73,11 +73,11 @@ const Home = () => {
                   padding: '1rem 2.5rem', borderRadius: 12,
                   fontFamily: "'Poppins', sans-serif",
                   fontWeight: 600, fontSize: '1rem',
-                  textDecoration: 'none', border: '2px solid rgba(255,255,255,0.5)',
-                  transition: 'all 0.2s'
+                  textDecoration: 'none', border: '2px solid rgba(255,255,255,0.6)',
+                  transition: 'all 0.25s ease'
                 }}
                   onMouseEnter={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.1)'; e.currentTarget.style.borderColor = 'white'; }}
-                  onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.5)'; }}
+                  onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.6)'; }}
                 >
                   Browse Courses
                 </Link>
