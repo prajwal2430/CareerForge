@@ -4,10 +4,10 @@ import { FiCheckSquare, FiSquare } from 'react-icons/fi';
 
 const DailyTasks = ({ tasks }) => {
   return (
-    <GlassCard className="h-full">
+    <div className="bg-white border border-[#E7E5E4] rounded-[16px] p-6 shadow-sm h-full">
       <div className="flex justify-between items-center mb-6">
-        <h3 className="text-lg font-bold">Daily Tasks</h3>
-        <span className="text-xs font-semibold bg-accent-primary/20 text-accent-primary px-2 py-1 rounded-md">
+        <h3 className="text-lg font-bold font-display text-[#1C1917]">Daily Tasks</h3>
+        <span className="text-xs font-semibold bg-[#F0FDFA] text-[#0F766E] border border-[#0F766E]/20 px-2.5 py-1 rounded-full">
           {tasks.filter(t => t.completed).length}/{tasks.length} Done
         </span>
       </div>
@@ -16,28 +16,28 @@ const DailyTasks = ({ tasks }) => {
         {tasks.map(task => (
           <div 
             key={task.id} 
-            className={`flex items-start gap-3 p-3 rounded-lg border transition-colors cursor-pointer ${
+            className={`flex items-start gap-3 p-3.5 rounded-xl border transition-all cursor-pointer ${
               task.completed 
-                ? 'bg-color-success-bg border-color-success/20 opacity-70' 
-                : 'bg-bg-primary border-glass-border hover:border-accent-primary/50'
+                ? 'bg-[#F0FDFA] border-[#0F766E]/20 opacity-80' 
+                : 'bg-[#FAFAF9] border-[#E7E5E4] hover:border-[#0F766E]'
             }`}
           >
-            <div className={`mt-0.5 text-lg ${task.completed ? 'text-color-success' : 'text-text-muted'}`}>
+            <div className={`mt-0.5 text-lg ${task.completed ? 'text-[#0F766E]' : 'text-[#78716C]'}`}>
               {task.completed ? <FiCheckSquare /> : <FiSquare />}
             </div>
             <div className="flex-1">
-              <p className={`text-sm font-medium ${task.completed ? 'line-through text-text-muted' : 'text-text-primary'}`}>
+              <p className={`text-sm font-medium ${task.completed ? 'line-through text-[#78716C]' : 'text-[#1C1917]'}`}>
                 {task.title}
               </p>
               <div className="flex justify-between items-center mt-1">
-                <span className="text-xs text-text-muted">+{task.points} Points</span>
-                {task.completed && <span className="text-xs text-color-success font-semibold">Claimed</span>}
+                <span className="text-xs text-[#78716C]">+{task.points} Points</span>
+                {task.completed && <span className="text-xs text-[#0F766E] font-semibold">Claimed</span>}
               </div>
             </div>
           </div>
         ))}
       </div>
-    </GlassCard>
+    </div>
   );
 };
 
