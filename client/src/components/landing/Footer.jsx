@@ -42,13 +42,13 @@ const Footer = () => {
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: '1.25rem' }}>
               <div style={{
-                width: 40, height: 40, background: 'linear-gradient(135deg, #0D9488, #06B6D4)',
+                width: 40, height: 40, background: '#0F766E',
                 borderRadius: 10, display: 'flex', alignItems: 'center', justifyContent: 'center',
                 fontWeight: 800, fontSize: '1.1rem', color: 'white',
                 fontFamily: "'Poppins', sans-serif"
               }}>L</div>
               <span style={{ fontFamily: "'Poppins', sans-serif", fontWeight: 700, fontSize: '1.5rem', color: 'white' }}>
-                Learn<span style={{ color: '#2DD4BF' }}>Hub</span>
+                Learn<span style={{ color: '#0F766E' }}>Hub</span>
               </span>
             </div>
             <p style={{ fontSize: '0.9rem', color: '#9CA3AF', lineHeight: 1.7, marginBottom: '1.5rem', maxWidth: 280 }}>
@@ -62,7 +62,7 @@ const Footer = () => {
                   color: '#9CA3AF', fontSize: '1rem', textDecoration: 'none',
                   transition: 'all 0.2s', border: '1px solid #333'
                 }}
-                  onMouseEnter={e => { e.currentTarget.style.background = '#0D9488'; e.currentTarget.style.color = 'white'; e.currentTarget.style.borderColor = '#0D9488'; }}
+                  onMouseEnter={e => { e.currentTarget.style.background = '#0F766E'; e.currentTarget.style.color = 'white'; e.currentTarget.style.borderColor = '#0F766E'; }}
                   onMouseLeave={e => { e.currentTarget.style.background = '#2A2A2A'; e.currentTarget.style.color = '#9CA3AF'; e.currentTarget.style.borderColor = '#333'; }}
                 >
                   {s.icon}
@@ -83,7 +83,7 @@ const Footer = () => {
                       fontSize: '0.88rem', color: '#9CA3AF', textDecoration: 'none',
                       transition: 'color 0.15s'
                     }}
-                      onMouseEnter={e => e.target.style.color = '#2DD4BF'}
+                      onMouseEnter={e => e.target.style.color = '#0F766E'}
                       onMouseLeave={e => e.target.style.color = '#9CA3AF'}
                     >
                       {item.label}
@@ -116,13 +116,16 @@ const Footer = () => {
               }}
             />
             <button type="submit" style={{
-              background: 'linear-gradient(135deg, #0D9488, #06B6D4)',
+              background: '#0F766E',
               color: 'white', padding: '0.75rem 1.25rem',
               borderRadius: '0 10px 10px 0', border: 'none',
               cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 8,
               fontWeight: 600, fontSize: '0.88rem', fontFamily: "'Poppins', sans-serif",
-              transition: 'opacity 0.2s'
-            }}>
+              transition: 'background 0.2s'
+            }}
+              onMouseEnter={e => e.currentTarget.style.background = '#115E59'}
+              onMouseLeave={e => e.currentTarget.style.background = '#0F766E'}
+            >
               Subscribe <FiArrowRight />
             </button>
           </form>
@@ -131,7 +134,7 @@ const Footer = () => {
         {/* Bottom */}
         <div style={{ borderTop: '1px solid #2A2A2A', paddingTop: '2rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <p style={{ fontSize: '0.82rem', color: '#6B7280' }}>
-            © {new Date().getFullYear()} LearnHub. Built with 🧡 for placement aspirants.
+            © {new Date().getFullYear()} LearnHub. Built with <span style={{ color: '#F97360' }}>❤</span> for placement aspirants.
           </p>
           <div style={{ display: 'flex', gap: '1.5rem' }}>
             {['Privacy', 'Terms', 'Contact'].map(item => (
@@ -139,7 +142,7 @@ const Footer = () => {
                 fontSize: '0.82rem', color: '#6B7280', textDecoration: 'none',
                 transition: 'color 0.15s'
               }}
-                onMouseEnter={e => e.target.style.color = '#2DD4BF'}
+                onMouseEnter={e => e.target.style.color = '#0F766E'}
                 onMouseLeave={e => e.target.style.color = '#6B7280'}
               >
                 {item}
