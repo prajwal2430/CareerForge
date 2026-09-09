@@ -23,27 +23,38 @@ const categoryImages = {
   'aws-thumb':    'https://images.unsplash.com/photo-1667372393913-59292cffe9e3?q=80&w=600&auto=format&fit=crop',
 };
 
+const categoryAccentColors = {
+  'DSA':            { bg: '#F0FDFA', text: '#0F766E', border: '#CCFBF1' },
+  'Web Dev':        { bg: '#F0FDFA', text: '#0F766E', border: '#CCFBF1' },
+  'System Design':  { bg: '#F0FDFA', text: '#0D9488', border: '#CCFBF1' },
+  'Aptitude':       { bg: '#FFF1F0', text: '#EA6250', border: '#FFE4E1' },
+  'AI/ML':          { bg: '#F0FDFA', text: '#0F766E', border: '#CCFBF1' },
+  'DevOps':         { bg: '#F0FDFA', text: '#0D9488', border: '#CCFBF1' },
+};
+
 const levelColors = {
-  'Beginner':     { bg: 'bg-green-50 dark:bg-green-900/20', text: 'text-green-600 dark:text-green-400', border: 'border-green-100 dark:border-green-900/50' },
-  'Intermediate': { bg: 'bg-amber-50 dark:bg-amber-900/20', text: 'text-amber-600 dark:text-amber-400', border: 'border-amber-100 dark:border-amber-900/50' },
-  'Advanced':     { bg: 'bg-rose-50 dark:bg-rose-900/20',   text: 'text-rose-600 dark:text-rose-400',   border: 'border-rose-100 dark:border-rose-900/50' },
+  'Beginner':     { bg: 'bg-[#F0FDFA]', text: 'text-[#0F766E]', border: 'border-[#CCFBF1]' },
+  'Intermediate': { bg: 'bg-[#F0FDFA]', text: 'text-[#0D9488]', border: 'border-[#CCFBF1]' },
+  'Advanced':     { bg: 'bg-[#FFF1F0]', text: 'text-[#EA6250]', border: 'border-[#FFE4E1]' },
+  'Completed':    { bg: 'bg-[#F0FDFA]', text: 'text-[#0F766E]', border: 'border-[#CCFBF1]' },
 };
 
 const CourseCard = ({ course, onClick }) => {
   const img = categoryImages[course.image] || 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?q=80&w=600&auto=format&fit=crop';
   const lvl = levelColors[course.level] || levelColors['Beginner'];
+  const catColor = categoryAccentColors[course.category] || { bg: '#F0FDFA', text: '#0F766E', border: '#CCFBF1' };
 
   return (
     <motion.div
-      whileHover={{ y: -5 }}
+      whileHover={{ y: -4 }}
       transition={{ duration: 0.2, ease: 'easeOut' }}
       className="h-full cursor-pointer group flex flex-col"
       onClick={onClick}
     >
       <div className="
-        flex-1 flex flex-col bg-card border-none
-        border border-slate-100 dark:border-slate-800 rounded-2xl
-        overflow-hidden shadow-sm hover:shadow-md transition-all duration-300
+        flex-1 flex flex-col bg-white
+        border border-[#E7E5E4] rounded-2xl
+        overflow-hidden shadow-[0_4px_12px_rgba(28,25,23,0.05)] hover:shadow-md hover:border-[#0F766E] transition-all duration-300
       ">
         {/* Thumbnail */}
         <div className="h-40 relative overflow-hidden flex-shrink-0">
@@ -52,10 +63,13 @@ const CourseCard = ({ course, onClick }) => {
             className="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-105"
           />
           {/* Overlay */}
-          <div className="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-slate-950/20 to-transparent z-10" />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#1C1917]/60 via-[#1C1917]/15 to-transparent z-10" />
 
           {/* Category badge */}
-          <span className="absolute top-3 left-3 z-20 text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-teal-600/90 backdrop-blur-md text-white tracking-wide uppercase">
+          <span 
+            className="absolute top-3 left-3 z-20 text-[10px] font-bold px-2.5 py-0.5 rounded-full border tracking-wide uppercase backdrop-blur-md"
+            style={{ backgroundColor: catColor.bg, color: catColor.text, borderColor: catColor.border }}
+          >
             {course.category}
           </span>
 
@@ -66,59 +80,59 @@ const CourseCard = ({ course, onClick }) => {
 
           {/* Progress bar overlay */}
           {course.progress > 0 && (
-            <div className="absolute bottom-0 left-0 right-0 h-1 bg-slate-200/20 z-20 overflow-hidden">
+            <div className="absolute bottom-0 left-0 right-0 h-1.5 bg-slate-200/30 z-20 overflow-hidden">
               <div
-                className="h-full bg-gradient-to-r from-teal-500 to-cyan-400"
+                className="h-full bg-[#0F766E]"
                 style={{ width: `${course.progress}%` }}
               />
             </div>
           )}
 
           {/* Play Icon Hover Effect */}
-          <div className="absolute inset-0 flex items-center justify-center bg-slate-950/40 backdrop-blur-[2px] opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-10">
-            <div className="w-12 h-12 rounded-full bg-gradient-to-r from-teal-600 to-cyan-500 flex items-center justify-center text-white shadow-lg shadow-teal-500/25">
+          <div className="absolute inset-0 flex items-center justify-center bg-[#1C1917]/30 backdrop-blur-[2px] opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-10">
+            <div className="w-12 h-12 rounded-full bg-[#0F766E] hover:bg-[#115E59] flex items-center justify-center text-white shadow-lg">
               <Play size={18} fill="white" className="ml-0.5" />
             </div>
           </div>
         </div>
 
         {/* Content */}
-        <div className="p-5 flex flex-col flex-1 gap-3.5">
+        <div className="p-5 flex flex-col flex-1 gap-3">
           <div className="space-y-1">
-            <h3 className="text-sm font-bold text-slate-800 dark:text-slate-100 leading-snug group-hover:text-teal-600 dark:group-hover:text-teal-400 transition-colors line-clamp-2">
+            <h3 className="text-sm font-bold text-[#1C1917] leading-snug group-hover:text-[#0F766E] transition-colors line-clamp-2">
               {course.title}
             </h3>
-            <p className="text-xs text-slate-400 dark:text-text-muted">{course.instructor}</p>
+            <p className="text-xs text-[#78716C]">{course.instructor}</p>
           </div>
 
           {/* Rating */}
           <div className="flex items-center gap-1.5 text-xs">
-            <span className="font-bold text-amber-500">{course.rating}</span>
-            <div className="flex text-amber-400">
+            <span className="font-bold text-[#EA6250]">{course.rating}</span>
+            <div className="flex text-[#F97360]">
               {[...Array(5)].map((_, i) => (
                 <Star
                   key={i}
                   size={12}
                   fill={i < Math.floor(course.rating) ? 'currentColor' : 'transparent'}
-                  className="text-amber-400"
+                  className="text-[#F97360]"
                 />
               ))}
             </div>
-            <span className="text-slate-400 dark:text-text-muted">({course.students})</span>
+            <span className="text-[#A8A29E]">({course.students})</span>
           </div>
 
           {/* Footer */}
-          <div className="flex justify-between items-center border-t border-slate-100 dark:border-slate-800/60 pt-3.5 mt-auto text-xs text-slate-400 dark:text-text-muted">
+          <div className="flex justify-between items-center border-t border-[#E7E5E4] pt-3.5 mt-auto text-xs text-[#78716C]">
             <span className="flex items-center gap-1">
               <Clock size={13} /> {course.duration}
             </span>
             {course.progress > 0 ? (
-              <span className="text-teal-600 dark:text-teal-400 font-bold flex items-center gap-1">
+              <span className="font-bold flex items-center gap-1 text-[#0F766E]">
                 <Zap size={13} /> {course.progress}% done
               </span>
             ) : (
-              <span className="flex items-center gap-1 text-text-muted dark:text-slate-400 font-semibold group-hover:text-teal-600 dark:group-hover:text-teal-400 transition-colors">
-                Start Now
+              <span className="flex items-center gap-1 text-[#0F766E] font-semibold group-hover:translate-x-0.5 transition-transform">
+                Start Course →
               </span>
             )}
           </div>
