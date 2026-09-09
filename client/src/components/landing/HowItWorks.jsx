@@ -26,9 +26,9 @@ const HowItWorks = () => {
       <section style={{ padding: '6rem 0', background: 'white' }}>
         <div className="container">
           <div style={{ textAlign: 'center', marginBottom: '4rem' }}>
-            <div className="section-tag">🚀 How It Works</div>
-            <h2 style={{ fontFamily: "'Poppins', sans-serif", fontSize: 'clamp(2rem, 4vw, 2.75rem)', fontWeight: 800, color: '#1E1E1E', marginTop: '0.75rem', letterSpacing: '-0.02em' }}>
-              Your Journey to <span style={{ background: 'linear-gradient(135deg, #0D9488, #06B6D4)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>Getting Placed</span>
+            <div className="section-tag" style={{ background: '#F0FDFA', color: '#0F766E', border: '1px solid rgba(15, 118, 110, 0.2)' }}>🚀 How It Works</div>
+            <h2 style={{ fontFamily: "'Poppins', sans-serif", fontSize: 'clamp(2rem, 4vw, 2.75rem)', fontWeight: 800, color: '#1C1917', marginTop: '0.75rem', letterSpacing: '-0.02em' }}>
+              Your Journey to <span style={{ color: '#0F766E' }}>Getting Placed</span>
             </h2>
           </div>
 
@@ -36,8 +36,8 @@ const HowItWorks = () => {
             {/* Connecting line */}
             <div style={{
               position: 'absolute', top: '2.5rem', left: '12.5%', right: '12.5%',
-              height: 2, background: 'linear-gradient(to right, #0D9488, #06B6D4)',
-              zIndex: 0, opacity: 0.3
+              height: 2, background: '#0F766E',
+              zIndex: 0, opacity: 0.2
             }} />
 
             {steps.map((step, i) => (
@@ -51,22 +51,22 @@ const HowItWorks = () => {
               >
                 <div style={{
                   width: 64, height: 64, margin: '0 auto 1.25rem',
-                  background: i === 0 ? 'linear-gradient(135deg, #0D9488, #06B6D4)' : 'white',
+                  background: i === 0 ? '#0F766E' : 'white',
                   borderRadius: '50%',
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
                   fontSize: '1.75rem',
-                  border: `2px solid ${i === 0 ? 'transparent' : '#E5E7EB'}`,
-                  boxShadow: i === 0 ? '0 8px 24px rgba(13, 148, 136, 0.3)' : '0 2px 12px rgba(0,0,0,0.06)'
+                  border: `2px solid ${i === 0 ? '#0F766E' : '#E7E5E4'}`,
+                  boxShadow: i === 0 ? '0 8px 24px rgba(15, 118, 110, 0.3)' : '0 2px 12px rgba(0,0,0,0.04)'
                 }}>
                   {step.icon}
                 </div>
                 <div style={{
                   fontFamily: "'Poppins', sans-serif",
-                  fontSize: '0.75rem', fontWeight: 700, color: '#0D9488',
+                  fontSize: '0.75rem', fontWeight: 700, color: '#0F766E',
                   marginBottom: '0.4rem', letterSpacing: '0.1em'
                 }}>{step.num}</div>
-                <h3 style={{ fontFamily: "'Poppins', sans-serif", fontWeight: 700, fontSize: '1rem', color: '#1E1E1E', marginBottom: '0.75rem' }}>{step.title}</h3>
-                <p style={{ fontSize: '0.85rem', color: '#6B7280', lineHeight: 1.6 }}>{step.desc}</p>
+                <h3 style={{ fontFamily: "'Poppins', sans-serif", fontWeight: 700, fontSize: '1rem', color: '#1C1917', marginBottom: '0.75rem' }}>{step.title}</h3>
+                <p style={{ fontSize: '0.85rem', color: '#78716C', lineHeight: 1.6 }}>{step.desc}</p>
               </motion.div>
             ))}
           </div>
@@ -74,12 +74,12 @@ const HowItWorks = () => {
       </section>
 
       {/* FAQ Section */}
-      <section style={{ padding: '6rem 0', background: '#F9FAFB' }}>
+      <section style={{ padding: '6rem 0', background: '#FAFAF9' }}>
         <div className="container">
           <div style={{ textAlign: 'center', marginBottom: '4rem' }}>
-            <div className="section-tag">❓ Common Questions</div>
-            <h2 style={{ fontFamily: "'Poppins', sans-serif", fontSize: 'clamp(2rem, 4vw, 2.75rem)', fontWeight: 800, color: '#1E1E1E', marginTop: '0.75rem', letterSpacing: '-0.02em' }}>
-              Frequently Asked <span style={{ background: 'linear-gradient(135deg, #0D9488, #06B6D4)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>Questions</span>
+            <div className="section-tag" style={{ background: '#F0FDFA', color: '#0F766E', border: '1px solid rgba(15, 118, 110, 0.2)' }}>❓ Common Questions</div>
+            <h2 style={{ fontFamily: "'Poppins', sans-serif", fontSize: 'clamp(2rem, 4vw, 2.75rem)', fontWeight: 800, color: '#1C1917', marginTop: '0.75rem', letterSpacing: '-0.02em' }}>
+              Frequently Asked <span style={{ color: '#0F766E' }}>Questions</span>
             </h2>
           </div>
 
@@ -92,17 +92,32 @@ const HowItWorks = () => {
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.07 }}
                 className={`accordion-item ${open === i ? 'open' : ''}`}
+                style={{
+                  background: 'white',
+                  border: open === i ? '1.5px solid #0F766E' : '1px solid #E7E5E4',
+                  borderRadius: 14, overflow: 'hidden'
+                }}
               >
-                <div className="accordion-header" onClick={() => setOpen(open === i ? null : i)}>
+                <div 
+                  className="accordion-header" 
+                  onClick={() => setOpen(open === i ? null : i)}
+                  style={{
+                    padding: '1.25rem 1.5rem',
+                    cursor: 'pointer',
+                    display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+                    fontWeight: 600, color: open === i ? '#0F766E' : '#1C1917',
+                    background: open === i ? '#F0FDFA' : 'white'
+                  }}
+                >
                   <span>{faq.q}</span>
-                  <FiChevronDown className="accordion-icon" />
+                  <FiChevronDown style={{ transform: open === i ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s', color: '#0F766E' }} />
                 </div>
                 {open === i && (
                   <motion.div
                     initial={{ height: 0, opacity: 0 }}
                     animate={{ height: 'auto', opacity: 1 }}
                     exit={{ height: 0, opacity: 0 }}
-                    className="accordion-body"
+                    style={{ padding: '1.25rem 1.5rem', color: '#44403C', fontSize: '0.9rem', lineHeight: 1.6, borderTop: '1px solid #E7E5E4' }}
                   >
                     {faq.a}
                   </motion.div>
