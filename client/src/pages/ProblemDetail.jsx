@@ -171,23 +171,23 @@ const ProblemDetail = () => {
   };
 
   return (
-    <div className="public-page min-h-screen bg-bg-primary">
+    <div className="public-page min-h-screen bg-[#FAFAF9] text-[#1C1917]">
       {/* Top Navbar specifically for practice */}
-      <nav className="h-14 bg-surface-2 border-b border-glass-border flex items-center justify-between px-4">
+      <nav className="h-14 bg-white border-b border-[#E7E5E4] flex items-center justify-between px-4 shadow-sm">
         <div className="flex items-center gap-4">
-          <Link to="/practice" className="text-text-secondary hover:text-white flex items-center gap-1 transition-colors">
+          <Link to="/practice" className="text-[#78716C] hover:text-[#0F766E] flex items-center gap-1 transition-colors">
             <FiChevronLeft /> Problem List
           </Link>
-          <div className="h-6 w-px bg-glass-border"></div>
-          <span className="font-bold text-text-primary flex items-center gap-2">
+          <div className="h-6 w-px bg-[#E7E5E4]"></div>
+          <span className="font-bold text-[#1C1917] flex items-center gap-2">
             {id}. {problem.title} <Badge variant={problem.difficulty.toLowerCase()}>{problem.difficulty}</Badge>
           </span>
         </div>
         <div className="flex items-center gap-3">
-          <button className="text-text-secondary hover:text-white p-2 rounded-md hover:bg-surface-3 transition-colors">
+          <button className="text-[#78716C] hover:text-[#0F766E] p-2 rounded-md hover:bg-[#F0FDFA] transition-colors">
             <FiSettings />
           </button>
-          <button className="text-text-secondary hover:text-white p-2 rounded-md hover:bg-surface-3 transition-colors">
+          <button className="text-[#78716C] hover:text-[#0F766E] p-2 rounded-md hover:bg-[#F0FDFA] transition-colors">
             <FiMaximize2 />
           </button>
         </div>
@@ -196,49 +196,49 @@ const ProblemDetail = () => {
       {/* Split Pane Layout */}
       <div className="split-pane">
         {/* Left Pane: Problem Description */}
-        <div className="split-pane-left">
+        <div className="split-pane-left bg-white border-r border-[#E7E5E4]">
           <div className="mb-6 flex gap-2">
             <Badge variant={problem.difficulty.toLowerCase()}>{problem.difficulty}</Badge>
             {problem.tags.map((tag, tIdx) => (
-              <span key={tIdx} className="text-xs bg-surface-2 text-text-muted px-2 py-1 rounded-full">{tag}</span>
+              <span key={tIdx} className="text-xs bg-[#F0FDFA] text-[#0F766E] border border-[#0F766E]/20 px-2 py-1 rounded-full">{tag}</span>
             ))}
           </div>
           
-          <h1 className="text-2xl font-bold text-white mb-6">{id}. {problem.title}</h1>
+          <h1 className="text-2xl font-bold font-display text-[#1C1917] mb-6">{id}. {problem.title}</h1>
           
           <div className="markdown-body">
             <ReactMarkdown>{problem.description}</ReactMarkdown>
           </div>
 
-          <div className="mt-8 pt-8 border-t border-glass-border">
-            <div className="flex items-center justify-between text-sm text-text-muted mb-4">
+          <div className="mt-8 pt-8 border-t border-[#E7E5E4]">
+            <div className="flex items-center justify-between text-sm text-[#78716C] mb-4">
               <span>Accepted: 14.5M</span>
               <span>Submissions: 28.3M</span>
               <span>Acceptance Rate: 51.2%</span>
             </div>
             <div className="flex gap-2">
-              <span className="text-xs text-text-muted">Companies:</span>
-              <span className="text-xs font-semibold text-color-warning">Amazon</span>
-              <span className="text-xs font-semibold text-accent-secondary">Google</span>
-              <span className="text-xs font-semibold text-text-primary">Apple</span>
+              <span className="text-xs text-[#78716C]">Companies:</span>
+              <span className="text-xs font-semibold text-[#0F766E]">Amazon</span>
+              <span className="text-xs font-semibold text-[#0F766E]">Google</span>
+              <span className="text-xs font-semibold text-[#1C1917]">Apple</span>
             </div>
           </div>
         </div>
 
         {/* Right Pane: Code Editor and Test Cases */}
-        <div className="split-pane-right">
-          <div className="h-10 bg-surface-2 flex items-center justify-between px-4 border-b border-glass-border">
+        <div className="split-pane-right bg-[#FAFAF9]">
+          <div className="h-10 bg-white flex items-center justify-between px-4 border-b border-[#E7E5E4]">
             <select 
               value={language}
               onChange={(e) => setLanguage(e.target.value)}
-              className="bg-bg-input border border-glass-border text-sm rounded-md px-2 py-1 text-text-secondary outline-none focus:border-accent-primary"
+              className="bg-[#FAFAF9] border border-[#E7E5E4] text-sm rounded-md px-2 py-1 text-[#1C1917] outline-none focus:border-[#0F766E]"
             >
               <option value="javascript">JavaScript</option>
               <option value="python">Python 3</option>
               <option value="java">Java</option>
               <option value="cpp">C++</option>
             </select>
-            <button className="text-text-secondary hover:text-white text-sm flex items-center gap-1 transition-colors">
+            <button className="text-[#78716C] hover:text-[#0F766E] text-sm flex items-center gap-1 transition-colors">
               Auto <FiSettings />
             </button>
           </div>
