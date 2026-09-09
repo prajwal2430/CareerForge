@@ -22,20 +22,20 @@ const StreakHeatmap = () => {
 
   const getIntensityColor = (intensity) => {
     switch(intensity) {
-      case 0: return 'var(--surface-3)';
-      case 1: return 'rgba(81, 207, 102, 0.3)';
-      case 2: return 'rgba(81, 207, 102, 0.5)';
-      case 3: return 'rgba(81, 207, 102, 0.8)';
-      case 4: return 'var(--color-success)';
-      default: return 'var(--surface-3)';
+      case 0: return '#E7E5E4';
+      case 1: return 'rgba(15, 118, 110, 0.2)';
+      case 2: return 'rgba(15, 118, 110, 0.45)';
+      case 3: return 'rgba(15, 118, 110, 0.75)';
+      case 4: return '#0F766E';
+      default: return '#E7E5E4';
     }
   };
 
   return (
-    <GlassCard className="h-full">
+    <div className="bg-white border border-[#E7E5E4] rounded-[16px] p-6 shadow-sm h-full">
       <div className="flex justify-between items-center mb-6">
-        <h3 className="text-lg font-bold">Learning Activity</h3>
-        <select className="bg-bg-input border border-glass-border text-sm rounded-md px-2 py-1 text-text-secondary outline-none">
+        <h3 className="text-lg font-bold font-display text-[#1C1917]">Learning Activity</h3>
+        <select className="bg-[#FAFAF9] border border-[#E7E5E4] text-sm rounded-lg px-2.5 py-1 text-[#1C1917] outline-none focus:border-[#0F766E]">
           <option>Last 30 Days</option>
           <option>Last 3 Months</option>
         </select>
@@ -46,20 +46,20 @@ const StreakHeatmap = () => {
           {heatmapData.map((day, i) => (
             <div 
               key={i} 
-              className="w-full aspect-square rounded-sm"
+              className="w-full aspect-square rounded-[4px] transition-transform hover:scale-110"
               style={{ backgroundColor: getIntensityColor(day.intensity) }}
               title={`${day.date.toDateString()} - Level ${day.intensity}`}
             ></div>
           ))}
         </div>
         
-        <div className="flex items-center justify-between text-xs text-text-muted mt-auto pt-4 border-t border-glass-border">
+        <div className="flex items-center justify-between text-xs text-[#78716C] mt-auto pt-4 border-t border-[#E7E5E4]">
           <span>Less</span>
-          <div className="flex gap-1">
+          <div className="flex gap-1.5 items-center">
             {[0, 1, 2, 3, 4].map(level => (
               <div 
                 key={level} 
-                className="w-3 h-3 rounded-sm" 
+                className="w-3.5 h-3.5 rounded-[3px]" 
                 style={{ backgroundColor: getIntensityColor(level) }}
               ></div>
             ))}
@@ -67,7 +67,7 @@ const StreakHeatmap = () => {
           <span>More</span>
         </div>
       </div>
-    </GlassCard>
+    </div>
   );
 };
 
